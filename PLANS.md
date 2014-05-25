@@ -11,6 +11,9 @@
         * Returning:
             * two multi-lined strings (representing STDOUT,STDERR)
             * Numeric exit code
+            * Whether the command was fully emulated (and the output should be
+            identical to the output a user would get on a real machine). Otherwise,
+            show a helpful warning to the user.
         * Implement few (just most common) options?
         * Detects unimplemented options, prints friendly message
         (e.g. "this is a real feature, but demo does not implement it. to learn more - visit URL")
@@ -32,6 +35,12 @@
     "pipes are useful shell feature, but they are not available in this lesson.
     This lesson can be completed without using pipes. To learn more about pipes,
     go to lesson XXXX").
+
+## Shell / Interface
+
+* Block-on-STDIN detection - When a user runs a command which would normally
+block forever on STDIN (connected to a terminal), such as `cut -f1` instead of `cut -f1 <input.txt`,
+stop and display a warning to the user.
 
 * **Guided execution** - The shell executor (and every implemented program) have
 a verbose mode, when it tells the user what's going on.
