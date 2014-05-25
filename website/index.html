@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>(UNIX) Guide for the Perplexed</title>
+
+    <!-- Bootstrap -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+<!-- couldn't find a CDN'd version of Google-Code-Prettify's CSS file, so include it inline.
+     Original version is here: http://google-code-prettify.googlecode.com/svn/trunk/src/prettify.css -->
+<style>
+.pln{color:#000}@media screen{.str{color:#080}.kwd{color:#008}.com{color:#800}.typ{color:#606}.lit{color:#066}.pun,.opn,.clo{color:#660}.tag{color:#008}.atn{color:#606}.atv{color:#080}.dec,.var{color:#606}.fun{color:red}}@media print,projection{.str{color:#060}.kwd{color:#006;font-weight:bold}.com{color:#600;font-style:italic}.typ{color:#404;font-weight:bold}.lit{color:#044}.pun,.opn,.clo{color:#440}.tag{color:#006;font-weight:bold}.atn{color:#404}.atv{color:#060}}pre.prettyprint{padding:2px;border:1px solid #888}ol.linenums{margin-top:0;margin-bottom:0}li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8{list-style-type:none}li.L1,li.L3,li.L5,li.L7,li.L9{background:#eee}
+</style>
+
+
+<style>
+input#shellcmd {
+	font-family:monospace;
+}
+</style>
+
+
+  </head>
+  <body>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+<h1>(UNIX) Guide for the Perplexed</h1>
+<p>
+This is an early-alpha-stage project, which I hope one day will become
+the UNIX equivalent of online tutorials such as <a href="http://try.github.io">http://try.github.io</a>,
+CodeSchool, CodeAcademy, and others. For more information,
+visit <a href="https://github.com/agordon/UnixGuideforthePerplexed">UGP GitHub Page</a>.
+</p>
+		</div>
+	</div><!--row: main title-->
+
+
+<!-- *************************************************
+	Demo Edit Box and Form
+     ************************************************* -->
+	<div class="row">
+		<div class="col-md-12">
+<h2 class="page-header">
+Shell Syntax Parsing Demo
+</h2>
+
+<p>Enter a shell command in the box below, and see its object representation,
+as parsed by the current implementation of the POSIX shell syntax parser.</p>
+
+<form class="form-horizontal" role="form">
+  <div class="form-group">
+    <label class="sr-only" for="shellcmd">Enter Shell Command</label>
+    <div class="col-md-12">
+      <input type="text" class="form-control col-md-8" id="shellcmd" placeholder="Enter Shell Command">
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-md-12">
+      <button type="parse" class="btn btn-primary" onclick="run_parse();return false;">Parse</button>
+      <button type="example1" class="btn btn-info" onclick="example(1);return false;">Example 1</button>
+      <button type="example2" class="btn btn-info" onclick="example(2);return false;">Example 2</button>
+      <button type="example3" class="btn btn-info" onclick="example(3);return false;">Example 3</button>
+      <button type="example4" class="btn btn-info" onclick="example(4);return false;">Example 4</button>
+      <button type="example5" class="btn btn-info" onclick="example(5);return false;">Example 5</button>
+    </div>
+  </div>
+</form>
+
+		</div>
+	</div><!--row -->
+
+
+<!-- *************************************************
+	Syntax Parsing Results
+     ************************************************* -->
+<div class="row">
+	<!-- **** JSON TREE Display **** -->
+	<div class="col-md-6">
+		<h3>Shell Command Structure</h3>
+<pre class="prettyprint lang-js" id="shell_cmd_json">(Enter a shell command and click 'Parse')</pre>
+	</div>
+
+	<!-- **** Shell Executor Log **** -->
+	<div class="col-md-6">
+		<h3>Shell Execution Log</h3>
+		(not implemented, yet)
+	</div>
+</div>
+
+
+</div> <!-- container -->
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <!-- Google Code Prettifier: https://code.google.com/p/google-code-prettify/ -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/prettify/188.0.0/prettify.js"></script>
+
+    <!-- The POSIX Shell parser, after compilation with PEG.js -->
+    <script src="posix_shell.js"></script>
+
+<script>
+
+var examples = [
+"sort -k1n,1 -u input.txt",
+"grep -i FOO <input.txt >output.txt",
+"LC_ALL=C sort -k5nr,5 input.txt >output.txt",
+'cut -f1-5 -d"|" foo.txt | grep -v ^bar | wc -l',
+'grep -q FOO bar.txt && echo found || echo notfound'
+];
+
+function example(num)
+{
+	var text = $("#shellcmd").val(examples[num-1]);
+	run_parse();
+}
+
+function run_parse()
+{
+	var shellcmd = $("#shellcmd").val();
+	try {
+		var result = peg.parse(shellcmd);
+		var json = JSON.stringify(result, undefined, 4);
+		$("#shell_cmd_json").text(json);
+		//Use Google-Code-Prettifier to add colors.
+		prettyPrint();
+	} catch(err) {
+		$("#shell_cmd_json").text("Pasing error:\n" + err);
+	}
+	return false;
+}
+
+</script>
+  </body>
+</html>

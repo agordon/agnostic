@@ -4,6 +4,9 @@ All source code files written for this projects are
 
 The project uses few external libraries, with the following licenses:
     PEG.js ( http://pegjs.majda.cz/ ) - MIT license
+    Bootstrap ( http://getbootstrap.com/ ) - MIT license
+    JQuery ( https://jquery.org )- MIT license
+    Google Code Prettify ( https://code.google.com/p/google-code-prettify/ ) - Apache License 2.0
 
 An additional permission applies to Javascript files in the './src/' directory,
 as explained here https://www.gnu.org/philosophy/javascript-trap.html :

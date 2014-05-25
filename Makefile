@@ -7,6 +7,7 @@ info:
 	@echo "The following targets are available:"
 	@echo ""
 	@echo "  make check    -     Run tests"
+	@echo "  make web      -     Create required Javascript for website"
 	@echo ""
 	@echo "Shell Syntax Parsing Examples:"
 	@echo "  make ex1 -     a simple command"
@@ -16,6 +17,9 @@ info:
 	@echo "  make ex5 -     commands with and,or"
 	@echo ""
 
+.PHONY: web
+web:
+	pegjs --export-var peg ./src/shell/posix_shell.pegjs ./website/posix_shell.js
 
 .PHONY: check
 check: test_posix_shell_syntax
@@ -24,7 +28,7 @@ check: test_posix_shell_syntax
 test_posix_shell_syntax:
 	$(NODEBIN) ./tests/test_posix_shell_syntax.js
 
-.PHONY: ex1 ex2 ex3 ex4
+.PHONY: ex1 ex2 ex3 ex4 ex5
 ex1:
 	$(NODEBIN) ./tools/shell_parse.js "sort -k1n,1 -u input.txt" | jq .
 
