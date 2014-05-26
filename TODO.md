@@ -13,6 +13,17 @@
 	* functions
 	* multi-line input
 	* Here-Documents redirection
+* Save position (character start/end position) of each parsed item,
+for later display of errors or information.
+* convert commands to OO structure instead of textual JSON
+
+## Shell Executor
+
+* Use JavaScript idioms for:
+    * Modules / Namespaces
+    * Exception Throwing and Handling
+* Instead of "console.log" - report events with using an external interface/object
+
 
 ## Build/infrastructure
 
