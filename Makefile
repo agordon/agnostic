@@ -1,5 +1,14 @@
 NODEBIN ?= nodejs
 
+CMDDEMO1="sort -k1n,1 -u input.txt"
+CMDDEMO2="grep -i FOO <input.txt >output.txt"
+CMDDEMO3="LC_ALL=C sort -k5nr,5 input.txt >output.txt"
+CMDDEMO4='cut -f1-5 -d"|" foo.txt | grep -v ^bar | wc -l'
+CMDDEMO5='grep -q FOO bar.txt && echo found || echo not-found'
+
+SHELL_PARSE_TOOL=./tools/shell_parse.js
+SHELL_EXECUTOR_LOG=./tools/shell_executor_log.js
+
 all: info
 
 .PHONY: info
@@ -10,37 +19,63 @@ info:
 	@echo "  make web      -     Create required Javascript for website"
 	@echo ""
 	@echo "Shell Syntax Parsing Examples:"
-	@echo "  make ex1 -     a simple command"
-	@echo "  make ex2 -     a command with redirection"
-	@echo "  make ex3 -     a command variable assignment and redirection"
-	@echo "  make ex4 -     commands with pipes"
-	@echo "  make ex5 -     commands with and,or"
+	@echo "  make ex1p -     a simple command"
+	@echo "  make ex2p -     a command with redirection"
+	@echo "  make ex3p -     a command variable assignment and redirection"
+	@echo "  make ex4p -     commands with pipes"
+	@echo "  make ex5p -     commands with &&, ||"
 	@echo ""
+	@echo "Shell Executor Examples:"
+	@echo "  make ex1e -     a simple command"
+	@echo "  make ex2e -     a command with redirection"
+	@echo "  make ex3e -     a command variable assignment and redirection"
+	@echo "  make ex4e -     commands with pipes"
+	@echo "  make ex5e -     commands with &&, ||"
 
 .PHONY: web
 web:
 	pegjs --export-var peg ./src/shell/posix_shell.pegjs ./website/posix_shell.js
 
 .PHONY: check
-check: test_posix_shell_syntax
+check: test_posix_shell_syntax test_shell_executor_helpers
 
 .PHONY: test_posix_shell_syntax
 test_posix_shell_syntax:
 	$(NODEBIN) ./tests/test_posix_shell_syntax.js
 
-.PHONY: ex1 ex2 ex3 ex4 ex5
-ex1:
-	$(NODEBIN) ./tools/shell_parse.js "sort -k1n,1 -u input.txt" | jq .
+.PHONY: test_shell_executor_helpers
+test_shell_executor_helpers:
+	$(NODEBIN) ./tests/test_shell_executor_helpers.js
 
-ex2:
-	$(NODEBIN) ./tools/shell_parse.js "grep -i FOO <input.txt >output.txt" | jq .
+.PHONY: ex1p ex2p ex3p ex4p ex5p
+ex1p:
+	$(NODEBIN) $(SHELL_PARSE_TOOL) $(CMDDEMO1) | jq .
 
-ex3:
-	$(NODEBIN) ./tools/shell_parse.js "LC_ALL=C sort -k5nr,5 input.txt >output.txt" | jq .
+ex2p:
+	$(NODEBIN) $(SHELL_PARSE_TOOL) $(CMDDEMO2) | jq .
 
-ex4:
-	$(NODEBIN) ./tools/shell_parse.js 'cut -f1-5 -d"|" foo.txt | grep -v ^bar | wc -l' | jq .
+ex3p:
+	$(NODEBIN) $(SHELL_PARSE_TOOL) $(CMDDEMO3) | jq .
 
-ex5:
-	$(NODEBIN) ./tools/shell_parse.js 'grep -q FOO bar.txt && echo found || echo notfound' | jq .
+ex4p:
+	$(NODEBIN) $(SHELL_PARSE_TOOL) $(CMDDEMO4)  | jq .
 
+ex5p:
+	$(NODEBIN) $(SHELL_PARSE_TOOL) $(CMDDEMO5) | jq .
+
+
+.PHONY: ex1e ex2e ex3e ex4e ex5e
+ex1e:
+	$(NODEBIN) $(SHELL_EXECUTOR_LOG) $(CMDDEMO1)
+
+ex2e:
+	$(NODEBIN) $(SHELL_EXECUTOR_LOG) $(CMDDEMO2)
+
+ex3e:
+	$(NODEBIN) $(SHELL_EXECUTOR_LOG) $(CMDDEMO3)
+
+ex4e:
+	$(NODEBIN) $(SHELL_EXECUTOR_LOG) $(CMDDEMO4)
+
+ex5e:
+	$(NODEBIN) $(SHELL_EXECUTOR_LOG) $(CMDDEMO5)
