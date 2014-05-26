@@ -1,3 +1,4 @@
 
-# This file is auto-generated with 'make web'
+# These files are auto-generated with 'make web'
 website/posix_shell.js
+website/shell_executor.js

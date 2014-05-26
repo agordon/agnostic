@@ -35,6 +35,7 @@ info:
 .PHONY: web
 web:
 	pegjs --export-var peg ./src/shell/posix_shell.pegjs ./website/posix_shell.js
+	cp ./src/shell/shell_executor.js ./website/
 
 .PHONY: check
 check: test_posix_shell_syntax test_shell_executor_helpers

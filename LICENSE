@@ -7,6 +7,7 @@ The project uses few external libraries, with the following licenses:
     Bootstrap ( http://getbootstrap.com/ ) - MIT license
     JQuery ( https://jquery.org )- MIT license
     Google Code Prettify ( https://code.google.com/p/google-code-prettify/ ) - Apache License 2.0
+    Javascript sprintf ( https://github.com/alexei/sprintf.js ) - 3-Clause BSD
 
 An additional permission applies to Javascript files in the './src/' directory,
 as explained here https://www.gnu.org/philosophy/javascript-trap.html :

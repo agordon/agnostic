@@ -28,6 +28,34 @@
 input#shellcmd {
 	font-family:monospace;
 }
+
+#shell_execution_log {
+	white-space: nowrap;
+}
+
+pre span.shell {
+}
+
+pre span.Redirection {
+	color: #68228b;
+}
+
+pre span.Command {
+	color: blue;
+}
+
+pre span.Pipeline {
+	color: red;
+}
+
+pre span.AndOrList {
+	color: #4f954f;
+}
+
+pre span.List {
+	color: #ffc125;
+}
+
 </style>
 
 
@@ -68,13 +96,15 @@ as parsed by the current implementation of the POSIX shell syntax parser.</p>
     </div>
   </div>
   <div class="form-group">
-    <div class="col-md-12">
+    <div class="col-md-12" id="buttons">
       <button type="parse" class="btn btn-primary" onclick="run_parse();return false;">Parse</button>
+<!--
       <button type="example1" class="btn btn-info" onclick="example(1);return false;">Example 1</button>
       <button type="example2" class="btn btn-info" onclick="example(2);return false;">Example 2</button>
       <button type="example3" class="btn btn-info" onclick="example(3);return false;">Example 3</button>
       <button type="example4" class="btn btn-info" onclick="example(4);return false;">Example 4</button>
       <button type="example5" class="btn btn-info" onclick="example(5);return false;">Example 5</button>
+-->
     </div>
   </div>
 </form>
@@ -88,15 +118,15 @@ as parsed by the current implementation of the POSIX shell syntax parser.</p>
      ************************************************* -->
 <div class="row">
 	<!-- **** JSON TREE Display **** -->
-	<div class="col-md-6">
+	<div class="col-md-4">
 		<h3>Shell Command Structure</h3>
 <pre class="prettyprint lang-js" id="shell_cmd_json">(Enter a shell command and click 'Parse')</pre>
 	</div>
 
 	<!-- **** Shell Executor Log **** -->
-	<div class="col-md-6">
+	<div class="col-md-8">
 		<h3>Shell Execution Log</h3>
-		(not implemented, yet)
+<pre class="shell_execution_log" id="shell_execution_log"></pre>
 	</div>
 </div>
 
@@ -111,8 +141,12 @@ as parsed by the current implementation of the POSIX shell syntax parser.</p>
     <!-- Google Code Prettifier: https://code.google.com/p/google-code-prettify/ -->
     <script src="http://cdnjs.cloudflare.com/ajax/libs/prettify/188.0.0/prettify.js"></script>
 
+    <!-- Javascript sprintf:   https://github.com/alexei/sprintf.js -->
+    <script src="sprintf.js"></script>
+
     <!-- The POSIX Shell parser, after compilation with PEG.js -->
     <script src="posix_shell.js"></script>
+    <script src="shell_executor.js"></script>
 
 <script>
 
@@ -121,12 +155,44 @@ var examples = [
 "grep -i FOO <input.txt >output.txt",
 "LC_ALL=C sort -k5nr,5 input.txt >output.txt",
 'cut -f1-5 -d"|" foo.txt | grep -v ^bar | wc -l',
-'grep -q FOO bar.txt && echo found || echo notfound'
+'grep -q FOO bar.txt && echo found || echo notfound',
+'CC=clang make && make check & top'
 ];
 
+
+var table_logger = (function() {
+	var identation = 0 ;
+	function indent()
+	{
+		identation ++;
+	}
+	function exdent()
+	{
+		identation --;
+	}
+	function log(content)
+	{
+		var indent = Array(identation * 3).join("&nbsp;");
+		var source = content["source"];
+		var topic  = content["topic"];
+		var params = content["params"].join(" ");
+
+		var text = sprintf("<span class=\"%s\">%s:</span> %s " +
+				   "<span class=\"%s\">%s:</span> %s<br/>",
+				   source,source,indent, topic,topic, params);
+
+		var oldtext = $("#shell_execution_log").html();
+		$("#shell_execution_log").html(oldtext + text);
+	}
+	return {
+		"indent" : indent,
+		"exdent" : exdent,
+		"log"    : log
+	};
+})();
 function example(num)
 {
-	var text = $("#shellcmd").val(examples[num-1]);
+	var text = $("#shellcmd").val(examples[num]);
 	run_parse();
 }
 
@@ -134,16 +200,41 @@ function run_parse()
 {
 	var shellcmd = $("#shellcmd").val();
 	try {
+		$("#shell_cmd_json").text("");
+		$("#shell_execution_log").text("");
 		var result = peg.parse(shellcmd);
-		var json = JSON.stringify(result, undefined, 4);
+		var json = JSON.stringify(result, undefined, 1);
 		$("#shell_cmd_json").text(json);
 		//Use Google-Code-Prettifier to add colors.
 		prettyPrint();
+
+		//Emulate Shell Execution
+		shell_executor.ShellExecute(result);
 	} catch(err) {
 		$("#shell_cmd_json").text("Pasing error:\n" + err);
 	}
 	return false;
 }
+
+$(document).ready(function() {
+
+	///shell_executor.AddConsoleLogger();
+	shell_executor.AddLogger(table_logger);
+
+	//Add "Example' button for each example
+	for (var i in examples) {
+		var num = parseInt(i)+1;
+		var btn_id = sprintf("btn_ex_%d",num);
+		var btn_code = sprintf("<button id=\"%s\" type=\"button\" class=\"btn btn-info\">Example %d</button>",btn_id,num);
+		$("#buttons")
+			.append(btn_code);
+
+		$("#" + btn_id)
+			.click(function(i){  return function() {example(i); return false ; };}(num-1));
+	}
+});
+
+
 
 </script>
   </body>
