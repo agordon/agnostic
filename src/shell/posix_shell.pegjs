@@ -141,7 +141,7 @@ HereDocRedirection =
    allow "word" to be a number, or a "minus".
    other values are undefined, and we reject them in this parser */
 FileDescriptorOrMinus =
-   [0-9]+ / '-'
+   [0-9]+ / '-' { return text(); }
 
 /* Duplicate Input Descriptor 2.7.5 */
 DupInputRedirection =
@@ -150,7 +150,7 @@ DupInputRedirection =
 			fd = 0 ; /* Default FD is STDIN/0 if not defined */
 		return { 'redirection' :
 			{ 'type':'input_dup_fd',
-			  'filename': file_name,
+			  'filename': file_name[0],
 			  'filedescriptor': fd } } ;
 		}
 
@@ -161,7 +161,7 @@ DupOutputRedirection =
 			fd = 1 ; /* Default FD is STDOUT/1 if not defined */
 		return { 'redirection' :
 			{ 'type':'output_dup_fd',
-			  'filename': file_name,
+			  'filename': file_name[0],
 			  'filedescriptor': fd } } ;
 		}
 
@@ -238,7 +238,7 @@ SimpleCommand =
 			var command = {} ;
 
 			if (assignments.length > 0)
-				command["assginments"] = assignments ;
+				command["assignments"] = assignments ;
 			if (redirections.length > 0)
 				command["redirections"] = redirections ;
 			if (cmd.length >0)
@@ -339,7 +339,7 @@ List =
 
 			/* The last step, if it isn't followed by ';' or '&' */
 			if (current_cmd !== null) {
-				steps.push( { "foreground_step" : current_cmd } ) ;
+				steps.push( { "foreground" : current_cmd } ) ;
 			}
 
 			return { "list" : steps } ;
