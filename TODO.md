@@ -29,6 +29,10 @@ for later display of errors or information.
 
 * Improve `Makefile`. It is currently all hard-coded.
 
+## Testing
+
+* Use PhantomJS to test javascripts, in addition to NodeJS testing.
+
 ## Similar / Related Projects
 
 * Mozilla's GCLI (demo: <http://mozilla.github.io/gcli/> ,
