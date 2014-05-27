@@ -24,38 +24,10 @@ shell_executor = (function() {
 
 	var loggers = [];
 
-	var console_logger = (function() {
-		var log_console_identation = 0 ;
-		function log_console_indent()
-		{
-			log_console_identation ++;
-		}
-		function log_console_exdent()
-		{
-			log_console_identation --;
-		}
-		function log_console_msg(content)
-		{
-			var indent = Array(log_console_identation * 4).join(" ");
-			console.log(content["source"] + ": " + indent +
-				    content["topic"] + ": " +
-				    content["params"].join(" "));
-		}
-		return {
-			"indent" : log_console_indent,
-			"exdent" : log_console_exdent,
-			"log"    : log_console_msg
-		};
-	})();
 
 	function AddLogger(l)
 	{
 		loggers.push(l);
-	}
-
-	function AddConsoleLogger()
-	{
-		AddLogger(console_logger);
 	}
 
 	/* Log Dispatcher, used through-out the SHELL executor module.
@@ -630,7 +602,6 @@ shell_executor = (function() {
 		"ShellExecute": ShellExecute,
 		"DescribeCommand": DescribeCommand,
 		"AddLogger" : AddLogger,
-		"AddConsoleLogger" : AddConsoleLogger,
 		/* These are exported in a sub-namespace, for testing purposes */
 		"HelperFunctions" : {
 				"IsObject": IsObject,

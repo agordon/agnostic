@@ -21,7 +21,6 @@ var assert = require("assert");
 /* TODO: don't Hard-code path to the PEGJS file. */
 var script_file = process.argv[1]; // Filename of current script
 var shell_executor_script = path.join( path.dirname(script_file), "..", "src", "shell", "shell_executor.js" );
-
 require(shell_executor_script);
 
 /* Create shortcuts for the functions to be tested */

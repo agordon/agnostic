@@ -41,11 +41,13 @@ var parser = PEG.buildParser(parser_text);
 
 var shell_executor_script  = path.join( path.dirname(script_file), "..", "src", "shell", "shell_executor.js" );
 var tmp = require(shell_executor_script);
+var console_logger_script  = path.join( path.dirname(script_file), "..", "src", "shell", "shell_console_logger.js" );
+var tmp2 = require(console_logger_script);
 
 try {
 	var shell_parse_tree = parser.parse(input);
 
-	shell_executor.AddConsoleLogger();
+	shell_executor.AddLogger(shell_executor_console_logger);
 	var result = shell_executor.ShellExecute(shell_parse_tree);
 } catch (err) {
 	console.error("--Failed to parse input:");
