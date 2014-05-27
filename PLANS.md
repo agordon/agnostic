@@ -17,10 +17,19 @@
         * Implement few (just most common) options?
         * Detects unimplemented options, prints friendly message
         (e.g. "this is a real feature, but demo does not implement it. to learn more - visit URL")
-   * File access?? Using emscripten's FileSystem module?
-   * Has "more info" method:
+    * File access?? Using emscripten's FileSystem module?
+    * Has "more info" method:
        * Explaining what the program does (long/short description variants?)
        * Link to an official website?
+       * Explain what each parameter does
+* Create "OS" object/class, representing the state of each process:
+    * has STDIN, STDOUT, STDERR streams
+           * For each, provide "GetLine" and "PutLine" - Always line-buffered.
+    * Has "FileSystem" object, based on emscripten's FileSystem class
+    * Has few OS-related emulation functions:
+        * getuid, geteuid, getgid,getegid ?
+* Allows plugins/extension of programs
+    * A collection of javascript "program emulators" - for external contributors
 
 
 ## Classes / Lessons
