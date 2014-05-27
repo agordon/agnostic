@@ -20,17 +20,8 @@ var assert = require("assert");
 
 /* TODO: don't Hard-code path to the PEGJS file. */
 var script_file = process.argv[1]; // Filename of current script
-var shell_executor_script = path.join( path.dirname(script_file), "..", "src", "shell", "shell_executor.js" );
-require(shell_executor_script);
-
-/* Create shortcuts for the functions to be tested */
-IsObject          = shell_executor.HelperFunctions.IsObject;
-VerifyObject      = shell_executor.HelperFunctions.VerifyObject;
-IsArray           = shell_executor.HelperFunctions.IsArray;
-VerifyArray       = shell_executor.HelperFunctions.VerifyArray;
-VerifyAllowedKeys = shell_executor.HelperFunctions.VerifyAllowedKeys;
-VerifyOneKey      = shell_executor.HelperFunctions.VerifyOneKey;
-GetOneKey         = shell_executor.HelperFunctions.GetOneKey;
+var utils_script = path.join( path.dirname(script_file), "..", "src", "utils", "utils.js" );
+require(utils_script);
 
 /* Test IsObject */
 assert.ok( IsObject( {} ) );
