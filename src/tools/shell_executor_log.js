@@ -14,39 +14,20 @@
    1. implement proper command-line parsing, with "--help" .
    2. read input from STDIN
 */
-var input = "" ;
-process.argv.forEach(function (val, index, array) {
-		/* The first two parameters are "nodejs" and the script name */
-		if (index<2)
-			return;
-		if (input !== "")
-			input = input + " ";
-		input = input + array[index];
-});
-
+var input = require("utils/single_cmdline_parameter");
 if (input === "") {
 	console.error("missing parameter: shell command to parse.");
 	process.exit(1);
 }
 
-var fs = require('fs');
-var PEG = require("pegjs");
-var path = require("path");
-
-/* TODO: don't Hard-code path to the PEGJS file. */
-var script_file = process.argv[1]; // Filename of current script
-var posix_parser_syntax = path.join( path.dirname(script_file), "..", "src", "shell", "posix_shell.pegjs" );
-var parser_text = fs.readFileSync(posix_parser_syntax, 'ascii');
-var parser = PEG.buildParser(parser_text);
-
-var shell_executor_script  = path.join( path.dirname(script_file), "..", "src", "shell", "shell_executor.js" );
-var tmp = require(shell_executor_script);
-var console_logger_script  = path.join( path.dirname(script_file), "..", "src", "shell", "shell_console_logger.js" );
-var tmp2 = require(console_logger_script);
+require("utils/object_utils");
+require("utils/shell_parser_loader");
+var parser = load_shell_parser();
+require("shell/shell_console_logger");
+require("shell/shell_executor");
 
 try {
 	var shell_parse_tree = parser.parse(input);
-
 	shell_executor.AddLogger(shell_executor_console_logger);
 	var result = shell_executor.ShellExecute(shell_parse_tree);
 } catch (err) {

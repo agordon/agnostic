@@ -6,22 +6,11 @@
 
 /* Shell Executor Helper Function unit test.
  *
- * This script tests the Helper Functions in the ShellExecutor module.
- *
+ * This script tests the Object Helper Functions.
  */
 
-var count_pass = 0 ;
-var count_fail = 0 ;
-var seen_tests = {};
-
-var fs = require('fs');
-var path = require("path");
-var assert = require("assert");
-
-/* TODO: don't Hard-code path to the PEGJS file. */
-var script_file = process.argv[1]; // Filename of current script
-var utils_script = path.join( path.dirname(script_file), "..", "src", "utils", "utils.js" );
-require(utils_script);
+var assert = require('assert');
+require("utils/object_utils");
 
 /* Test IsObject */
 assert.ok( IsObject( {} ) );

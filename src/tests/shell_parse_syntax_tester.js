@@ -391,17 +391,11 @@ var count_pass = 0 ;
 var count_fail = 0 ;
 var seen_tests = {};
 
-var fs = require('fs');
-var PEG = require("pegjs");
-var path = require("path");
+require('utils/object_utils');
+require('utils/shell_parser_loader');
 
 var start_rules = Object.keys(rules);
-
-/* TODO: don't Hard-code path to the PEGJS file. */
-var script_file = process.argv[1]; // Filename of current script
-var posix_parser_syntax = path.join( path.dirname(script_file), "..", "src", "shell", "posix_shell.pegjs" );
-var parser_text = fs.readFileSync(posix_parser_syntax, 'ascii');
-var parser = PEG.buildParser(parser_text,{ 'allowedStartRules': start_rules });
+var parser = load_shell_parser({ "allowedStartRules" : start_rules });
 
 
 /* Tests one input.

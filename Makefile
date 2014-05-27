@@ -6,8 +6,8 @@ CMDDEMO3="LC_ALL=C sort -k5nr,5 input.txt >output.txt"
 CMDDEMO4='cut -f1-5 -d"|" foo.txt | grep -v ^bar | wc -l'
 CMDDEMO5='grep -q FOO bar.txt && echo found || echo not-found'
 
-SHELL_PARSE_TOOL=./tools/shell_parse.js
-SHELL_EXECUTOR_LOG=./tools/shell_executor_log.js
+SHELL_PARSE_TOOL=./src/tools/shell_parse.js
+SHELL_EXECUTOR_LOG=./src/tools/shell_executor_log.js
 
 all: info
 
@@ -38,15 +38,16 @@ web:
 	cp ./src/shell/shell_executor.js ./website/
 
 .PHONY: check
-check: test_posix_shell_syntax test_shell_executor_helpers
+check: test_parse_syntax \
+       test_object_utils
 
-.PHONY: test_posix_shell_syntax
-test_posix_shell_syntax:
-	$(NODEBIN) ./tests/test_posix_shell_syntax.js
+.PHONY: test_parse_syntax
+test_parse_syntax:
+	$(NODEBIN) ./src/tests/shell_parse_syntax_tester.js
 
-.PHONY: test_shell_executor_helpers
-test_shell_executor_helpers:
-	$(NODEBIN) ./tests/test_shell_executor_helpers.js
+.PHONY: test_object_utils
+test_object_utils:
+	$(NODEBIN) ./src/tests/object_utils_tester.js
 
 .PHONY: ex1p ex2p ex3p ex4p ex5p
 ex1p:
