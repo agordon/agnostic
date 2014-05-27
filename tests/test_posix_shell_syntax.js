@@ -33,6 +33,12 @@ var rules = {
 	'NonQuotedCharacters' : 'non_operator_token',
 	'SingleQuotedString' : 'non_operator_token',
 	'DoubleQuotedString' : 'non_operator_token',
+	'SubshellExpandable' : 'non_operator_token',
+	'BacktickExpandable' : 'non_operator_token',
+	'ParameterExpandable' : 'non_operator_token',
+	'ParameterOperationExpandable' : 'non_operator_token',
+	'ArithmeticExpandable' : 'non_operator_token',
+	'Expandable'         : 'non_operator_token',
 	'non_operator_token' : 'non_operator_tokens',
 	'non_operator_tokens' : 'SimpleCommand',
 	'Redirection' : 'Redirections',
@@ -269,6 +275,113 @@ var tests = [
 ["list7",	"true && false &",				true,	"List" ],
 ["list8",	";",						false,	"List" ],
 ["list9",	"&",						false,	"List" ],
+
+/* Test Sub-Shell Parameter Expansion */
+["subshell1",	"$()",						true,	"SubshellExpandable"],
+["subshell2",	"$())",						false,	"SubshellExpandable"],
+["subshell3",	"$(ls)",					true,	"SubshellExpandable"],
+["subshell4",	"$(echo $(uname -s))",				true,	"SubshellExpandable"],
+["subshell5",	"$(()",						false,	"SubshellExpandable"],
+["subshell6",	"$(echo \\()",					true,	"SubshellExpandable"],
+["subshell7",	"$(echo \\))",					true,	"SubshellExpandable"],
+["subshell8",	"$(echo \\$)",					true,	"SubshellExpandable"],
+["subshell9",	"$(echo $($()$()$($($()))uname -s))",		true,	"SubshellExpandable"],
+["subshell10",	"$(echo ${USER})",				true,	"SubshellExpandable"],
+["subshell11",	"$(echo `uname -s`)",				true,	"SubshellExpandable"],
+["subshell12",	"aaa$()",					false,	"SubshellExpandable"],
+["subshell13",	"$(echo hi)"	,				true,	"SubshellExpandable"],
+
+/* Test Backtick Subshell parameter expansion */
+/*TODO: add more backtick tests */
+["backtick1",	"`ls`",						true,	"BacktickExpandable"],
+["backtick2",	"`ls",						false,	"BacktickExpandable"],
+["backtick3",	"ls`",						false,	"BacktickExpandable"],
+["backtick4",	"ls``",						false,	"BacktickExpandable"],
+/* TODO: Test 5 should not fail. what's the diff between this and subshell13? */
+/*["backtick5",	"`echo hi`",					true,	"BacktickExpandable"],*/
+
+
+/* Test Parameter Expansion (without operations) */
+["ParamExp1",	"${FOO}",					true,	"ParameterExpandable"],
+["ParamExp2",	"$FOO",						true,	"ParameterExpandable"],
+["ParamExp3",	"${FOO",					false,	"ParameterExpandable"],
+["ParamExp4",	"$FOO}",					false,	"ParameterExpandable"],
+["ParamExp5",	"$F.OO",					false,	"ParameterExpandable"],
+["ParamExp6",	"$FOO=",					false,	"ParameterExpandable"],
+["ParamExp7",	"$FO${O}",					false,	"ParameterExpandable"],
+["ParamExp8",	"${FOO=BAR}",					false,	"ParameterExpandable"],
+/* Special parameters */
+["ParamExp9",	"$!",						true,	"ParameterExpandable"],
+["ParamExp10",	"$$",						true,	"ParameterExpandable"],
+["ParamExp11",	"$-",						true,	"ParameterExpandable"],
+["ParamExp12",	"$?",						true,	"ParameterExpandable"],
+["ParamExp13",	"$@",						true,	"ParameterExpandable"],
+["ParamExp14",	"${!}",						true,	"ParameterExpandable"],
+["ParamExp15",	"${$}",						true,	"ParameterExpandable"],
+["ParamExp16",	"${-}",						true,	"ParameterExpandable"],
+["ParamExp17",	"${?}",						true,	"ParameterExpandable"],
+["ParamExp18",	"${@}",						true,	"ParameterExpandable"],
+
+/* Test Parameter Expansion with operations */
+["ParmOpExp1",	"${FOO=BAR}",					true,	"ParameterOperationExpandable"],
+["ParmOpExp2",	"${FOO:-BAR}",					true,	"ParameterOperationExpandable"],
+["ParmOpExp3",	"${FOO-BAR}",					true,	"ParameterOperationExpandable"],
+["ParmOpExp4",	"${FOO:=BAR}",					true,	"ParameterOperationExpandable"],
+["ParmOpExp5",	"${FOO=BAR}",					true,	"ParameterOperationExpandable"],
+["ParmOpExp6",	"${FOO:?BAR}",					true,	"ParameterOperationExpandable"],
+["ParmOpExp7",	"${FOO?BAR}",					true,	"ParameterOperationExpandable"],
+["ParmOpExp8",	"${FOO:+BAR}",					true,	"ParameterOperationExpandable"],
+["ParmOpExp9",	"${FOO+BAR}",					true,	"ParameterOperationExpandable"],
+["ParmOpExp10",	"${FOO%BAR}",					true,	"ParameterOperationExpandable"],
+["ParmOpExp12",	"${FOO%%BAR}",					true,	"ParameterOperationExpandable"],
+["ParmOpExp13",	"${FOO#BAR}",					true,	"ParameterOperationExpandable"],
+["ParmOpExp14",	"${FOO##BAR}",					true,	"ParameterOperationExpandable"],
+["ParmOpExp15",	"${FOO=}",					true,	"ParameterOperationExpandable"],
+/* Go Recursive */
+["ParmOpExp16",	"${FOO=${BAR}}",				true,	"ParameterOperationExpandable"],
+["ParmOpExp17",	"${FOO=BAR${BAR}}",				true,	"ParameterOperationExpandable"],
+["ParmOpExp18",	"${FOO=${BAR-BAZ}}",				true,	"ParameterOperationExpandable"],
+["ParmOpExp19",	"${FOO=$(uname -s)BAZ}",			true,	"ParameterOperationExpandable"],
+["ParmOpExp20",	"${FOO=$BAR}",					true,	"ParameterOperationExpandable"],
+/* Test bad syntax */
+["ParmOpExp21",	"${FOO",					false,	"ParameterOperationExpandable"],
+["ParmOpExp22",	"${FOO=",					false,	"ParameterOperationExpandable"],
+["ParmOpExp23",	"$FOO=BAR",					false,	"ParameterOperationExpandable"],
+["ParmOpExp24",	"$FOO=BAR}",					false,	"ParameterOperationExpandable"],
+["ParmOpExp25",	"$FOO}",					false,	"ParameterOperationExpandable"],
+
+
+/* Test Arithmatic Expansion */
+/* TODO: as more arithmetic operations are added, add appropriate tests */
+/* TODO: the first two should work, but don't. Allow empty arithmetic expressions */
+/*["arthm1",	"$(())",					true,	"ArithmeticExpandable"],
+["arthm2",	"$(( ))",					true,	"ArithmeticExpandable"],*/
+["arthm3",	"$((1))",					true,	"ArithmeticExpandable"],
+["arthm4",	"$(( 3 ))",					true,	"ArithmeticExpandable"],
+["arthm5",	"$((A))",					true,	"ArithmeticExpandable"],
+["arthm6",	"$(($A))",					true,	"ArithmeticExpandable"],
+["arthm7",	"$((1+2+3))",					true,	"ArithmeticExpandable"],
+["arthm8",	"$((1+2*3))",					true,	"ArithmeticExpandable"],
+["arthm9",	"$((A*3))",					true,	"ArithmeticExpandable"],
+["arthm10",	"$((1+FOO*3))",					true,	"ArithmeticExpandable"],
+["arthm11",	"$(((1+FOO)*3))",				true,	"ArithmeticExpandable"],
+/* Go Recursive */
+["arthm20",	"$(( $(nproc)+1 ))",				true,	"ArithmeticExpandable"],
+["arthm21",	"$(( ${PID}*1 ))",				true,	"ArithmeticExpandable"],
+["arthm22",	"$(( $((42))*9 ))",				true,	"ArithmeticExpandable"],
+/* Test bad syntax */
+["arthm30",	"$(( 3+4 )",					false,	"ArithmeticExpandable"],
+
+
+/* Test possible combinations of parameter expansions - single token*/
+["expan1",	"una$(echo me)",				true,	"non_operator_token"],
+["expan2",	"una${A}",					true,	"non_operator_token"],
+["expan3",	"una$A",					true,	"non_operator_token"],
+["expan4",	"una${FOO-me}",					true,	"non_operator_token"],
+["expan5",	"hel'lo'${USER}$(echo wo)`uptime`",		true,	"non_operator_token"],
+["expan6",	"${A}$(ls)$B$C${D}-foo",			true,	"non_operator_token"],
+
+/* TODO: test expansion with assignment, redirection */
 
 ];
 

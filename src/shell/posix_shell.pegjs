@@ -70,7 +70,8 @@ non_operator_token =
       terms:( NonQuotedCharacters /
               SingleQuotedString /
               DoubleQuotedString /
-              EscapedCharacter
+              EscapedCharacter /
+              Expandable
               )+ { return terms; }
 
 /* Ugly Hack:
@@ -379,4 +380,146 @@ List =
 
 			return { "list" : steps } ;
 		}
+
+/****************************************
+ Parameter Expansions
+******************************************/
+
+Expandable =
+  SubshellExpandable /
+  BacktickExpandable /
+  ParameterExpandable /
+  ParameterOperationExpandable /
+  ArithmeticExpandable
+
+/* These are the allowed "literal" characters inside the expandables
+   (i.e. characters allowed inside ${} $() ``) - which will NOT trigger
+   a recursive call to an inner expandable rule */
+AllowedCharacters =
+  [^\$\(\)\`\\\{\}]+ { return text(); }
+
+
+/* Rule for a subshell (i.e. $() ) */
+SubshellExpandable =
+  "$(" !"(" terms:SubshellExpandableInner* ")" { return { "subshell" : terms } ; }
+
+/* in a subshell "$()" - backslash-quoted parens are Ok, as are braces */
+SubshellExpandableInner =
+  Expandable / "\\(" / "\\)" / "{" / "}" / "\\$" / AllowedCharacters { return text(); }
+
+/* in a backtick-shell "``" - backslash-quoted backticks are Ok, as are braces and parens.
+   TODO: recursive backticks are NOT allowed, and backslash-backticks should be used instead.
+         this parser rule does not allow it yet. */
+BacktickExpandable =
+  "`"  terms:BacktickExpandableInner* "`" { return { "backtickshell" : terms } ; }
+
+BacktickExpandableInner =
+  Expandable / "\\`" / "\\`" / "(" / ")" / "{" / "}" / AllowedCharacters { return text(); }
+
+
+/* Rule for a simple parameter expansion, i.e. ${VAR} */
+ParameterExpandable =
+  "${" varname:ParameterName "}" { return { "envvar" : varname } ; }
+  / "$" varname:ParameterName "" { return { "envvar" : varname } ; }
+
+/* Rule for parameter expansion, including an operation, e.g. $(VAR:=VALUE} .
+   NOTE: the "VAR" can only contain valid parameter-name characters,
+         but the "VALUE" part can recursively contain more expandable items. */
+ParameterOperationExpandable =
+  "${" varname:ParameterName varop:ParameterExpansionOperator opvalue:ParameterOperationValue* "}" { return { "envvar_operation" : { "envvar" : varname, "operation" : varop, "value": opvalue } }; }
+
+/* In a "${}" parameter expansion, backslash-quoted braces are allowed, as are parens. */
+ParameterOperationValue =
+  Expandable / "\\{" / "\\}" / "(" / ")" / "\\$" / AllowedCharacters { return text(); }
+
+/* Alphanumeric parameter name, or special parameter name (section 2.5.2) */
+ParameterName =
+  ( [A-Za-z_][A-Za-z0-9_]* / [\@\*\#\?\-\$\!\0] ) { return text(); }
+
+/* Section 2.6.2 Parameter Expansions
+   TODO: what about "/" operator? seems to be commonly implemented.
+           $ FOO=helloworld
+           $ echo ${FOO/world}
+           hello
+*/
+ParameterExpansionOperator =
+  ( ":-" / "-" / ":=" / "=" / ":?" / "?" / ":+" / "+" /"%" / "%%" / "#" / "##" ) { return text(); }
+
+
+/******************************************************
+Artihmetic Expressions, Section 2.6.4.
+
+NOTE: The parsing starts with "ArithmeticExpandable",
+      goes all the way up to "Factor" - which recursively goes back
+      to "Expandable" (because arithmetic operations are allowed to have
+      expandable parameters inside them).
+
+TODO: The parsing tree is more-or-less standard for arithmetic expressions,
+      but currently only +,-,*,/ operators are implemented.
+      The full list to be implemented is here:
+        http://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap01.html#tag_01_07_02_01
+        (without "sizeof", selection, jump, interation operatiors).
+******************************************************/
+
+ArithmeticExpandable =
+  "$((" whitespace expr:ArithmeticExpression whitespace "))" { return { "arithmetic" : expr } ; }
+
+
+ArithmeticExpression
+  = first:Term rest:( whitespace ("+" / "-") whitespace Term)* {
+		if (rest.length===0)
+			return first;
+
+		var list=[];
+		list.push(first);
+		for (var i in rest) {
+			list.push( rest[i][1] ); // the operator + or -
+			list.push( rest[i][3] ); // the value
+		}
+		return { "arithmetics_add_sub" : list } ;
+	}
+
+Term
+  = first:Factor rest:( whitespace ("*" / "/") whitespace Factor)* {
+		if (rest.length===0)
+			return first;
+
+		var list=[];
+		list.push(first);
+		for (var i in rest) {
+			list.push( rest[i][1] ); // the operator * or /
+			list.push( rest[i][3] ); // the value
+		}
+		return { "arithmetics_mul_div" : list } ;
+	}
+
+
+Factor
+  = "(" whitespace expr:ArithmeticExpression whitespace ")" { return expr ; }
+  / value:Integer { return { "literal" : value } ; }
+  / ArithmeticParameterName
+  / Expandable
+
+Integer =
+  DecimalInteger / HexInteger / OctalInteger
+
+DecimalInteger
+  = [1-9][0-9]* { return parseInt(text(), 10); }
+
+HexInteger
+  = "0x" hexvalue:[A-Fa-f0-9]+ { return parseInt(text(), 16); }
+
+OctalInteger
+  = "0" [0-7]+ { return parseInt(text(), 8); }
+
+/* Parameter Variable Names which can appear inside $(()) without a '$' - special variables can't.
+   e.g. invalid: $((?))
+        valid:   $(($?)) */
+ArithmeticParameterName =
+  [A-Za-z0-9_]+ { return text(); }
+
+
+/* TODO: add newlines \r\n? */
+whitespace
+  = [ \t]*
 
