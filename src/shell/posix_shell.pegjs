@@ -37,56 +37,93 @@
 start =
   List
 
-/* filter out empty string tokens (which are empty delimiters).
-   NOTE: this will not harm empty string parameters (e.g. -d"")
-         because those will include the quotes characaters in the token string.
-   Quote-Removal has not happened yet, before this step. */
 non_operator_tokens =
-  tokens: ( word / EmptyDelimiter )* {
-		    var non_empty = tokens.filter(function(e){return e});
-		     return non_empty ; }
+  first:non_operator_token rest:( non_operator_token / EmptyDelimiter )* {
+		var results = [] ;
+		for (var i in first) {
+			results.push(first[i]);
+		}
+		for (var i in rest) {
+			var item = rest[i];
+			for (var j in item) {
+				results.push(item[j]);
+			}
+		}
+		return { "tokens" : results };
+	}
 
+/* non_operator_token :
+     a non-delimited list of items, that can be considered as "one" item
+     (after possible expansion), and does not include any special shell operator.
+     Example:
+	hello"wo"$(echo rl)${FOO-d}
+     Is a valid, non-delimited, non-operator token list, containing:
+        1. literal string "hello"
+	2. double-quoted string "wo"
+	3. sub-shell command $(echo rl)
+	4. parameter expansion ${FOO-d}
+     After evaluation, it will be consolidated into one token: "hellworld",
+     but this happens outside the parser. */
 
+non_operator_token =
+  !redirection_word_hack
+      terms:( NonQuotedCharacters /
+              SingleQuotedString /
+              DoubleQuotedString /
+              EscapedCharacter
+              )+ { return terms; }
 
 /* Ugly Hack:
    prevent the "2" in input like "uptime 2>&1" to be separated from the redirection. */
 redirection_word_hack =
   [0-9]+ [\<\>]
 
-word =
-  !redirection_word_hack ( NonQuotedCharacters / QuotedString / EscapedCharacter )+ { return text(); }
-
+/* Ugly Hack: catch valid assignments syntax.
+   Valid assignments can happen at the first word/token of a new command (or sub command),
+   and must contain only valid characters and an equal sign.
+   Example:
+     ABC= uname         -  "ABC=" is a valid assignment.
+     A%C= uname         -  "A%C=" is not a valid assignment, and the shell will
+                           treat it as the atcual command (and fail with '"A%C=" command not found').
+/*
 assignment_word_hack =
   [A-Za-z_][A-Za-z0-9_]* '='
 
-not_first_word =
-  !redirection_word_hack !assignment_word_hack ( NonQuotedCharacters / QuotedString / EscapedCharacter )+ { return text(); }
+non_first_word_non_operator_token =
+  !assign_word_hack non_operator_token
+*/
+
 
 /* Characters which do not need quoting, as per 2.2 */
 NonQuotedCharacters =
-  [^\|\&\;\<\>\(\)\$\'\\\"\' \t\n]+
+  value:[^\|\&\;\<\>\(\)\$\'\\\"\' \t\n]+ { return { "literal" : value.join("") } ; }
 
-QuotedString =
-  '"' DoubleQuotedStringCharacter* '"'
-  / "'" SingleQuotedStringCharacter* "'"
-
-/* TODO: Inside double-quotes, parameters-expansion & sub-commands must work */
-DoubleQuotedStringCharacter =
-  !('"' / "\\" / LineTerminator) .
-  / EscapedCharacter
+SingleQuotedString =
+  "'" value:SingleQuotedStringCharacter* "'" { return { "singlequotedstring" : value.join("") } ; }
 
 SingleQuotedStringCharacter =
-  !("'" / "\\" / LineTerminator) .
+  !("'" / "\\" / LineTerminator) value:. { return value ; }
+  / EscapedCharacter
+
+/* TODO: allow parameter expansion sinde double-quoted string */
+DoubleQuotedString =
+  '"' value:DoubleQuotedStringCharacter* '"' { return { "doublequotedstring" : value.join("") } ; }
+
+DoubleQuotedStringCharacter =
+  !('"' / "\\" / LineTerminator) value:. { return value ; }
   / EscapedCharacter
 
 EscapedCharacter =
-  "\\" .
+  "\\" value:. { return { "literal" : "\\" + value } ; }
 
 LineTerminator =
   "\n"
 
 EmptyDelimiter =
-  [\n\t ]+ { return ""; }
+  [\n\t ]+ { return [ { "delimiter" : null } ]; }
+
+VariableName =
+  [A-Za-z_][A-Za-z0-9_]* { return text(); }
 
 
 /***********************
@@ -99,7 +136,7 @@ RedirectionFileDescriptor =
 
 /* Input Redirection, 2.7.1 */
 InputRedirection =
-  fd:RedirectionFileDescriptor? '<' file_name:word {
+  fd:RedirectionFileDescriptor? '<' file_name:non_operator_token {
 		if (fd === null)
 			fd = 0 ; /* Default FD is STDIN/0 if not defined */
 		return { 'redirection' :
@@ -110,7 +147,7 @@ InputRedirection =
 
 /* Output Redirection, 2.7.2 */
 OutputRedirection =
-  fd:RedirectionFileDescriptor? '>' forceclobber:'|'? file_name:word {
+  fd:RedirectionFileDescriptor? '>' forceclobber:'|'? file_name:non_operator_token {
 		if (fd === null)
 			fd = 1 ; /* Default FD is STDOUT/1 if not defined */
 		return { 'redirection' :
@@ -122,7 +159,7 @@ OutputRedirection =
 
 /* Append Redirection, 2.7.3 */
 AppendRedirection =
-  fd:RedirectionFileDescriptor? '>>' file_name:word {
+  fd:RedirectionFileDescriptor? '>>' file_name:non_operator_token {
 		if (fd === null)
 			fd = 1 ; /* Default FD is STDOUT/1 if not defined */
 		return { 'redirection' :
@@ -167,7 +204,7 @@ DupOutputRedirection =
 
 /* Open file for reading/writing, 2.7.7 */
 InOutRedirection =
-  fd:RedirectionFileDescriptor? '<>' file_name:word {
+  fd:RedirectionFileDescriptor? '<>' file_name:non_operator_token {
 		if (fd === null)
 			fd = 0 ; /* Default FD is STDIN/0 if not defined */
 		return { 'redirection' :
@@ -189,11 +226,8 @@ Redirection =
 Variable Assignment, as per 2.9.1:
 *************************/
 
-VariableName =
-  [A-Za-z_][A-Za-z0-9_]* { return text(); }
-
 Assignment =
-  vari_name:VariableName '=' value:word { var tmp={}; tmp[vari_name]=value; return { 'assignment' :tmp }; }
+  vari_name:VariableName '=' value:non_operator_token { var tmp={}; tmp[vari_name]=value; return { 'assignment' :tmp }; }
 
 
 /***************************
@@ -241,13 +275,14 @@ SimpleCommand =
 				command["assignments"] = assignments ;
 			if (redirections.length > 0)
 				command["redirections"] = redirections ;
-			if (cmd.length >0)
-				command["tokens"] = cmd ;
+
+			if (cmd)
+				command["command"] = cmd ;
 
 			/* TODO: fix this ugly hack for the broken parser rules.
 				The current parser rules wrongly accept empty command.
 				mark it as so, later 'List' rule will prune this out.  */
-			if (cmd.length===0 &&
+			if (! (cmd) &&
 				assignments.length===0 &&
 				redirections.length===0)
 				return null;
