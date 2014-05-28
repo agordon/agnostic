@@ -1,0 +1,32 @@
+#!/bin/sh
+
+#   This file is part of UNIX Guide for the Perplexed project.
+#   Copyright (C) 2014 by Assaf Gordon <assafgordon@gmail.com>
+#   Released under GPLv3 or later
+
+if [ -z "$1" ] ; then
+echo "UNIX Guide for the Perplexed Project
+Shell-Command-Describe tool
+
+Usage:
+  describe [shell command]
+
+This debugging tool will parse the shell command, then reconstruct the
+string description of the command.
+
+The input and output should be very similar, or it might indicate a bug
+in the parsing/iterating code.
+
+Example:
+    $ ./describe 'seq 1 10 | wc -l && echo ok'
+    -- Input Command:
+    seq 1 10 | wc -l && echo ok
+    -- Command Description (after parsing):
+    seq 1 10 | wc -l && echo ok
+
+To see the syntax-JSON-structure, use the 'parse' tool.
+"
+exit 0
+fi
+
+nodejs ./src/tools/shell_describe "$@"

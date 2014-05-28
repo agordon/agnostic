@@ -1,0 +1,71 @@
+#!/bin/sh
+
+#   This file is part of UNIX Guide for the Perplexed project.
+#   Copyright (C) 2014 by Assaf Gordon <assafgordon@gmail.com>
+#   Released under GPLv3 or later
+
+if [ -z "$1" ] ; then
+echo "UNIX Guide for the Perplexed Project
+Shell-Syntax-Parse tool
+
+Usage:
+  parse [shell command]
+
+This debugging tool will parse the shell command,
+then print the JSON-syntax structure syntax of the command.
+
+NOTE: this script tests only the syntax parsing step.
+      unknown shell commands can be successfully parsed
+      (e.g. \"seq 1 10 | no_such_program >/dev/sbd1\" is valid syntax,
+       but will fail when actually executed).
+
+Example:
+    $ ./parse 'seq 1 10 | wc -l && echo ok'
+    {
+      \"and_or_list\": [
+        {
+          \"pipeline\": [
+            {
+              \"SimpleCommand\": {
+                \"command\": [
+                  { \"literal\": \"seq\" },
+                  { \"delimiter\": null },
+                  { \"literal\": \"1\" },
+                  { \"delimiter\": null },
+                  { \"literal\": \"10\" }
+                ]
+              }
+            },
+            {
+              \"SimpleCommand\": {
+                \"command\": [
+                  { \"literal\": \"wc\" },
+                  { \"delimiter\": null },
+                  { \"literal\": \"-l\" }
+                ]
+              }
+            }
+          ]
+        },
+        \"&&\",
+        {
+          \"SimpleCommand\": {
+            \"command\": [
+              { \"literal\": \"echo\" },
+              { \"delimiter\": null },
+              { \"literal\": \"ok\" }
+            ]
+          }
+        }
+      ]
+    }
+"
+exit 1
+fi
+
+if ! which jq 2>/dev/null >/dev/null ; then
+	echo "Error: this script requires the 'jq' program (which was not found)" >&2
+	exit 1
+fi
+
+nodejs ./src/tools/shell_parse.js "$@" | jq .
