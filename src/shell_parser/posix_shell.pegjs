@@ -494,7 +494,7 @@ SubshellExpandable =
    TODO: recursive backticks are NOT allowed, and backslash-backticks should be used instead.
          this parser rule does not allow it yet. */
 BacktickExpandable =
-  "`"  terms:start* "`" { return { "backtickshell" : terms } ; }
+  "`"  terms:List "`" { return { "backtickshell" : terms } ; }
 
 /* Rule for a simple parameter expansion, i.e. ${VAR} */
 ParameterExpandable =
@@ -505,7 +505,7 @@ ParameterExpandable =
    NOTE: the "VAR" can only contain valid parameter-name characters,
          but the "VALUE" part can recursively contain more expandable items. */
 ParameterOperationExpandable =
-  "${" varname:ParameterName varop:ParameterExpansionOperator opvalue:Token_NoBraces* "}" { return { "envvar_operation" : { "envvar" : varname, "operation" : varop, "value": opvalue } }; }
+  "${" varname:ParameterName varop:ParameterExpansionOperator opvalue:Token_NoBraces* "}" { return { "envvar_operation" : { "envvar" : varname, "operation" : varop, "value": (opvalue?opvalue[0]:[]) } }; }
 
 /* Alphanumeric parameter name, or special parameter name (section 2.5.2) */
 ParameterName =
