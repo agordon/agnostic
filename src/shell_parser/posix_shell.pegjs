@@ -56,8 +56,8 @@ function unbox_tokens()
 
 function pack_simple_command(prefix,cmd,suffix)
 {
-			parser_debug("SimpleCommand, text = '" + text() + "' offset = " + offset() );
-
+/*			parser_debug("SimpleCommand, text = '" + text() + "' offset = " + offset() );
+*/
 			/* Combine redirection from BEFORE and AFTER the command,
 			   and store assignments and redirection in seperate arrays */
 			var assignments = [] ;
@@ -119,9 +119,11 @@ start =
 	     "2.6 Word Expansion" item #2). So in this context, there's no
 	     need to stop consuming tokens due to unquoted whitespace/delimiters.
 */
-Token_NoOperator =
-  !redirection_word_hack
-  items: ( Non_Operator_UnquotedCharacters / AllContexts_Tokens )+ { return items; }
+Tokens_Command =
+  first:Token_NoDelimiter rest:(EmptyDelimiter+ Token_NoDelimiter)* {
+		parser_debug("Tokens_Command, text ='" + text() + "' offset = " + offset() ) ;
+		return Array.prototype.concat.apply(first,rest);
+	}
 
 Non_Operator_UnquotedCharacters =
   value:[^\|\&\;\<\>\(\)\$\`\'\\\"\'\n]+ { return { "literal" : value.join("") }; }
@@ -152,11 +154,11 @@ Non_Operator_UnquotedCharacters =
 	   $ seq 10 >"$C"
 */
 Token_NoDelimiter =
-  ( NoDelimiter_UnquotedCharacters / AllContexts_Tokens )+
+  !redirection_word_hack
+  items:( NoDelimiter_UnquotedCharacters / AllContexts_Tokens )+ { return items; }
 
 NoDelimiter_UnquotedCharacters =
-  value:[^\|\&\;\<\>\(\)\$\'\\\"\ \t\'\n]+ { return { "literal" : value.join("") }; }
-
+  value:[^\|\&\;\`\<\>\(\)\$\'\\\"\ \t\'\n]+ { return { "literal" : value.join("") }; }
 
 
 /* Acceptable Tokens inside braces ${} -
@@ -229,7 +231,7 @@ LineTerminator =
   "\n"
 
 EmptyDelimiter =
-  [\n\t ]+ { return [ { "delimiter" : null } ]; }
+  [\n\t ]+ { return { "delimiter" : null }; }
 
 VariableName =
   [A-Za-z_][A-Za-z0-9_]* { return text(); }
@@ -323,20 +325,25 @@ InOutRedirection =
 		}
 
 Redirection =
-  InputRedirection /
+  item:( InputRedirection /
   OutputRedirection /
   AppendRedirection /
   HereDocRedirection /
   DupInputRedirection /
   DupOutputRedirection /
-  InOutRedirection
+  InOutRedirection) {
+		 parser_debug("Redirection, text ='" + text() + "' offset = " + offset() ) ;
+		return item;
+		}
 
 /***********************
 Variable Assignment, as per 2.9.1:
 *************************/
 
 Assignment =
-  vari_name:VariableName '=' value:Token_NoDelimiter { var tmp={}; tmp[vari_name]=value; return { 'assignment' :tmp }; }
+  vari_name:VariableName '=' value:Token_NoDelimiter {
+	  parser_debug("Assignments, text ='" + text() + "' offset = " + offset() ) ;
+	  var tmp={}; tmp[vari_name]=value; return { 'assignment' :tmp }; }
 
 
 /***************************
@@ -345,21 +352,39 @@ A "simple command" is a sequence of optional variable assignments and redirectio
 ***************************/
 
 Assignments_Or_Redirections =
-  first:(Assignment / Redirection) rest:(EmptyDelimiter / Assignment / Redirection )* { return Array.prototype.concat.apply(first,rest); }
+  first:(Assignment / Redirection) rest:( (EmptyDelimiter+ Assignment ) / ( EmptyDelimiter* Redirection) )* {
+		parser_debug("Assignments_or_Redirections, text ='" + text() + "' offset = " + offset() ) ;
+		return Array.prototype.concat.apply(first,rest); }
 
 Redirections =
-  first:Redirection rest: (EmptyDelimiter / Redirection)* { return Array.prototype.concat.apply(first,rest); }
+  first:Redirection rest: (EmptyDelimiter* Redirection)* {
+		parser_debug("Redirections, text ='" + text() + "' offset = " + offset() ) ;
+		return Array.prototype.concat.apply(first,rest); }
 
 SimpleCommand =
-   prefix:Assignments_Or_Redirections  cmd:Token_NoOperator? suffix:Redirections? { return pack_simple_command(prefix, cmd, suffix); }
-   / cmd:Token_NoOperator suffix:Redirections? { return pack_simple_command([], cmd, suffix) ; }
+   prefix:Assignments_Or_Redirections EmptyDelimiter+ cmd:Tokens_Command EmptyDelimiter+ suffix:Redirections {
+		parser_debug("SimpleCommand(form1), text ='" + text() + "' offset = " + offset() ) ;
+		return pack_simple_command(prefix, cmd, suffix); }
+   / prefix:Assignments_Or_Redirections EmptyDelimiter+ cmd:Tokens_Command {
+		parser_debug("SimpleCommand(form2), text ='" + text() + "' offset = " + offset() ) ;
+		return pack_simple_command(prefix, cmd, []); }
+   / prefix:Assignments_Or_Redirections {
+		parser_debug("SimpleCommand(form3), text ='" + text() + "' offset = " + offset() ) ;
+		return pack_simple_command(prefix, null, []); }
+   / cmd:Tokens_Command EmptyDelimiter+ suffix:Redirections {
+		parser_debug("SimpleCommand(form4), text ='" + text() + "' offset = " + offset() ) ;
+		return pack_simple_command([], cmd, suffix); }
+   / cmd:Tokens_Command {
+		parser_debug("SimpleCommand(form5), text ='" + text() + "' offset = " + offset() ) ;
+		return pack_simple_command([], cmd, []); }
+
 
 /***************************
 Command, as per Section "2.9 Shell Commands"
 ***************************/
 
 Command =
-	SimpleCommand
+	EmptyDelimiter* cmd:SimpleCommand EmptyDelimiter* { return cmd; }
 
 /***************************
 Pipeline, as per Section 2.9.2
@@ -367,7 +392,9 @@ Pipeline, as per Section 2.9.2
 
 /* TODO: negate pipeline with "!" */
 Pipeline =
-	first:Command rest:( !"||" '|' Command )* {
+	first:Command rest:(  !"||" '|' Command )* {
+			parser_debug("Pipeline, text ='" + text() + "' offset = " + offset() ) ;
+
 			if (rest.length === 0)
 				return first;
 			if (first === null) /* have a pipe character, but the first command is empty */
@@ -408,8 +435,13 @@ AndOrList =
 			return { "and_or_list" : and_or_list };
 		}
 
+/* TODO:
+	Allow multilined commands, separator can be "\n" -
+	basically, allowing shell scripts.
+*/
+
 List =
-	first:AndOrList rest:( list_sep_op:(";" / "&") AndOrList)* {
+	first:AndOrList rest:( list_sep_op:(";" / "&") AndOrList)* last_op:(";" / "&")? {
 			parser_debug("List, text = '" + text() + "'");
 
 			if (rest.length === 0)
@@ -439,7 +471,11 @@ List =
 
 			/* The last step, if it isn't followed by ';' or '&' */
 			if (current_cmd !== null) {
-				steps.push( { "foreground" : current_cmd } ) ;
+
+				if (last_op === null || last_op === ";" )
+					steps.push( { "foreground" : current_cmd } ) ;
+				else
+					steps.push( { "background" : current_cmd } ) ;
 			}
 
 			return { "list" : steps } ;
