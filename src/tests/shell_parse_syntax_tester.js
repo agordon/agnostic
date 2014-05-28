@@ -30,17 +30,16 @@
  * The hierarchial order must match 'posix_shell.pegjs'.
  */
 var rules = {
-	'NonQuotedCharacters' : 'non_operator_token',
-	'SingleQuotedString' : 'non_operator_token',
-	'DoubleQuotedString' : 'non_operator_token',
-	'SubshellExpandable' : 'non_operator_token',
-	'BacktickExpandable' : 'non_operator_token',
-	'ParameterExpandable' : 'non_operator_token',
-	'ParameterOperationExpandable' : 'non_operator_token',
-	'ArithmeticExpandable' : 'non_operator_token',
-	'Expandable'         : 'non_operator_token',
-	'non_operator_token' : 'non_operator_tokens',
-	'non_operator_tokens' : 'SimpleCommand',
+	'Non_Operator_UnquotedCharacters' : 'Token_NoOperator',
+	'SingleQuotedString' : 'Token_NoOperator',
+	'DoubleQuotedString' : 'Token_NoOperator',
+	'SubshellExpandable' : 'Token_NoOperator',
+	'BacktickExpandable' : 'Token_NoOperator',
+	'ParameterExpandable' : 'Token_NoOperator',
+	'ParameterOperationExpandable' : 'Token_NoOperator',
+	'ArithmeticExpandable' : 'Token_NoOperator',
+	'Expandable'         : '',
+	'Token_NoOperator' : 'SimpleCommand',
 	'Redirection' : 'Redirections',
 	'Assignment' : 'Assignments_Or_Redirections',
 	'Assignments_Or_Redirections' : 'SimpleCommand',
@@ -49,23 +48,25 @@ var rules = {
 	'Command' : 'Pipeline',
 	'Pipeline' : 'AndOrList',
 	'AndOrList' : 'List',
-	'List' : undefined /* last rule */
+	'List' : undefined, /* last rule in hierarchy */
+
+	'Token_NoDelimiter' : undefined /* special rule */
 };
 
 var tests = [
 /* test-name,	test-input,	should-be-accepted,		start-rule */
 
-/* Single words, without any quoted characters */
-["nqc1",	"hello",	true,				"NonQuotedCharacters"],
-["nqc2",	"he%llo",	true,				"NonQuotedCharacters"],
-["nqc3",	"9hello",	true,				"NonQuotedCharacters"],
-["nqc4",	"h_",		true,				"NonQuotedCharacters"],
-["nqc5",	"==ds@_",	true,				"NonQuotedCharacters"],
-["nqc6",	"foo bar",	false,				"NonQuotedCharacters"],
-["nqc7",	"foo\"bar",	false,				"NonQuotedCharacters"],
-["nqc8",	"foo\$bar",	false,				"NonQuotedCharacters"],
-["nqc9",	"|foobar",	false,				"NonQuotedCharacters"],
-["nqc10",	"foobar>",	false,				"NonQuotedCharacters"],
+/* Single words, without any quoted characters, accpted in the context of a command. */
+["nqc1",	"hello",	true,				"Non_Operator_UnquotedCharacters"],
+["nqc2",	"he%llo",	true,				"Non_Operator_UnquotedCharacters"],
+["nqc3",	"9hello",	true,				"Non_Operator_UnquotedCharacters"],
+["nqc4",	"h_",		true,				"Non_Operator_UnquotedCharacters"],
+["nqc5",	"==ds@_",	true,				"Non_Operator_UnquotedCharacters"],
+["nqc6",	"foo bar",	true,				"Non_Operator_UnquotedCharacters"],
+["nqc7",	"foo\"bar",	false,				"Non_Operator_UnquotedCharacters"],
+["nqc8",	"foo\$bar",	false,				"Non_Operator_UnquotedCharacters"],
+["nqc9",	"|foobar",	false,				"Non_Operator_UnquotedCharacters"],
+["nqc10",	"foobar>",	false,				"Non_Operator_UnquotedCharacters"],
 
 /* Single and Double Quoted strings (must be properly quoted) */
 ["dquote1",	'"hello"',	true,			"DoubleQuotedString"],
@@ -95,33 +96,33 @@ var tests = [
 /* Test single tokens - any combination fo quoted and unquoted strings,
    that logically become one token/word.
    Special characters must be properly quoted. */
-["word1",	'he"llo"',	true,			"non_operator_token"],
-["word2",	'he"ll\'o"',	true,			"non_operator_token"],
-["word3",	'he"ll""o"',	true,			"non_operator_token"],
-["word4",	'hell\\"o',	true,			"non_operator_token"],
-["word5",	'he"\'ll"o',	true,			"non_operator_token"],
-["word6",	'he\\|llo',	true,			"non_operator_token"],
-["word7",	'he"\\|"llo',	true,			"non_operator_token"],
-["word8",	'he"\\\\"llo',	true,			"non_operator_token"],
-["word9",	'he\\\\llo',	true,			"non_operator_token"],
-["word10",	'"he|llo"',	true,			"non_operator_token"],
-["word11",	'"he  l  lo"',	true,			"non_operator_token"],
-["word12",	'"he&llo"',	true,			"non_operator_token"],
-["word13",	'"he;llo"',	true,			"non_operator_token"],
-["word14",	'"he>llo"',	true,			"non_operator_token"],
-["word15",	'"he>llo"world',true,			"non_operator_token"],
-["word16",	'foo>bar',	false,			"non_operator_token"],
-["word17",	'foo|bar',	false,			"non_operator_token"],
-["word18",	'foo bar',	false,			"non_operator_token"],
-["word19",	'foo\\|bar',	true,			"non_operator_token"],
-["word20",	'foo\\>bar',	true,			"non_operator_token"],
-["word21",	'foo\\ bar',	true,			"non_operator_token"],
-["word22",	'"foo|bar"',	true,			"non_operator_token"],
-["word23",	'"foo>bar"',	true,			"non_operator_token"],
-["word24",	'"foo bar"',	true,			"non_operator_token"],
-["word25",	'"foo "bar',	true,			"non_operator_token"],
-["word26",	"'foo 'bar",	true,			"non_operator_token"],
-["word27",	"'foo '\"bar\"",true,			"non_operator_token"],
+["word1",	'he"llo"',	true,			"Token_NoDelimiter"],
+["word2",	'he"ll\'o"',	true,			"Token_NoDelimiter"],
+["word3",	'he"ll""o"',	true,			"Token_NoDelimiter"],
+["word4",	'hell\\"o',	true,			"Token_NoDelimiter"],
+["word5",	'he"\'ll"o',	true,			"Token_NoDelimiter"],
+["word6",	'he\\|llo',	true,			"Token_NoDelimiter"],
+["word7",	'he"\\|"llo',	true,			"Token_NoDelimiter"],
+["word8",	'he"\\\\"llo',	true,			"Token_NoDelimiter"],
+["word9",	'he\\\\llo',	true,			"Token_NoDelimiter"],
+["word10",	'"he|llo"',	true,			"Token_NoDelimiter"],
+["word11",	'"he  l  lo"',	true,			"Token_NoDelimiter"],
+["word12",	'"he&llo"',	true,			"Token_NoDelimiter"],
+["word13",	'"he;llo"',	true,			"Token_NoDelimiter"],
+["word14",	'"he>llo"',	true,			"Token_NoDelimiter"],
+["word15",	'"he>llo"world',true,			"Token_NoDelimiter"],
+["word16",	'foo>bar',	false,			"Token_NoDelimiter"],
+["word17",	'foo|bar',	false,			"Token_NoDelimiter"],
+["word18",	'foo bar',	false,			"Token_NoDelimiter"],
+["word19",	'foo\\|bar',	true,			"Token_NoDelimiter"],
+["word20",	'foo\\>bar',	true,			"Token_NoDelimiter"],
+["word21",	'foo\\ bar',	true,			"Token_NoDelimiter"],
+["word22",	'"foo|bar"',	true,			"Token_NoDelimiter"],
+["word23",	'"foo>bar"',	true,			"Token_NoDelimiter"],
+["word24",	'"foo bar"',	true,			"Token_NoDelimiter"],
+["word25",	'"foo "bar',	true,			"Token_NoDelimiter"],
+["word26",	"'foo 'bar",	true,			"Token_NoDelimiter"],
+["word27",	"'foo '\"bar\"",true,			"Token_NoDelimiter"],
 /* TODO: these are accepted, but at the moment - do not actually
          perform sub-shell and parameter expansion */
 
@@ -129,24 +130,24 @@ var tests = [
    only non-operator tokens should be accepted
    (operator characters can be accepted if they're quoted - thus
     losing their special meaning) */
-["token1",	"hello world",			true,	"non_operator_tokens"],
-["token2",	"hello   world",		true,	"non_operator_tokens"],
-["token3",	"hello   world   ",		true,	"non_operator_tokens"],
-["token4",	"'hello   world' foo bar",	true,	"non_operator_tokens"],
-["token5",	"'hello   world' \"foo bar\"",	true,	"non_operator_tokens"],
+["token1",	"hello world",			true,	"Token_NoOperator"],
+["token2",	"hello   world",		true,	"Token_NoOperator"],
+["token3",	"hello   world   ",		true,	"Token_NoOperator"],
+["token4",	"'hello   world' foo bar",	true,	"Token_NoOperator"],
+["token5",	"'hello   world' \"foo bar\"",	true,	"Token_NoOperator"],
 /* single-quote not terminated */
-["token6",	"hello world' \"foo bar\"",	false,	"non_operator_tokens"],
-["token7",	"hello  \t \t  world   ",	true,	"non_operator_tokens"],
-["token8",	"hello  ''  world   ",		true,	"non_operator_tokens"],
-["token9",	'cut -f1 -d""  ',		true,	"non_operator_tokens"],
-["token10",	'foo bar|',			false,	"non_operator_tokens"],
-["token11",	'foo|bar',			false,	"non_operator_tokens"],
-["token12",	'foo>bar',			false,	"non_operator_tokens"],
-["token13",	'foo ">bar"',			true,	"non_operator_tokens"],
-["token14",	'foo && bar',			false,	"non_operator_tokens"],
-["token15",	'foo ; bar',			false,	"non_operator_tokens"],
-["token16",	'foo > bar',			false,	"non_operator_tokens"],
-["token17",	'foo ">" bar',			true,	"non_operator_tokens"],
+["token6",	"hello world' \"foo bar\"",	false,	"Token_NoOperator"],
+["token7",	"hello  \t \t  world   ",	true,	"Token_NoOperator"],
+["token8",	"hello  ''  world   ",		true,	"Token_NoOperator"],
+["token9",	'cut -f1 -d""  ',		true,	"Token_NoOperator"],
+["token10",	'foo bar|',			false,	"Token_NoOperator"],
+["token11",	'foo|bar',			false,	"Token_NoOperator"],
+["token12",	'foo>bar',			false,	"Token_NoOperator"],
+["token13",	'foo ">bar"',			true,	"Token_NoOperator"],
+["token14",	'foo && bar',			false,	"Token_NoOperator"],
+["token15",	'foo ; bar',			false,	"Token_NoOperator"],
+["token16",	'foo > bar',			false,	"Token_NoOperator"],
+["token17",	'foo ">" bar',			true,	"Token_NoOperator"],
 
 /* Test single redirection */
 ["redir1",	">foo.txt",		true,		"Redirection"],
@@ -349,6 +350,10 @@ var tests = [
 ["ParmOpExp23",	"$FOO=BAR",					false,	"ParameterOperationExpandable"],
 ["ParmOpExp24",	"$FOO=BAR}",					false,	"ParameterOperationExpandable"],
 ["ParmOpExp25",	"$FOO}",					false,	"ParameterOperationExpandable"],
+["ParmOpExp26",	"${FOO=(}",					false,	"ParameterOperationExpandable"],
+["ParmOpExp27",	"${FOO=HELLO\"WORLD}",				false,	"ParameterOperationExpandable"],
+["ParmOpExp28",	"${FOO=HELLO\'WORLD}",				false,	"ParameterOperationExpandable"],
+["ParmOpExp29",	"${FOO=HEL${LOWORLD}",				false,	"ParameterOperationExpandable"],
 
 
 /* Test Arithmatic Expansion */
@@ -374,12 +379,12 @@ var tests = [
 
 
 /* Test possible combinations of parameter expansions - single token*/
-["expan1",	"una$(echo me)",				true,	"non_operator_token"],
-["expan2",	"una${A}",					true,	"non_operator_token"],
-["expan3",	"una$A",					true,	"non_operator_token"],
-["expan4",	"una${FOO-me}",					true,	"non_operator_token"],
-["expan5",	"hel'lo'${USER}$(echo wo)`uptime`",		true,	"non_operator_token"],
-["expan6",	"${A}$(ls)$B$C${D}-foo",			true,	"non_operator_token"],
+["expan1",	"una$(echo me)",				true,	"Token_NoDelimiter"],
+["expan2",	"una${A}",					true,	"Token_NoDelimiter"],
+["expan3",	"una$A",					true,	"Token_NoDelimiter"],
+["expan4",	"una${FOO-me}",					true,	"Token_NoDelimiter"],
+["expan5",	"hel'lo'${USER}$(echo wo)`uptime`",		true,	"Token_NoDelimiter"],
+["expan6",	"${A}$(ls)$B$C${D}-foo",			true,	"Token_NoDelimiter"],
 
 /* TODO: test expansion with assignment, redirection */
 
@@ -459,3 +464,5 @@ for (var t in tests)
 console.log ("--Summary--");
 console.log ("pass: " + count_pass);
 console.log ("fail: " + count_fail);
+
+process.exit( count_fail>0 ) ;

@@ -32,72 +32,180 @@
    This file was auto-generated from 'posix_shell.pegjs'
    using PEGJS ( http://pegjs.majda.cz/ ).
 */
+
+function parser_debug()
+{
+	if (0) {
+		var text = "" ;
+		for (var i in arguments) {
+			text += arguments[i] + " " ;
+		}
+		console.warn(text);
+	}
+}
+
+
+function unbox_tokens()
+{
+	var results = [] ;
+	for (var i in arguments) {
+		results.push(arguments[i]);
+	}
+	return results;
+}
+
+function pack_simple_command(prefix,cmd,suffix)
+{
+			parser_debug("SimpleCommand, text = '" + text() + "' offset = " + offset() );
+
+			/* Combine redirection from BEFORE and AFTER the command,
+			   and store assignments and redirection in seperate arrays */
+			var assignments = [] ;
+			var redirections = [] ;
+
+			for (i in prefix) {
+				if (prefix[i]) {
+					var tmp = prefix[i];
+					if ( "assignment" in tmp ) {
+						assignments.push(tmp["assignment"]);
+					} else if ( "redirection" in tmp ) {
+						redirections.push(tmp["redirection"]);
+					}
+				}
+			}
+			for (i in suffix) {
+				if (suffix[i]) {
+					var tmp = suffix[i];
+					if ( "assignment" in tmp ) {
+						assignments.push(tmp["assignment"]);
+					} else if ( "redirection" in tmp ) {
+						redirections.push(tmp["redirection"]);
+					}
+				}
+			}
+
+			var command = {} ;
+
+			if (assignments.length > 0)
+				command["assignments"] = assignments ;
+			if (redirections.length > 0)
+				command["redirections"] = redirections ;
+
+			if (cmd)
+				command["command"] = cmd ;
+
+			return { "SimpleCommand" : command } ;
+		}
+
+
 }
 
 start =
   List
 
-non_operator_tokens =
-  first:non_operator_token rest:( non_operator_token / EmptyDelimiter )* {
-		var results = [] ;
-		for (var i in first) {
-			results.push(first[i]);
-		}
-		for (var i in rest) {
-			var item = rest[i];
-			for (var j in item) {
-				results.push(item[j]);
-			}
-		}
-		return { "tokens" : results };
-	}
+/* Acceptable Tokens when parsing shell command context.
+   In this context, whitespace delimiters are accepted without any problem
+   as part of the token.
+   Only shell operators ( $,|,& etc ) and quoted strings will 'stop' the token
+   recogonition.
 
-/* non_operator_token :
-     a non-delimited list of items, that can be considered as "one" item
-     (after possible expansion), and does not include any special shell operator.
+   Example 1: this will be parsed as one literal token:
+	sort -k1nr,1 -o foo.txt
+   Example 2: this will be parsed as one compound token:
+	echo hell"o  w"'or'$(echo ld)
+
+   Rational: In POSIX Shell, field-splitting (based on whitespace/delimiters/IFS),
+             is done during runtime, AFTER parameter expansion  (see section
+	     "2.6 Word Expansion" item #2). So in this context, there's no
+	     need to stop consuming tokens due to unquoted whitespace/delimiters.
+*/
+Token_NoOperator =
+  !redirection_word_hack
+  items: ( Non_Operator_UnquotedCharacters / AllContexts_Tokens )+ { return items; }
+
+Non_Operator_UnquotedCharacters =
+  value:[^\|\&\;\<\>\(\)\$\`\'\\\"\'\n]+ { return { "literal" : value.join("") }; }
+
+
+
+
+/* Acceptable Tokens when a single (non-delimited) token is allowed.
+   Example, where 'word' can be any token, but must not contain unquoted delimiters:
+	FOO=word command
+	command 2>word
+   But a compound token is still acceptable:
+	FOO=he"llo"$(echo world) command
+
+   NOTE: during execution (in parameter-expansion step), the 'word' might be
+         expanded to multiple fields (after field-splitting).
+	 This will be detected during execution, and cause an error.
+	 Example:
+	   $  C="foo bar"
+	   # Below, $C is a single, non-delimited token. Parsing will succeed.
+	   # but in runtime, it will be expanded to two fields, and the shell will comlain.
+	   $  seq 10 >$C
+	   bash: $C: ambiguous redirect
+
+	   # Below, "$C" is a single, non-delimited token. Parsing will succeed.
+	   # in runtime, because of the double-quotes, the expanded value is
+	   # is STILL one field (a filename with a space) - no errors here.
+	   $ seq 10 >"$C"
+*/
+Token_NoDelimiter =
+  ( NoDelimiter_UnquotedCharacters / AllContexts_Tokens )+
+
+NoDelimiter_UnquotedCharacters =
+  value:[^\|\&\;\<\>\(\)\$\'\\\"\ \t\'\n]+ { return { "literal" : value.join("") }; }
+
+
+
+/* Acceptable Tokens inside braces ${} -
+   (See Section "2.3 Token Recognition" item #4).
+   In the form of ${param:=word} , "word" can be almost any unquoted tokens - 
+   shell operators are not used. So the following are all valid assignments:
+	${FOO-BAR}
+	${FOO-HELLO|WORLD}       (inside ${} - this is not a shell pipe)
+	${FOO-HELLO>WORLD}       (inside ${} - this is not redirection)
+*/
+Token_NoBraces =
+  ( NoBraces_UnquotedCharacters / AllContexts_Tokens )+
+
+NoBraces_UnquotedCharacters =
+  value:[^\}\$\'\\\"\'\n]+ { return { "literal" : value.join("") }; }
+
+
+/*
+This rule recognizes tokens which are acceptable in any context.
+
+Rational:
+These tokens have well defined start and end (e.g. double-quotes, single-quotes,
+parenthesis, braces, backticks). Their detection does not change based on context
+(e.g. like a  "whitespace" which separates tokens in unquoted commands, but not inside ${} ).
+Also, these rules require proper balancing of opening and closing characters.
+
+This rule is not used directly, but combimed with the specific rule
+for unquoted characters (which depends on the context).
+
      Example:
-	hello"wo"$(echo rl)${FOO-d}
-     Is a valid, non-delimited, non-operator token list, containing:
-        1. literal string "hello"
+	'hello'"wo"$(echo rl)${FOO-d}$((5+4))
+     Is a valid compound token in all contextes:
+        1. literal string 'hello'
 	2. double-quoted string "wo"
 	3. sub-shell command $(echo rl)
 	4. parameter expansion ${FOO-d}
-     After evaluation, it will be consolidated into one token: "hellworld",
-     but this happens outside the parser. */
+	5. Arithmetic expression 5+4
+     After evaluation, it will be consolidated into one token: "hellworld9" .
+*/
+AllContexts_Tokens =
+      SingleQuotedString / DoubleQuotedString / EscapedCharacter / Expandable
 
-non_operator_token =
-  !redirection_word_hack
-      terms:( NonQuotedCharacters /
-              SingleQuotedString /
-              DoubleQuotedString /
-              EscapedCharacter /
-              Expandable
-              )+ { return terms; }
+
 
 /* Ugly Hack:
    prevent the "2" in input like "uptime 2>&1" to be separated from the redirection. */
 redirection_word_hack =
   [0-9]+ [\<\>]
 
-/* Ugly Hack: catch valid assignments syntax.
-   Valid assignments can happen at the first word/token of a new command (or sub command),
-   and must contain only valid characters and an equal sign.
-   Example:
-     ABC= uname         -  "ABC=" is a valid assignment.
-     A%C= uname         -  "A%C=" is not a valid assignment, and the shell will
-                           treat it as the atcual command (and fail with '"A%C=" command not found').
-/*
-assignment_word_hack =
-  [A-Za-z_][A-Za-z0-9_]* '='
-
-non_first_word_non_operator_token =
-  !assign_word_hack non_operator_token
-*/
-
-
-/* Characters which do not need quoting, as per 2.2 */
-NonQuotedCharacters =
-  value:[^\|\&\;\<\>\(\)\$\'\\\"\' \t\n]+ { return { "literal" : value.join("") } ; }
 
 SingleQuotedString =
   "'" value:SingleQuotedStringCharacter* "'" { return { "singlequotedstring" : value.join("") } ; }
@@ -137,7 +245,7 @@ RedirectionFileDescriptor =
 
 /* Input Redirection, 2.7.1 */
 InputRedirection =
-  fd:RedirectionFileDescriptor? '<' file_name:non_operator_token {
+  fd:RedirectionFileDescriptor? '<' file_name:Token_NoDelimiter {
 		if (fd === null)
 			fd = 0 ; /* Default FD is STDIN/0 if not defined */
 		return { 'redirection' :
@@ -148,7 +256,7 @@ InputRedirection =
 
 /* Output Redirection, 2.7.2 */
 OutputRedirection =
-  fd:RedirectionFileDescriptor? '>' forceclobber:'|'? file_name:non_operator_token {
+  fd:RedirectionFileDescriptor? '>' forceclobber:'|'? file_name:Token_NoDelimiter {
 		if (fd === null)
 			fd = 1 ; /* Default FD is STDOUT/1 if not defined */
 		return { 'redirection' :
@@ -160,7 +268,7 @@ OutputRedirection =
 
 /* Append Redirection, 2.7.3 */
 AppendRedirection =
-  fd:RedirectionFileDescriptor? '>>' file_name:non_operator_token {
+  fd:RedirectionFileDescriptor? '>>' file_name:Token_NoDelimiter {
 		if (fd === null)
 			fd = 1 ; /* Default FD is STDOUT/1 if not defined */
 		return { 'redirection' :
@@ -205,7 +313,7 @@ DupOutputRedirection =
 
 /* Open file for reading/writing, 2.7.7 */
 InOutRedirection =
-  fd:RedirectionFileDescriptor? '<>' file_name:non_operator_token {
+  fd:RedirectionFileDescriptor? '<>' file_name:Token_NoDelimiter {
 		if (fd === null)
 			fd = 0 ; /* Default FD is STDIN/0 if not defined */
 		return { 'redirection' :
@@ -228,7 +336,7 @@ Variable Assignment, as per 2.9.1:
 *************************/
 
 Assignment =
-  vari_name:VariableName '=' value:non_operator_token { var tmp={}; tmp[vari_name]=value; return { 'assignment' :tmp }; }
+  vari_name:VariableName '=' value:Token_NoDelimiter { var tmp={}; tmp[vari_name]=value; return { 'assignment' :tmp }; }
 
 
 /***************************
@@ -243,55 +351,8 @@ Redirections =
   first:Redirection rest: (EmptyDelimiter / Redirection)* { return Array.prototype.concat.apply(first,rest); }
 
 SimpleCommand =
-   EmptyDelimiter* prefix:Assignments_Or_Redirections? cmd:non_operator_tokens? suffix:Redirections? {
-			/* Combine redirection from BEFORE and AFTER the command,
-			   and store assignments and redirection in seperate arrays */
-			var assignments = [] ;
-			var redirections = [] ;
-
-			for (i in prefix) {
-				if (prefix[i]) {
-					var tmp = prefix[i];
-					if ( "assignment" in tmp ) {
-						assignments.push(tmp["assignment"]);
-					} else if ( "redirection" in tmp ) {
-						redirections.push(tmp["redirection"]);
-					}
-				}
-			}
-			for (i in suffix) {
-				if (suffix[i]) {
-					var tmp = suffix[i];
-					if ( "assignment" in tmp ) {
-						assignments.push(tmp["assignment"]);
-					} else if ( "redirection" in tmp ) {
-						redirections.push(tmp["redirection"]);
-					}
-				}
-			}
-
-			var command = {} ;
-
-			if (assignments.length > 0)
-				command["assignments"] = assignments ;
-			if (redirections.length > 0)
-				command["redirections"] = redirections ;
-
-			if (cmd)
-				command["command"] = cmd ;
-
-			/* TODO: fix this ugly hack for the broken parser rules.
-				The current parser rules wrongly accept empty command.
-				mark it as so, later 'List' rule will prune this out.  */
-			if (! (cmd) &&
-				assignments.length===0 &&
-				redirections.length===0)
-				return null;
-
-			return { "SimpleCommand" : command } ;
-		}
-
-
+   prefix:Assignments_Or_Redirections  cmd:Token_NoOperator? suffix:Redirections? { return pack_simple_command(prefix, cmd, suffix); }
+   / cmd:Token_NoOperator suffix:Redirections? { return pack_simple_command([], cmd, suffix) ; }
 
 /***************************
 Command, as per Section "2.9 Shell Commands"
@@ -329,6 +390,7 @@ Lists, as per Section 2.9.3
 
 AndOrList =
 	first:Pipeline rest:( and_or_op:("&&" / "||") Pipeline)* {
+			parser_debug("AndOrList, text = '" + text() + "'");
 			if (rest.length === 0)
 				return first;
 			if (first === null) /* have &&/|| but the first command is empty */
@@ -348,6 +410,8 @@ AndOrList =
 
 List =
 	first:AndOrList rest:( list_sep_op:(";" / "&") AndOrList)* {
+			parser_debug("List, text = '" + text() + "'");
+
 			if (rest.length === 0)
 				return first;
 
@@ -392,30 +456,15 @@ Expandable =
   ParameterOperationExpandable /
   ArithmeticExpandable
 
-/* These are the allowed "literal" characters inside the expandables
-   (i.e. characters allowed inside ${} $() ``) - which will NOT trigger
-   a recursive call to an inner expandable rule */
-AllowedCharacters =
-  [^\$\(\)\`\\\{\}]+ { return text(); }
-
-
 /* Rule for a subshell (i.e. $() ) */
 SubshellExpandable =
-  "$(" !"(" terms:SubshellExpandableInner* ")" { return { "subshell" : terms } ; }
-
-/* in a subshell "$()" - backslash-quoted parens are Ok, as are braces */
-SubshellExpandableInner =
-  Expandable / "\\(" / "\\)" / "{" / "}" / "\\$" / AllowedCharacters { return text(); }
+  "$(" !"(" terms:SimpleCommand* ")" { return { "subshell" : terms } ; }
 
 /* in a backtick-shell "``" - backslash-quoted backticks are Ok, as are braces and parens.
    TODO: recursive backticks are NOT allowed, and backslash-backticks should be used instead.
          this parser rule does not allow it yet. */
 BacktickExpandable =
-  "`"  terms:BacktickExpandableInner* "`" { return { "backtickshell" : terms } ; }
-
-BacktickExpandableInner =
-  Expandable / "\\`" / "\\`" / "(" / ")" / "{" / "}" / AllowedCharacters { return text(); }
-
+  "`"  terms:start* "`" { return { "backtickshell" : terms } ; }
 
 /* Rule for a simple parameter expansion, i.e. ${VAR} */
 ParameterExpandable =
@@ -426,11 +475,7 @@ ParameterExpandable =
    NOTE: the "VAR" can only contain valid parameter-name characters,
          but the "VALUE" part can recursively contain more expandable items. */
 ParameterOperationExpandable =
-  "${" varname:ParameterName varop:ParameterExpansionOperator opvalue:ParameterOperationValue* "}" { return { "envvar_operation" : { "envvar" : varname, "operation" : varop, "value": opvalue } }; }
-
-/* In a "${}" parameter expansion, backslash-quoted braces are allowed, as are parens. */
-ParameterOperationValue =
-  Expandable / "\\{" / "\\}" / "(" / ")" / "\\$" / AllowedCharacters { return text(); }
+  "${" varname:ParameterName varop:ParameterExpansionOperator opvalue:Token_NoBraces* "}" { return { "envvar_operation" : { "envvar" : varname, "operation" : varop, "value": opvalue } }; }
 
 /* Alphanumeric parameter name, or special parameter name (section 2.5.2) */
 ParameterName =
