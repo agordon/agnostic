@@ -81,7 +81,7 @@ for (var t in tests)
 		count_fail++;
 	}
 }
-console.log ("--Summary--");
+console.log ("--Shell Parser Tests Summary--");
 console.log ("pass: " + count_pass);
 console.log ("fail: " + count_fail);
 
