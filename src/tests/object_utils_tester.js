@@ -12,6 +12,21 @@
 var assert = require('assert');
 require("utils/object_utils");
 
+/* Test IsBoolean */
+assert.ok( IsBoolean( false ) );
+assert.ok( IsBoolean( true ) );
+assert.ok( !IsBoolean( 1 ) );
+assert.ok( !IsBoolean( {} ) );
+assert.ok( !IsBoolean( [] ) );
+assert.ok( !IsBoolean( null ) );
+assert.ok( !IsBoolean( "hello" ) );
+assert.ok( IsBoolean( 1==1 ) );
+assert.ok( IsBoolean( 1===1 ) );
+
+/* Test VerifyBoolean */
+assert.doesNotThrow( function() { VerifyBoolean( false ); } );
+assert.throws(       function() { VerifyBoolean( "foo" ); } ) ;
+
 /* Test IsObject */
 assert.ok( IsObject( {} ) );
 assert.ok( IsObject( { "hello" : "world" } ) );
