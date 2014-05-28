@@ -44,16 +44,6 @@ function parser_debug()
 	}
 }
 
-
-function unbox_tokens()
-{
-	var results = [] ;
-	for (var i in arguments) {
-		results.push(arguments[i]);
-	}
-	return results;
-}
-
 function pack_simple_command(prefix,cmd,suffix)
 {
 /*			parser_debug("SimpleCommand, text = '" + text() + "' offset = " + offset() );
@@ -122,9 +112,16 @@ Acceptable Tokens when parsing shell command context.
 	     need to stop consuming tokens due to unquoted whitespace/delimiters.
 */
 Tokens_Command =
-  first:Token_NoDelimiter rest:(EmptyDelimiter+ Token_NoDelimiter)* {
+  first:Token_NoDelimiter rest:(EmptyDelimiter Token_NoDelimiter)* {
 		parser_debug("Tokens_Command, text ='" + text() + "' offset = " + offset() ) ;
-		return Array.prototype.concat.apply(first,rest);
+        var results = first ;
+        rest.forEach(function(item){
+            var delim = item[0];
+            var tokens = item[1];
+            results.push(delim); // Emptydelimiter is one item
+            results = results.concat(tokens); // Tokens is an array of items, add each one
+        });
+		return results;
 	}
 
 Non_Operator_UnquotedCharacters =
@@ -222,7 +219,7 @@ SingleQuotedStringCharacter =
   / EscapedCharacter
 
 DoubleQuotedString =
-  '"' value:( NoDoubleQuotes_UnquotedCharacters / EscapedCharacter / Expandable)* '"' { return { "doublequotedstring" : unbox_tokens(value) } ; }
+  '"' value:( NoDoubleQuotes_UnquotedCharacters / EscapedCharacter / Expandable)* '"' { return { "doublequotedstring" : value } ; }
 
 EscapedCharacter =
   "\\" value:. { return { "literal" : "\\" + value } ; }
@@ -371,7 +368,7 @@ SimpleCommand =
    / prefix:Assignments_Or_Redirections {
 		parser_debug("SimpleCommand(form3), text ='" + text() + "' offset = " + offset() ) ;
 		return pack_simple_command(prefix, null, []); }
-   / cmd:Tokens_Command EmptyDelimiter+ suffix:Redirections {
+   / cmd:Tokens_Command EmptyDelimiter* suffix:Redirections {
 		parser_debug("SimpleCommand(form4), text ='" + text() + "' offset = " + offset() ) ;
 		return pack_simple_command([], cmd, suffix); }
    / cmd:Tokens_Command {
@@ -444,12 +441,8 @@ List =
 	first:AndOrList rest:( list_sep_op:(";" / "&") AndOrList)* last_op:(";" / "&")? {
 			parser_debug("List, text = '" + text() + "'");
 
-			if (rest.length === 0)
-				return first;
-
 			/* Shortcut for specific case of a single command with ';' */
-			if (first !== null && rest.length === 1
-			    && rest[0][0] == ";" && rest[0][1] === null)
+			if (rest.length === 0 && ( last_op === null || last_op === ";" ))
 				return first;
 
 			var current_cmd = first ;
@@ -495,7 +488,7 @@ Expandable =
 /* Rule for a subshell (i.e. $() ) */
 SubshellExpandable =
   "$(" !"(" EmptyDelimiter* ")" { return { "subshell" : null } ; }
-  / "$(" !"(" terms:SimpleCommand* ")" { return { "subshell" : terms } ; }
+  / "$(" !"(" term:List ")" { return { "subshell" : term } ; }
 
 /* in a backtick-shell "``" - backslash-quoted backticks are Ok, as are braces and parens.
    TODO: recursive backticks are NOT allowed, and backslash-backticks should be used instead.
@@ -558,7 +551,7 @@ ArithmeticExpression
 			list.push( rest[i][1] ); // the operator + or -
 			list.push( rest[i][3] ); // the value
 		}
-		return { "arithmetics_add_sub" : list } ;
+		return { "arithmetics_op_list" : list } ;
 	}
 
 Term
@@ -572,14 +565,14 @@ Term
 			list.push( rest[i][1] ); // the operator * or /
 			list.push( rest[i][3] ); // the value
 		}
-		return { "arithmetics_mul_div" : list } ;
+		return { "arithmetics_op_list" : list } ;
 	}
 
 
 Factor
   = "(" whitespace expr:ArithmeticExpression whitespace ")" { return expr ; }
   / value:Integer { return { "literal" : value } ; }
-  / ArithmeticParameterName
+  / ArithmeticParameterName { return { "envvar" : text() } ; } /* an unquoted alphanumeric text means an environment variable name */
   / Expandable
 
 Integer =
@@ -598,7 +591,7 @@ OctalInteger
    e.g. invalid: $((?))
         valid:   $(($?)) */
 ArithmeticParameterName =
-  [A-Za-z0-9_]+ { return text(); }
+  [A-Za-z_][A-Za-z0-9_]* { return text(); }
 
 
 /* TODO: add newlines \r\n? */

@@ -252,6 +252,9 @@ var tests = [
 ["smpl23",	"seq 10 \\|\\| echo ok"	,		true,	"SimpleCommand" ],
 ["smpl25",	"seq 10 ; echo ok",			false,	"SimpleCommand" ],
 ["smpl26",	"seq 10 & echo ok",			false,	"SimpleCommand" ],
+/* Few more cases */
+["smpl27",	"true>foo.txt",	true,	"SimpleCommand" ],
+["smpl28",	"true>foo.txt<foo.txt",	true,	"SimpleCommand" ],
 
 /* Test Pipeline rule */
 ["pipe1",	"seq 1 2 10 | wc -l",							true,	"Pipeline"],
@@ -303,18 +306,23 @@ var tests = [
 ["subshell1",	"$()",						true,	"SubshellExpandable"],
 ["subshell2",	"$())",						false,	"SubshellExpandable"],
 ["subshell3",	"$(ls)",					true,	"SubshellExpandable"],
-["subshell4",	"$(echo $(uname -s))",				true,	"SubshellExpandable"],
+["subshell4",	"$(echo $(uname -s))",		true,	"SubshellExpandable"],
 ["subshell5",	"$(()",						false,	"SubshellExpandable"],
-["subshell6",	"$(echo \\()",					true,	"SubshellExpandable"],
-["subshell7",	"$(echo \\))",					true,	"SubshellExpandable"],
-["subshell8",	"$(echo \\$)",					true,	"SubshellExpandable"],
+["subshell6",	"$(echo \\()",				true,	"SubshellExpandable"],
+["subshell7",	"$(echo \\))",				true,	"SubshellExpandable"],
+["subshell8",	"$(echo \\$)",				true,	"SubshellExpandable"],
 ["subshell9",	"$(echo $($()$()$($($()))uname -s))",		true,	"SubshellExpandable"],
-["subshell10",	"$(echo ${USER})",				true,	"SubshellExpandable"],
-["subshell11",	"$(echo `uname -s`)",				true,	"SubshellExpandable"],
+["subshell10",	"$(echo ${USER})",			true,	"SubshellExpandable"],
+["subshell11",	"$(echo `uname -s`)",		true,	"SubshellExpandable"],
 ["subshell12",	"aaa$()",					false,	"SubshellExpandable"],
-["subshell13",	"$(echo hi)"	,				true,	"SubshellExpandable"],
+["subshell13",	"$(echo hi)"	,			true,	"SubshellExpandable"],
 ["subshell14",	"$( )",						true,	"SubshellExpandable"],
-["subshell15",	"$(  \t   \t )",				true,	"SubshellExpandable"],
+["subshell15",	"$(  \t   \t )",			true,	"SubshellExpandable"],
+["subshell16",	"$(FOO=BAR)",				true,	"SubshellExpandable"],
+["subshell17",	"$(true|false)",			true,	"SubshellExpandable"],
+["subshell18",	"$(true;false)",			true,	"SubshellExpandable"],
+["subshell19",	"$(true;false;)",			true,	"SubshellExpandable"],
+["subshell20",	"$(foo 2>1.txt | wc-l)",	true,	"SubshellExpandable"],
 
 /* Test Backtick Subshell parameter expansion */
 /*TODO: add more backtick tests */
