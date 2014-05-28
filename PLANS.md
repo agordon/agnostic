@@ -28,6 +28,10 @@
     * Has "FileSystem" object, based on emscripten's FileSystem class
     * Has few OS-related emulation functions:
         * getuid, geteuid, getgid,getegid ?
+* Shell Execution Environment
+    * See Section [2.12 Shell Excution ENV](http://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html#tag_02_12)
+    * implement it
+    * Pass it to sub-proceses ?
 * Allows plugins/extension of programs
     * A collection of javascript "program emulators" - for external contributors
 
