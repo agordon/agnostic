@@ -28,6 +28,16 @@
     * Has "FileSystem" object, based on emscripten's FileSystem class
     * Has few OS-related emulation functions:
         * getuid, geteuid, getgid,getegid ?
+    * STDIN/STDOUT should maintain an open/close state? accommedate the following:
+
+            $ seq 10 | echo $(head -n2) ==$(head -n1)==
+            1 2 ====
+            $ seq 10 | echo $(sed 1q) ==$(head -n1)==
+            1 ====
+            $ seq 10 | echo $(sed -u 1q) ==$(head -n1)==
+            1 ==2==
+    * SIGPIPE ?
+
 * Shell Execution Environment
     * See Section [2.12 Shell Excution ENV](http://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html#tag_02_12)
     * implement it
