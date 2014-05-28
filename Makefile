@@ -43,7 +43,7 @@ check: test_parse_syntax \
 
 .PHONY: test_parse_syntax
 test_parse_syntax:
-	$(NODEBIN) ./src/tests/shell_parse_syntax_tester.js
+	$(NODEBIN) ./src/tests/shell_parser_tester.js
 
 .PHONY: test_object_utils
 test_object_utils:
