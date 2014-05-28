@@ -67,6 +67,9 @@ var tests = [
 ["nqc8",	"foo\$bar",	false,				"Non_Operator_UnquotedCharacters"],
 ["nqc9",	"|foobar",	false,				"Non_Operator_UnquotedCharacters"],
 ["nqc10",	"foobar>",	false,				"Non_Operator_UnquotedCharacters"],
+["nqc11",	"foobar&",	false,				"Non_Operator_UnquotedCharacters"],
+["nqc12",	"foobar;",	false,				"Non_Operator_UnquotedCharacters"],
+["nqc13",	";foobar",	false,				"Non_Operator_UnquotedCharacters"],
 
 /* Single and Double Quoted strings (must be properly quoted) */
 ["dquote1",	'"hello"',	true,			"DoubleQuotedString"],
@@ -81,6 +84,26 @@ var tests = [
 ["dquote10",	'"he|llo"',	true,			"DoubleQuotedString"],
 ["dquote11",	'""',		true,			"DoubleQuotedString"],
 ["dquote12",	'"hell\'lo"',	true,			"DoubleQuotedString"],
+["dquote13",	'"hello world"',true,			"DoubleQuotedString"],
+["dquote14",	'"foo\tbar"',	true,			"DoubleQuotedString"],
+["dquote15",	'"hello("',	true,			"DoubleQuotedString"],
+["dquote16",	'"he)llo"',	true,			"DoubleQuotedString"],
+["dquote17",	'"he{llo"',	true,			"DoubleQuotedString"],
+["dquote18",	'"he}llo"',	true,			"DoubleQuotedString"],
+["dquote19",	'"${FOO}world"',true,			"DoubleQuotedString"],
+/* Double-Quotes with parameter expansion */
+["dquote30",	'"hello$(uname)world"',	true,		"DoubleQuotedString"],
+["dquote31",	'"hello$(uname -s)world"',true,		"DoubleQuotedString"],
+["dquote32",	'"hello${uname}world"',	true,		"DoubleQuotedString"],
+["dquote33",	'"hello$(echo "world")"',true,		"DoubleQuotedString"],
+["dquote34",	'"hello$(echo \'world\')"',true,	"DoubleQuotedString"],
+["dquote37",	'"hello$FOO"',	true,			"DoubleQuotedString"],
+["dquote38",	'"hello$((1+4))"',true,			"DoubleQuotedString"],
+["dquote39",	'"hello$(echo"',false,			"DoubleQuotedString"],
+["dquote40",	'"hello${echo"',false,			"DoubleQuotedString"],
+["dquote41",	'"hello$((1+4)"',false,			"DoubleQuotedString"],
+
+
 
 ["squote1",	"'hello'",	true,			"SingleQuotedString"],
 ["squote2",	"he'llo",	false,			"SingleQuotedString"],
@@ -290,6 +313,8 @@ var tests = [
 ["subshell11",	"$(echo `uname -s`)",				true,	"SubshellExpandable"],
 ["subshell12",	"aaa$()",					false,	"SubshellExpandable"],
 ["subshell13",	"$(echo hi)"	,				true,	"SubshellExpandable"],
+["subshell14",	"$( )",						true,	"SubshellExpandable"],
+["subshell15",	"$(  \t   \t )",				true,	"SubshellExpandable"],
 
 /* Test Backtick Subshell parameter expansion */
 /*TODO: add more backtick tests */

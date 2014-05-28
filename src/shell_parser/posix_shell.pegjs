@@ -103,7 +103,9 @@ function pack_simple_command(prefix,cmd,suffix)
 start =
   List
 
-/* Acceptable Tokens when parsing shell command context.
+/* TODO: XXX Fix this comment !!!
+
+Acceptable Tokens when parsing shell command context.
    In this context, whitespace delimiters are accepted without any problem
    as part of the token.
    Only shell operators ( $,|,& etc ) and quoted strings will 'stop' the token
@@ -158,7 +160,7 @@ Token_NoDelimiter =
   items:( NoDelimiter_UnquotedCharacters / AllContexts_Tokens )+ { return items; }
 
 NoDelimiter_UnquotedCharacters =
-  value:[^\|\&\;\`\<\>\(\)\$\'\\\"\ \t\'\n]+ { return { "literal" : value.join("") }; }
+  value:[^\|\&\;\`\<\>\(\)\$\\\"\ \t\'\n]+ { return { "literal" : value.join("") }; }
 
 
 /* Acceptable Tokens inside braces ${} -
@@ -173,8 +175,12 @@ Token_NoBraces =
   ( NoBraces_UnquotedCharacters / AllContexts_Tokens )+
 
 NoBraces_UnquotedCharacters =
-  value:[^\}\$\'\\\"\'\n]+ { return { "literal" : value.join("") }; }
+  value:[^\}\$\'\\\"\n]+ { return { "literal" : value.join("") }; }
 
+/* Acceptable Tokens Double Quotes ""
+*/
+NoDoubleQuotes_UnquotedCharacters=
+  value:[^\$\"\n]+ { return { "literal" : value.join("") }; }
 
 /*
 This rule recognizes tokens which are acceptable in any context.
@@ -202,7 +208,6 @@ AllContexts_Tokens =
       SingleQuotedString / DoubleQuotedString / EscapedCharacter / Expandable
 
 
-
 /* Ugly Hack:
    prevent the "2" in input like "uptime 2>&1" to be separated from the redirection. */
 redirection_word_hack =
@@ -216,13 +221,8 @@ SingleQuotedStringCharacter =
   !("'" / "\\" / LineTerminator) value:. { return value ; }
   / EscapedCharacter
 
-/* TODO: allow parameter expansion sinde double-quoted string */
 DoubleQuotedString =
-  '"' value:DoubleQuotedStringCharacter* '"' { return { "doublequotedstring" : value.join("") } ; }
-
-DoubleQuotedStringCharacter =
-  !('"' / "\\" / LineTerminator) value:. { return value ; }
-  / EscapedCharacter
+  '"' value:( NoDoubleQuotes_UnquotedCharacters / EscapedCharacter / Expandable)* '"' { return { "doublequotedstring" : unbox_tokens(value) } ; }
 
 EscapedCharacter =
   "\\" value:. { return { "literal" : "\\" + value } ; }
@@ -494,7 +494,8 @@ Expandable =
 
 /* Rule for a subshell (i.e. $() ) */
 SubshellExpandable =
-  "$(" !"(" terms:SimpleCommand* ")" { return { "subshell" : terms } ; }
+  "$(" !"(" EmptyDelimiter* ")" { return { "subshell" : null } ; }
+  / "$(" !"(" terms:SimpleCommand* ")" { return { "subshell" : terms } ; }
 
 /* in a backtick-shell "``" - backslash-quoted backticks are Ok, as are braces and parens.
    TODO: recursive backticks are NOT allowed, and backslash-backticks should be used instead.
