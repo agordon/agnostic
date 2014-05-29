@@ -47,7 +47,9 @@ rules = {
 	'AndOrList' : 'List',
 	'List' : undefined, /* last rule in hierarchy */
 
-	'Token_NoDelimiter' : undefined, /* special rule */
+	/* Special rules, which should not automatically lead to subsequent rules */
+	'Token_NoDelimiter' : undefined,
+	'TerminatedList' : undefined,
 
 	/* NOTE: these rules must be used directly, no other rule points to them */
 	'Compound_Command_Subshell' : 'Command',
@@ -301,6 +303,11 @@ tests = [
 ["pipe13",	"cut -f1 |",								false,	"Pipeline"],
 ["pipe14",	"|cut -f1 |",								false,	"Pipeline"],
 ["pipe15",	"|cut -f1",								false,	"Pipeline"],
+/* Pipelines with compound commands */
+["pipe30",	"seq 10 | ( sed -u 1q ; sort -nr)",					true,	"Pipeline"],
+["pipe31",	"( cat hello ; tac world ) | wc -l",					true,	"Pipeline"],
+["pipe32",	"seq 10 | { sed -u 1q ; sort -nr ; }",					true,	"Pipeline"],
+["pipe33",	"{ cat hello ; tac world ; } | wc -l",					true,	"Pipeline"],
 
 /* Test AndOrList rule */
 ["andor1",	"true && false || seq 1",			true,	"AndOrList" ],
@@ -317,6 +324,11 @@ tests = [
 ["andor12",	"|| true",					false,	"AndOrList" ],
 ["andor13",	"true && && true",				false,	"AndOrList" ],
 ["andor14",	"false && || true",				false,	"AndOrList" ],
+/* AndOrLists with compound commands */
+["andor30",	"true && ( sed -u 1q ; sort -nr)",		true,	"AndOrList"],
+["andor31",	"( cat hello ; tac world ) || wc -l",		true,	"AndOrList"],
+["andor32",	"seq 10 && { sed -u 1q ; sort -nr ; }",		true,	"AndOrList"],
+["andor33",	"{ cat hello ; tac world ; } && wc -l",		true,	"AndOrList"],
 
 /* Test List rule */
 ["list1",	"true ;",					true,	"List" ],
@@ -328,6 +340,18 @@ tests = [
 ["list7",	"true && false &",				true,	"List" ],
 ["list8",	";",						false,	"List" ],
 ["list9",	"&",						false,	"List" ],
+
+/* Test TerminatedList Rule - a special rule for commands inside "{}" which requires
+   that each command be terminated (unlike "List" rule,
+   in which the last command is optionally terminated */
+["tlist1",	"true ;",					true,	"TerminatedList"],
+["tlist2",	"true &",					true,	"TerminatedList"],
+["tlist3",	"true ; false ;",				true,	"TerminatedList"],
+["tlist4",	"true ; false &",				true,	"TerminatedList"],
+["tlist5",	"true",						false,	"TerminatedList"],
+["tlist6",	"true",						false,	"TerminatedList"],
+["tlist7",	"true ; false",					false,	"TerminatedList"],
+["tlist8",	"true ; false",					false,	"TerminatedList"],
 
 /* Test Sub-Shell Parameter Expansion */
 ["subshell1",	"$()",						true,	"SubshellExpandable"],
