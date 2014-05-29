@@ -41,6 +41,9 @@ rules = {
 	'Assignments_Or_Redirections' : 'SimpleCommand',
 	'Redirections' : 'SimpleCommand',
 	'SimpleCommand' : 'Command',
+
+	/* NOTE: this rule must be used directly, no other rule points to it */
+	'Compound_Command_Subshell' : 'Command',
 	'Command' : 'Pipeline',
 	'Pipeline' : 'AndOrList',
 	'AndOrList' : 'List',
@@ -251,6 +254,18 @@ tests = [
 /* Few more cases */
 ["smpl27",	"true>foo.txt",	true,	"SimpleCommand" ],
 ["smpl28",	"true>foo.txt<foo.txt",	true,	"SimpleCommand" ],
+/* Simple Command rule must not accept compound commands */
+["smpl40",	"( true | false )",			false,	"SimpleCommand" ],
+["smpl41",	"{ true ; false ; }",			false,	"SimpleCommand" ],
+
+/* Test Compound-Command-SubShell rule */
+["cmpss1",	"( uname )",				true,	"Compound_Command_Subshell"],
+["cmpss2",	"(uname)",				true,	"Compound_Command_Subshell"],
+["cmpss3",	"( uname | true | false)",		true,	"Compound_Command_Subshell"],
+["cmpss4",	"( uname | true & false)",		true,	"Compound_Command_Subshell"],
+["cmpss5",	"( uname ; true ; false)",		true,	"Compound_Command_Subshell"],
+["cmpss6",	"( uname && true || false)",		true,	"Compound_Command_Subshell"],
+["cmpss7",	"()",					false,	"Compound_Command_Subshell"],
 
 /* Test Pipeline rule */
 ["pipe1",	"seq 1 2 10 | wc -l",							true,	"Pipeline"],

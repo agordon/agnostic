@@ -157,7 +157,7 @@ Token_NoDelimiter =
   items:( NoDelimiter_UnquotedCharacters / AllContexts_Tokens )+ { return items; }
 
 NoDelimiter_UnquotedCharacters =
-  value:[^\|\&\;\`\<\>\(\)\$\\\"\ \t\'\n]+ { return { "literal" : value.join("") }; }
+  value:[^\|\&\;\`\<\>\{\}\(\)\$\\\"\ \t\'\n]+ { return { "literal" : value.join("") }; }
 
 
 /* Acceptable Tokens inside braces ${} -
@@ -380,8 +380,12 @@ SimpleCommand =
 Command, as per Section "2.9 Shell Commands"
 ***************************/
 
+/* Compound Commands - Section "2.9.4" */
+Compound_Command_Subshell =
+	"(" EmptyDelimiter* cmd:List EmptyDelimiter* ")" { return { "compound_subshell" : cmd } ; }
+
 Command =
-	EmptyDelimiter* cmd:SimpleCommand EmptyDelimiter* { return cmd; }
+	EmptyDelimiter* cmd:(SimpleCommand / Compound_Command_Subshell) EmptyDelimiter* { return cmd; }
 
 /***************************
 Pipeline, as per Section 2.9.2
