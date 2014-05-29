@@ -43,12 +43,23 @@ web:
 
 .PHONY: check
 check: test_object_utils \
+       test_os_state \
+       test_process_state \
        test_parse_syntax \
        test_shell_descriptor
 
 .PHONY: test_parse_syntax
 test_parse_syntax:
 	$(NODEBIN) ./src/tests/shell_parser_tester.js
+
+.PHONY: test_os_state
+test_os_state:
+	$(NODEBIN) ./src/tests/os_state_tester.js
+
+
+.PHONY: test_process_state
+test_process_state:
+	$(NODEBIN) ./src/tests/process_state_tester.js
 
 .PHONY: test_shell_descriptor
 test_shell_descriptor:
