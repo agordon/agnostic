@@ -31,6 +31,7 @@ for later display of errors or information.
 ## Build/infrastructure
 
 * Improve `Makefile`. It is currently all hard-coded.
+* Follow advice from [Writing for node and the browser](http://caolanmcmahon.com/posts/writing_for_node_and_the_browser/)
 
 ## Testing
 
@@ -43,3 +44,7 @@ for later display of errors or information.
 But too *cutesy*, "web 2.0++" for my current taste...
 
 * Ace Javascript Editor: <http://ace.c9.io>
+
+* JS/UIX - virtual OS written entirely in Javascript: <http://www.masswerk.at/jsuix/jsuix-documentation.txt> ,
+    from 2003. Current Status unclear. License clearly not free. Uses "old-style" functional javascript.
+
