@@ -33,6 +33,77 @@ input#shellcmd {
 	white-space: nowrap;
 }
 
+
+/* Classes from Shell-Descriptor-HTML */
+div.shell_diagram {
+	padding: 1em;
+	height: 3em;
+}
+
+span.cmdlevel1 {
+-webkit-border-radius: 5px;
+-moz-border-radius: 5px;
+border-radius: 5px;
+padding: 6px;
+
+background-color: #FFCC99;
+}
+
+span.cmdlevel2 {
+-webkit-border-radius: 5px;
+-moz-border-radius: 5px;
+border-radius: 5px;
+padding: 12px;
+
+background-color: #6699FF;
+}
+
+span.cmdlevel3 {
+-webkit-border-radius: 5px;
+-moz-border-radius: 5px;
+border-radius: 5px;
+padding: 18px;
+margin: 18px;
+
+background-color: #00CC99;
+}
+
+span.cmdlevel4 {
+-webkit-border-radius: 5px;
+-moz-border-radius: 5px;
+border-radius: 5px;
+padding: 24px;
+margin: 24px;
+
+background-color: #CCCC00;
+}
+
+span.pipecmd {
+}
+span.List {
+}
+span.Assignments {
+background-color:rgba(100,0,0,0.2);
+}
+span.AndOrList {
+}
+span.CompoundSubshell {
+}
+span.CompoundCurrentshell {
+}
+span.Arithmetic {
+}
+span.ExecTokens {
+}
+span.Redirections {
+background-color:rgba(0,0,255,0.1);
+}
+
+
+
+
+
+
 pre span.shell {
 }
 
@@ -117,19 +188,17 @@ as parsed by the current implementation of the POSIX shell syntax parser.</p>
 	Syntax Parsing Results
      ************************************************* -->
 <div class="row">
+	<div class="col-md-12">
+		<h3>Shell Command Diagram</h3>
+<div class="shell_diagram" id="shell_diagram"></div>
+	</div>
+
 	<!-- **** JSON TREE Display **** -->
-	<div class="col-md-8">
+	<div class="col-md-12">
 		<h3>Shell Command Structure</h3>
 <pre class="prettyprint lang-js" id="shell_cmd_json">(Enter a shell command and click 'Parse')</pre>
 	</div>
 
-	<!-- **** Shell Executor Log **** -->
-<!--
-	<div class="col-md-8">
-		<h3>Shell Execution Log</h3>
-<pre class="shell_execution_log" id="shell_execution_log"></pre>
-	</div>
--->
 </div>
 
 
@@ -150,16 +219,19 @@ as parsed by the current implementation of the POSIX shell syntax parser.</p>
     <!-- The POSIX Shell parser, after compilation with PEG.js -->
     <script src="posix_shell.js"></script>
 
+    <script src="shell_HTML_descriptor.js"></script>
+    <script src="shell_descriptor.js"></script>
+
 <script>
 
 var examples = [
 "sort -k1n,1 -u input.txt",
-"grep -i FOO <input.txt >output.txt",
-"LC_ALL=C sort -k5nr,5 input.txt >output.txt",
+"LC_ALL=C sort -k5nr,5 input.txt",
 'cut -f1-5 -d"|" foo.txt | grep -v ^bar | wc -l',
 'grep -q FOO bar.txt && echo found || echo notfound',
 'CC=clang make && make check & top',
-'seq 10 | ( sed -u 1q ; LC_ALL=C sort -nr )'
+'seq 10 | ( sed -u 1q ; LC_ALL=C sort -nr )',
+'make || { echo build failed ; exit 1 ;}'
 ];
 
 
@@ -202,7 +274,7 @@ function example(num)
 function run_parse()
 {
 	var shellcmd = $("#shellcmd").val();
-	try {
+//	try {
 		$("#shell_cmd_json").text("");
 		$("#shell_execution_log").text("");
 		var result = peg.parse(shellcmd);
@@ -213,9 +285,14 @@ function run_parse()
 
 		//Emulate Shell Execution
 		//shell_executor.ShellExecute(result);
-	} catch(err) {
-		$("#shell_cmd_json").text("Pasing error:\n" + err);
-	}
+		var text_code = DescribeShellCommand(result);
+		console.log("text_code = '" + text_code + "'");
+		var html_code = DescribeShellCommandHTML(result);
+		console.log("html_code = '" + html_code + "'");
+		$("#shell_diagram").html(html_code);
+//	} catch(err) {
+//		$("#shell_cmd_json").text("Pasing error:\n" + err);
+//	}
 	return false;
 }
 
