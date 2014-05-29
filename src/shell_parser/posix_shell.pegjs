@@ -384,8 +384,11 @@ Command, as per Section "2.9 Shell Commands"
 Compound_Command_Subshell =
 	"(" EmptyDelimiter* cmd:List EmptyDelimiter* ")" { return { "compound_subshell" : cmd } ; }
 
+Compound_Command_Currentshell =
+	"{" EmptyDelimiter* cmd:TerminatedList EmptyDelimiter* "}" { return { "compound_currentshell" : cmd } ; }
+
 Command =
-	EmptyDelimiter* cmd:(SimpleCommand / Compound_Command_Subshell) EmptyDelimiter* { return cmd; }
+	EmptyDelimiter* cmd:(SimpleCommand / Compound_Command_Subshell / Compound_Command_Currentshell ) EmptyDelimiter* { return cmd; }
 
 /***************************
 Pipeline, as per Section 2.9.2
@@ -440,7 +443,6 @@ AndOrList =
 	Allow multilined commands, separator can be "\n" -
 	basically, allowing shell scripts.
 */
-
 List =
 	first:AndOrList rest:( list_sep_op:(";" / "&") AndOrList)* last_op:(";" / "&")? {
 			parser_debug("List, text = '" + text() + "'");
@@ -475,6 +477,40 @@ List =
 					steps.push( { "background" : current_cmd } ) ;
 			}
 
+			return { "list" : steps } ;
+		}
+
+/*
+TerminatedList produces the same tree-structure as "List",
+but requires slightly modified input rules:
+Each command MUST be terminated by a ';' or '&' (or newline, in the future).
+This requirement happens inside the compound_command_currentshell rule,
+as the POSIX shell standard mandates that compound commmands inside braces
+ALWAYS have a terminated character (due to different implementation of the tokenizer).
+
+Section 2.9.4 says:
+"{ compound-list;}
+      Execute compound-list in the current process environment.
+      The semicolon shown here is an example of a control operator
+      delimiting the } reserved word.
+      Other delimiters are possible, as shown in Shell Grammar; a <newline> is frequently used."
+
+*/
+TerminatedList =
+	items:( AndOrList list_sep_op:(";" / "&") )+ {
+			parser_debug("TerminatedList, text = '" + text() + "'");
+
+			var steps = [] ;
+			for (var i in items) {
+				var cmd = items[i][0];
+				var op = items[i][1]; /* ';'or '&' */
+
+				if ( op == ";" ) {
+					steps.push( { "foreground" : cmd } ) ;
+				} else {
+					steps.push( { "background" : cmd } ) ;
+				}
+			}
 			return { "list" : steps } ;
 		}
 

@@ -42,14 +42,16 @@ rules = {
 	'Redirections' : 'SimpleCommand',
 	'SimpleCommand' : 'Command',
 
-	/* NOTE: this rule must be used directly, no other rule points to it */
-	'Compound_Command_Subshell' : 'Command',
 	'Command' : 'Pipeline',
 	'Pipeline' : 'AndOrList',
 	'AndOrList' : 'List',
 	'List' : undefined, /* last rule in hierarchy */
 
-	'Token_NoDelimiter' : undefined /* special rule */
+	'Token_NoDelimiter' : undefined, /* special rule */
+
+	/* NOTE: these rules must be used directly, no other rule points to them */
+	'Compound_Command_Subshell' : 'Command',
+	'Compound_Command_Currentshell' : 'Command'
 };
 
 tests = [
@@ -266,6 +268,20 @@ tests = [
 ["cmpss5",	"( uname ; true ; false)",		true,	"Compound_Command_Subshell"],
 ["cmpss6",	"( uname && true || false)",		true,	"Compound_Command_Subshell"],
 ["cmpss7",	"()",					false,	"Compound_Command_Subshell"],
+
+/* Test Compound-Command-CurrentShell rule */
+["cmpcs1",	"{ uname ; }",				true,	"Compound_Command_Currentshell"],
+["cmpcs2",	"{ uname & }",				true,	"Compound_Command_Currentshell"],
+["cmpcs3",	"{ uname   }",				false,	"Compound_Command_Currentshell"],
+["cmpcs4",	"{ uname;}",				true,	"Compound_Command_Currentshell"],
+["cmpcs5",	"{ uname&}",				true,	"Compound_Command_Currentshell"],
+["cmpcs6",	"{ uname; }",				true,	"Compound_Command_Currentshell"],
+["cmpcs7",	"{ uname& }",				true,	"Compound_Command_Currentshell"],
+["cmpcs9",	"{ uname | true | false ; }",		true,	"Compound_Command_Currentshell"],
+["cmpcs10",	"{ uname | true & false ; }",		true,	"Compound_Command_Currentshell"],
+["cmpcs11",	"{ uname ; true ; false ; }",		true,	"Compound_Command_Currentshell"],
+["cmpcs12",	"{ uname && true || false & }",		true,	"Compound_Command_Currentshell"],
+["cmpcs13",	"{}",					false,	"Compound_Command_Currentshell"],
 
 /* Test Pipeline rule */
 ["pipe1",	"seq 1 2 10 | wc -l",							true,	"Pipeline"],
