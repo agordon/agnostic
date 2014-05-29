@@ -27,6 +27,23 @@ assert.ok( IsBoolean( 1===1 ) );
 assert.doesNotThrow( function() { VerifyBoolean( false ); } );
 assert.throws(       function() { VerifyBoolean( "foo" ); } ) ;
 
+/* Test IsString */
+assert.ok( !IsString( false ) );
+assert.ok( !IsString( true ) );
+assert.ok( !IsString( 1 ) );
+assert.ok( !IsString( {} ) );
+assert.ok( !IsString( [] ) );
+assert.ok( !IsString( null ) );
+assert.ok( IsString( "hello" ) );
+assert.ok( IsString( 'hello' ) );
+assert.ok( IsString( "" ) );
+assert.ok( !IsString( 1==1 ) );
+assert.ok( !IsString( 1===1 ) );
+
+/* Test VerifyString */
+assert.doesNotThrow( function() { VerifyString( "foo" ); } );
+assert.throws(       function() { VerifyString( false ); } ) ;
+
 /* Test IsObject */
 assert.ok( IsObject( {} ) );
 assert.ok( IsObject( { "hello" : "world" } ) );
