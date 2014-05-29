@@ -44,6 +44,51 @@ assert.ok( !IsString( 1===1 ) );
 assert.doesNotThrow( function() { VerifyString( "foo" ); } );
 assert.throws(       function() { VerifyString( false ); } ) ;
 
+/* Test IsNumber */
+assert.ok( !IsNumber( false ) );
+assert.ok( !IsNumber( true ) );
+assert.ok( IsNumber( 1 ) );
+assert.ok( IsNumber( 1.43 ) );
+assert.ok( IsNumber( -0.43e-9 ) );
+assert.ok( !IsNumber( {} ) );
+assert.ok( !IsNumber( [] ) );
+assert.ok( !IsNumber( null ) );
+assert.ok( !IsNumber( "hello" ) );
+assert.ok( !IsNumber( 'hello' ) );
+assert.ok( !IsNumber( "" ) );
+assert.ok( !IsNumber( 1==1 ) );
+assert.ok( !IsNumber( 1===1 ) );
+
+/* Test VerifyNumber */
+assert.doesNotThrow( function() { VerifyNumber( 32 ); } );
+assert.doesNotThrow( function() { VerifyNumber( 32.4 ); } );
+assert.throws(       function() { VerifyNumber( false ); } ) ;
+
+/* Test IsInteger */
+assert.ok( !IsInteger( false ) );
+assert.ok( !IsInteger( true ) );
+assert.ok( IsInteger( 1 ) );
+assert.ok( IsInteger( 0123 ) );
+assert.ok( IsInteger( 0x664 ) );
+assert.ok( IsInteger( 1 ) );
+assert.ok( IsInteger( 0 ) );
+assert.ok( IsInteger( -43 ) );
+assert.ok( !IsInteger( 1.43 ) );
+assert.ok( !IsInteger( -0.43e-9 ) );
+assert.ok( !IsInteger( {} ) );
+assert.ok( !IsInteger( [] ) );
+assert.ok( !IsInteger( null ) );
+assert.ok( !IsInteger( "hello" ) );
+assert.ok( !IsInteger( 'hello' ) );
+assert.ok( !IsInteger( "" ) );
+assert.ok( !IsInteger( 1==1 ) );
+assert.ok( !IsInteger( 1===1 ) );
+
+/* Test VerifyInteger */
+assert.doesNotThrow( function() { VerifyInteger( 32 ); } );
+assert.throws(       function() { VerifyInteger( "foo" ); } ) ;
+assert.throws(       function() { VerifyInteger( 43.3 ); } ) ;
+
 /* Test IsObject */
 assert.ok( IsObject( {} ) );
 assert.ok( IsObject( { "hello" : "world" } ) );
