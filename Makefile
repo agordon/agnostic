@@ -34,8 +34,11 @@ info:
 
 .PHONY: web
 web:
-	pegjs --export-var peg ./src/shell/posix_shell.pegjs ./website/posix_shell.js
-	cp ./src/shell/shell_executor.js ./website/
+	pegjs --export-var peg ./src/shell_parser/posix_shell.pegjs ./website/posix_shell.js
+	cp ./src/node_modules/utils/object_utils.js \
+	   ./src/node_modules/shell/shell_descriptor.js \
+	   ./src/node_modules/shell/shell_console_logger.js \
+	   ./website/
 
 .PHONY: check
 check: test_object_utils \

@@ -118,16 +118,18 @@ as parsed by the current implementation of the POSIX shell syntax parser.</p>
      ************************************************* -->
 <div class="row">
 	<!-- **** JSON TREE Display **** -->
-	<div class="col-md-4">
+	<div class="col-md-8">
 		<h3>Shell Command Structure</h3>
 <pre class="prettyprint lang-js" id="shell_cmd_json">(Enter a shell command and click 'Parse')</pre>
 	</div>
 
 	<!-- **** Shell Executor Log **** -->
+<!--
 	<div class="col-md-8">
 		<h3>Shell Execution Log</h3>
 <pre class="shell_execution_log" id="shell_execution_log"></pre>
 	</div>
+-->
 </div>
 
 
@@ -144,9 +146,9 @@ as parsed by the current implementation of the POSIX shell syntax parser.</p>
     <!-- Javascript sprintf:   https://github.com/alexei/sprintf.js -->
     <script src="sprintf.js"></script>
 
+    <script src="object_utils.js"></script>
     <!-- The POSIX Shell parser, after compilation with PEG.js -->
     <script src="posix_shell.js"></script>
-    <script src="shell_executor.js"></script>
 
 <script>
 
@@ -156,7 +158,8 @@ var examples = [
 "LC_ALL=C sort -k5nr,5 input.txt >output.txt",
 'cut -f1-5 -d"|" foo.txt | grep -v ^bar | wc -l',
 'grep -q FOO bar.txt && echo found || echo notfound',
-'CC=clang make && make check & top'
+'CC=clang make && make check & top',
+'seq 10 | ( sed -u 1q ; LC_ALL=C sort -nr )'
 ];
 
 
@@ -209,7 +212,7 @@ function run_parse()
 		prettyPrint();
 
 		//Emulate Shell Execution
-		shell_executor.ShellExecute(result);
+		//shell_executor.ShellExecute(result);
 	} catch(err) {
 		$("#shell_cmd_json").text("Pasing error:\n" + err);
 	}
@@ -219,7 +222,7 @@ function run_parse()
 $(document).ready(function() {
 
 	///shell_executor.AddConsoleLogger();
-	shell_executor.AddLogger(table_logger);
+	//shell_executor.AddLogger(table_logger);
 
 	//Add "Example' button for each example
 	for (var i in examples) {

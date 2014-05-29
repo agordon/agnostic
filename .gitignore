@@ -2,3 +2,6 @@
 # These files are auto-generated with 'make web'
 website/posix_shell.js
 website/shell_executor.js
+website/object_utils.js
+website/shell_descriptor.js
+website/shell_console_logger.js
