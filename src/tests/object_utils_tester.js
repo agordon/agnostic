@@ -12,6 +12,10 @@
 var assert = require('assert');
 require("utils/object_utils");
 
+/* Test IsObjectEmpty */
+assert.ok( IsObjectEmpty( {} ) );
+assert.ok( !IsObjectEmpty( {"hello" : "world"} ) );
+
 /* Test IsBoolean */
 assert.ok( IsBoolean( false ) );
 assert.ok( IsBoolean( true ) );
