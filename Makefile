@@ -46,6 +46,7 @@ check: test_object_utils \
        test_os_state \
        test_process_state \
        test_streams \
+       test_storage_object \
        test_parse_syntax \
        test_shell_descriptor
 
@@ -64,6 +65,10 @@ test_process_state:
 .PHONY: test_streams
 test_streams:
 	$(NODEBIN) ./src/tests/stream_tester.js
+
+.PHONY: test_storage_object
+test_storage_object:
+	$(NODEBIN) ./src/tests/storage_object_tester.js
 
 .PHONY: test_shell_descriptor
 test_shell_descriptor:
