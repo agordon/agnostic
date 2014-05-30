@@ -43,10 +43,12 @@ web:
 
 .PHONY: check
 check: test_object_utils \
+       test_string_utils \
        test_os_state \
        test_process_state \
        test_streams \
        test_storage_object \
+       test_filesystem \
        test_parse_syntax \
        test_shell_descriptor
 
@@ -70,6 +72,10 @@ test_streams:
 test_storage_object:
 	$(NODEBIN) ./src/tests/storage_object_tester.js
 
+.PHONY: test_filesystem
+test_filesystem:
+	$(NODEBIN) ./src/tests/filesystem_tester.js
+
 .PHONY: test_shell_descriptor
 test_shell_descriptor:
 	$(NODEBIN) ./src/tests/shell_descriptor_tester.js
@@ -77,6 +83,10 @@ test_shell_descriptor:
 .PHONY: test_object_utils
 test_object_utils:
 	$(NODEBIN) ./src/tests/object_utils_tester.js
+
+.PHONY: test_string_utils
+test_string_utils:
+	$(NODEBIN) ./src/tests/string_utils_tester.js
 
 .PHONY: ex1p ex2p ex3p ex4p ex5p
 ex1p:
