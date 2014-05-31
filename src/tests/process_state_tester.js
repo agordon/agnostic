@@ -8,9 +8,9 @@
 
 var assert = require('assert');
 require('utils/object_utils');
-require('os/process_state');
+var ProcessState = require('os/process_state');
 
-ps = ProcessState ;
+ps = new ProcessState.ProcessState();
 
 var pid  = ps.getpid();
 var ppid = ps.getppid();
