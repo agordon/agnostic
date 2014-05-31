@@ -12,10 +12,12 @@ var count_pass = 0 ;
 var count_fail = 0 ;
 
 require('utils/object_utils');
-require('os/os_state');
+var OperatingSystem = require('os/os_state');
 
-console.log("OS time = " + OperatingSystemState.time() );
+var os = new OperatingSystem.OperatingSystem(null); //OS without a FileSystem
 
-var uname = OperatingSystemState.uname();
+console.log("OS time = " + os.time() );
+
+var uname = os.uname();
 var kernel_version = uname["sysname"] + " " + uname["version"] ;
 console.log("OS uname kernel+version = " + kernel_version);
