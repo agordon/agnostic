@@ -45,10 +45,11 @@ web:
 check: test_object_utils \
        test_string_utils \
        test_os_state \
-       test_process_state \
        test_streams \
        test_storage_object \
        test_filesystem \
+       test_process_state \
+       test_program_base \
        test_parse_syntax \
        test_shell_descriptor
 
@@ -75,6 +76,10 @@ test_storage_object:
 .PHONY: test_filesystem
 test_filesystem:
 	$(NODEBIN) ./src/tests/filesystem_tester.js
+
+.PHONY: test_program_base
+test_program_base:
+	$(NODEBIN) ./src/tests/program_base_tester.js
 
 .PHONY: test_shell_descriptor
 test_shell_descriptor:
