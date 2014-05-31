@@ -44,6 +44,7 @@ web:
 .PHONY: check
 check: test_object_utils \
        test_string_utils \
+       test_getopt \
        test_os_state \
        test_streams \
        test_storage_object \
@@ -97,6 +98,10 @@ test_object_utils:
 .PHONY: test_string_utils
 test_string_utils:
 	$(NODEBIN) ./src/tests/string_utils_tester.js
+
+.PHONY: test_getopt
+test_getopt:
+	$(NODEBIN) ./src/tests/getopt_tester.js
 
 .PHONY: ex1p ex2p ex3p ex4p ex5p
 ex1p:
