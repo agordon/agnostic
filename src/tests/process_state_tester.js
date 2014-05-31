@@ -8,9 +8,14 @@
 
 var assert = require('assert');
 require('utils/object_utils');
+var OperatingSystem = require('os/os_state');
+var FileSystem = require('os/filesystem');
 var ProcessState = require('os/process_state');
 
-ps = new ProcessState.ProcessState();
+var os = new OperatingSystem.OperatingSystem();
+var fs = new FileSystem.FileSystem();
+
+var ps = new ProcessState.ProcessState(os,fs);
 
 var pid  = ps.getpid();
 var ppid = ps.getppid();
@@ -61,3 +66,18 @@ env["foo"] = "test";
 assert( ! ps.existsenv("foo") ) ;
 env["orange"] = "green";
 assert.equal( ps.getenv("orange","*"), "black");
+
+//Test ProcessState creation with invalid parameters
+assert.throws(
+	function() {
+		var ps1 = new ProcessState.ProcessState({},fs);
+	});
+assert.throws(
+	function() {
+		var ps2 = new ProcessState.ProcessState(os,{});
+	});
+assert.throws(
+	function() {
+		//(reversed parameter order, wrong instance type)
+		var ps3 = new ProcessState.ProcessState(fs,os);
+	});
