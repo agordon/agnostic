@@ -94,6 +94,12 @@ assert.strictEqual ( is.is_empty(), false);
 assert.strictEqual ( is.get_line(), "bar" );
 assert.strictEqual ( is.is_empty(), true); //end of input
 
+//Test 'get_all_lines()'
+is.__set_lines(["hello","world"]);
+assert.strictEqual ( is.is_empty(), false);
+assert.deepEqual(is.get_all_lines(), [ "hello", "world"] );
+assert.strictEqual ( is.is_empty(), true); //end of input
+
 
 /*********************************************************************
  * Test Output Stream
@@ -117,4 +123,12 @@ assert.strictEqual ( tmp[0], "hello" );
 assert.strictEqual ( tmp[1], "world" );
 assert.strictEqual ( tmp[2], "foo" );
 assert.strictEqual ( tmp[3], "bar" );
+
+//Test 'put_lines'
+os.put_line("hello");
+os.put_lines(["1","2","3"]);
+var tmp = os.__get_lines();
+VerifyArray(tmp);
+assert.deepEqual(tmp, ["hello","1","2","3"]);
+
 
