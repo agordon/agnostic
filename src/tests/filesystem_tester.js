@@ -24,7 +24,7 @@ var f = fs.openfile("/tmp/foo.txt",true);
 f.write(["hello","world"]);
 f= null;
 var k = fs.openfile("/tmp/foo.txt",false);
-var t = k.read();
+var t = k.get_all_lines();
 VerifyArray(t);
 assert.strictEqual( t[0], "hello");
 assert.strictEqual( t[1], "world");

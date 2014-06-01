@@ -60,7 +60,7 @@ var st = f.stat();
 assert.strictEqual( st["size"], 0 );
 
 // Test Read empty file
-var lines = f.read();
+var lines = f.get_all_lines();
 VerifyArray(lines);
 assert.strictEqual( lines.length, 0);
 
@@ -69,7 +69,7 @@ f.write(["hello","world"]);
 f.append(["foo","bar"]);
 var st = f.stat();
 assert.strictEqual( st["size"], 20 );
-lines = f.read();
+lines = f.get_all_lines();
 VerifyArray(lines);
 assert.strictEqual ( lines[0], "hello" );
 assert.strictEqual ( lines[1], "world" );
