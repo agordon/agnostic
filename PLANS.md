@@ -37,6 +37,8 @@
             $ seq 10 | echo $(sed -u 1q) ==$(head -n1)==
             1 ==2==
     * SIGPIPE ?
+    * Perhaps a singleton representing "current process" (asusming this will
+    always be a "single process" operting system?
 
 * Shell Execution Environment
     * See Section [2.12 Shell Excution ENV](http://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html#tag_02_12)

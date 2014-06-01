@@ -28,6 +28,18 @@ for later display of errors or information.
     * Exception Throwing and Handling
 
 
+## OS
+
+* Consolidate "streams" and "files", and then
+* Implement pseudo-File-Descriptor (.e.g os.GetFileDescriptor(int) )
+
+## Programs
+
+* Date:
+    * Support UTC (javascript's Date() supports it)
+    * Use `strftime` in Javascript <https://github.com/samsonjs/strftime>,
+    then  implement almost-full `date` format options.
+
 ## Build/infrastructure
 
 * Improve `Makefile`. It is currently all hard-coded.
