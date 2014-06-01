@@ -49,7 +49,7 @@ Each Test contains:
 3. Expected output (object with 'exit_code', 'stdout', 'stderr') - used with assert.deepEqual
 */
 
-var try_help = "Try 'seq' for more information.\n";
+var try_help = "Try 'seq --help' for more information.\n";
 
 var tests = [
 ["1",  [ "10" ],		{ exit_code: 0, stdout: "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n" }],
