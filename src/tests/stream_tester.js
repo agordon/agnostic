@@ -100,6 +100,45 @@ assert.strictEqual ( is.is_empty(), false);
 assert.deepEqual(is.get_all_lines(), [ "hello", "world"] );
 assert.strictEqual ( is.is_empty(), true); //end of input
 
+// Ensure multiple streams don't intermix
+var is2 = new Streams.InputStream();
+is.__set_lines(["hello"]);
+is2.__set_lines(["world"]);
+assert.strictEqual( is2.get_line(), "world" );
+assert.strictEqual ( is.is_empty(), false);
+assert.strictEqual ( is2.is_empty(), true);
+assert.strictEqual( is.get_line(), "hello" );
+assert.strictEqual ( is.is_empty(), true);
+assert.strictEqual ( is2.is_empty(), true);
+
+
+// Test InputStream with fill-input callback
+var is3 = new Streams.InputStream();
+
+var callback_count=4;
+is3.fill_input_callback = function() {
+	callback_count--;
+	if (callback_count > 0)
+		return [ "" + callback_count ];
+	return [];
+}
+assert.strictEqual( is3.is_empty(), false);
+assert.strictEqual( is3.get_line(), "3" );
+assert.strictEqual( is3.get_line(), "2" );
+assert.strictEqual( is3.is_empty(), false);
+assert.strictEqual( is3.get_line(), "1" );
+assert.strictEqual( is3.is_empty(), true);
+assert.strictEqual( is3.get_line(), null );
+
+
+// Test two InputStreams with full-input callbacks
+var is4 = new Streams.InputStream();
+var is5 = new Streams.InputStream();
+is4.fill_input_callback = function() { return ["foo"]; }
+is5.fill_input_callback = function() { return ["bar"]; }
+assert.strictEqual( is4.get_line(), "foo" );
+assert.strictEqual( is5.get_line(), "bar" );
+
 
 /*********************************************************************
  * Test Output Stream
