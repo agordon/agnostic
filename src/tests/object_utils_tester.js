@@ -93,6 +93,46 @@ assert.doesNotThrow( function() { VerifyInteger( 32 ); } );
 assert.throws(       function() { VerifyInteger( "foo" ); } ) ;
 assert.throws(       function() { VerifyInteger( 43.3 ); } ) ;
 
+/* Test IsStrictDecimalIntegerValue */
+assert.ok ( IsStrictDecimalIntegerValue(1) ) ;
+assert.ok ( IsStrictDecimalIntegerValue("1") ) ;
+assert.ok ( ! IsStrictDecimalIntegerValue(1.4) ) ;
+assert.ok ( ! IsStrictDecimalIntegerValue("1.4") ) ;
+assert.ok ( IsStrictDecimalIntegerValue(0) ) ;
+assert.ok ( IsStrictDecimalIntegerValue("0") ) ;
+assert.ok ( IsStrictDecimalIntegerValue("-32") ) ;
+assert.ok ( IsStrictDecimalIntegerValue(-32) ) ;
+assert.ok ( IsStrictDecimalIntegerValue("  32") ) ;
+assert.ok ( ! IsStrictDecimalIntegerValue("  32  ") ) ;
+assert.ok ( ! IsStrictDecimalIntegerValue("5 apples") ) ;
+assert.ok ( ! IsStrictDecimalIntegerValue("5.5") ) ;
+assert.ok ( ! IsStrictDecimalIntegerValue([]) ) ;
+assert.ok ( ! IsStrictDecimalIntegerValue({}) ) ;
+assert.ok ( IsStrictDecimalIntegerValue(0x10) ) ;
+assert.ok ( !IsStrictDecimalIntegerValue("0x10") ) ;
+
+/* Test IsStrictFloatNumber */
+assert.ok ( IsStrictFloatValue(1) ) ;
+assert.ok ( IsStrictFloatValue("1") ) ;
+assert.ok ( IsStrictFloatValue(1.4) ) ;
+assert.ok ( IsStrictFloatValue("1.4") ) ;
+assert.ok ( IsStrictFloatValue(0) ) ;
+assert.ok ( IsStrictFloatValue("0") ) ;
+assert.ok ( IsStrictFloatValue("-32") ) ;
+assert.ok ( IsStrictFloatValue(-32) ) ;
+assert.ok ( IsStrictFloatValue("  32") ) ;
+assert.ok ( ! IsStrictFloatValue("  32  ") ) ;
+assert.ok ( ! IsStrictFloatValue("5 apples") ) ;
+assert.ok ( ! IsStrictFloatValue("5.5 apples") ) ;
+assert.ok ( IsStrictFloatValue("5.5") ) ;
+assert.ok ( ! IsStrictFloatValue([]) ) ;
+assert.ok ( ! IsStrictFloatValue({}) ) ;
+assert.ok ( IsStrictFloatValue(0x10) ) ;
+assert.ok ( !IsStrictFloatValue("0x10") ) ;
+assert.ok ( IsStrictFloatValue(1.4e4) ) ;
+assert.ok ( IsStrictFloatValue("1.4e4") ) ;
+
+
 /* Test IsObject */
 assert.ok( IsObject( {} ) );
 assert.ok( IsObject( { "hello" : "world" } ) );
