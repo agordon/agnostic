@@ -99,12 +99,16 @@ assert.strictEqual ( is.is_empty(), true); //end of input
  * Test Output Stream
 *********************************************************************/
 var os = new Streams.OutputStream();
+var os2 = new Streams.OutputStream();
 
 //Use public methods to store output lines
 os.put_line("hello");
 os.put_line("world");
 os.put_line("foo");
 os.put_line("bar");
+
+//Verify two streams don't share "lines"
+assert.deepEqual ( os2.__get_lines(), [] );
 
 //Use internal methods to get the lines
 var tmp = os.__get_lines();
