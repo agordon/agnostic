@@ -1,0 +1,30 @@
+#!/bin/sh
+
+#   This file is part of UNIX Guide for the Perplexed project.
+#   Copyright (C) 2014 by Assaf Gordon <assafgordon@gmail.com>
+#   Released under GPLv3 or later
+
+if [ -z "$1" ] ; then
+echo "UNIX Guide for the Perplexed Project
+Program Runner
+
+Usage:
+  run_prog [program] [program arguments]
+
+This debugging tool will run a javascript program (under the Agnostic
+UNIX emulation envionment).
+
+Example:
+    # The the Javascript emulation version of seq(1)
+    # The source code is ./src/node_nodules/programs/seq.js
+    $ ./run_prog seq -w 1 2 10
+    01
+    03
+    05
+    07
+    10
+"
+exit 0
+fi
+
+nodejs ./src/tools/run_prog.js "$@"
