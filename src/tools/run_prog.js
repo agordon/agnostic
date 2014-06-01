@@ -6,6 +6,7 @@
 
 /* Generic Program Runner */
 
+var nodefs = require('fs');
 var assert = require('assert');
 require('utils/object_utils');
 require('utils/time_utils');
@@ -30,6 +31,17 @@ if (process.argv.length<3) {
 
 var program_name = process.argv[2];
 var program_args = process.argv.slice(2); //first item is the program name
+
+//Read STDIN, in one chunk
+ps.stdin.fill_input_callback = function() {
+	var stdin_text = nodefs.readFileSync('/dev/stdin').toString();
+
+	//Remove last linebreak, if any (to prevent an extranous empty last line)
+	stdin_text = stdin_text.replace(/\n$/,"");
+
+	var stdin_lines = stdin_text.split("\n");
+	return stdin_lines ;
+}
 
 //Try to load the program's source code
 var program_module = {} ;
