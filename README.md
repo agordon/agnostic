@@ -42,6 +42,17 @@ and returns a JSON representation of the commands:
     }
     ```
 
+2. Emulated operating system, implemented:
+    * Streams (emulating stdin/stdout/stderr)
+    * File Objects (functioning more like 'object storage' than posix files)
+    * File System (files, directories, stats). Partial, non-posix-compliant at all.
+    * Opeating-System class
+    * Process-State class (encapsulating per-process information)
+
+3. Emulated programs, implemented:
+    * date(1) - partial
+    * head(1)
+    * seq(1)
 
 ### Project Goals
 
