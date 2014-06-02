@@ -6,6 +6,19 @@
     * Chapter 7 - input and Output, Files and Command Evluation
     * Chapter 7 Section 7.8 - Evaluation Order and eval
 
+# To learn more about emulated UNIX os and implemented program:
+    * Experiment with emulated programs by running:
+
+        $ ./run_prog [PROGRAM] [PROGRAM PARAMETERS]
+
+        # Example, run the emulated implementation of 'seq 10'
+        $ ./run_prog seq 10
+
+        # Example, run the emulated implementatio of 'head -n5'
+        $ seq 10 | ./run_prog head -n 5
+    * Examine emulated implementation of `seq` and `head` (in `./src/node_modules/programs/{seq,head}.js`).
+    * Examine the necessary steps to start an emulated progran, in `./src/tools/run_progs.js` .
+
 # To learn more about the Javascript POSIX shell parser
 
 * The POSIX Parser uses [PEGjs](http://pegjs.majda.cz/) syntax.
