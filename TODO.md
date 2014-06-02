@@ -39,6 +39,8 @@ for later display of errors or information.
     * Support UTC (javascript's Date() supports it)
     * Use `strftime` in Javascript <https://github.com/samsonjs/strftime>,
     then  implement almost-full `date` format options.
+* TESTS:
+    * consolidate tests for programs with a testing framework (for stdin/argvs/exitcode/stdout/stderr)
 
 ## Build/infrastructure
 
