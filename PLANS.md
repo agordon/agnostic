@@ -39,6 +39,10 @@
     * SIGPIPE ?
     * Perhaps a singleton representing "current process" (asusming this will
     always be a "single process" operting system?
+    * Implement real files+pipes, with numeric file descriptors as entries to
+    a `ProcessState` array of files/streams.
+    * Each File/Stream have a callback when lines are added - allowed javascript callbacks
+    to visualization of information passing
 
 * Shell Execution Environment
     * See Section [2.12 Shell Excution ENV](http://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html#tag_02_12)
