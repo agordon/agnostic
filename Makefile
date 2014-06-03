@@ -54,6 +54,7 @@ check: test_object_utils \
        test_program_date \
        test_program_seq \
        test_program_head \
+       test_program_tail \
        test_parse_syntax \
        test_shell_descriptor
 
@@ -96,6 +97,10 @@ test_program_seq:
 .PHONY: test_program_head
 test_program_head:
 	$(NODEBIN) ./src/tests/program_head_tester.js
+
+.PHONY: test_program_tail
+test_program_tail:
+	$(NODEBIN) ./src/tests/program_tail_tester.js
 
 .PHONY: test_shell_descriptor
 test_shell_descriptor:
