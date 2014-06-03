@@ -41,6 +41,7 @@ for later display of errors or information.
     then  implement almost-full `date` format options.
 * TESTS:
     * consolidate tests for programs with a testing framework (for stdin/argvs/exitcode/stdout/stderr)
+* 'coreutil programs' - consolidate methods from XXX_file, XXX_stdin, XXX_content
 
 ## Build/infrastructure
 
