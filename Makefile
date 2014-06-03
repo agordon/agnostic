@@ -57,6 +57,7 @@ check: test_object_utils \
        test_program_tail \
        test_program_cat \
        test_program_cut \
+       test_pipe \
        test_parse_syntax \
        test_shell_descriptor
 
@@ -127,6 +128,10 @@ test_string_utils:
 .PHONY: test_getopt
 test_getopt:
 	$(NODEBIN) ./src/tests/getopt_tester.js
+
+.PHONY: test_pipe
+test_pipe:
+	$(NODEBIN) ./src/tests/pipe_tester.js
 
 .PHONY: ex1p ex2p ex3p ex4p ex5p
 ex1p:
