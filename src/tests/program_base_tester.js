@@ -31,12 +31,6 @@ function run_program_skip_step(step_to_skip)
 	if (step_to_skip!==1)
 		ps = new ProcessState.ProcessState(os,fs);
 	if (step_to_skip!==2)
-		ps.stdin = new Streams.InputStream();
-	if (step_to_skip!==3)
-		ps.stdout = new Streams.OutputStream();
-	if (step_to_skip!==4)
-		ps.stderr = new Streams.OutputStream();
-	if (step_to_skip!==5)
 		args.push("/bin/foo");
 
 	var prog = new ProgramBase.ProgramBase();
@@ -61,7 +55,7 @@ assert.strictEqual(ps.stderr.__shift_line(), "Not implemented");
 
 // Test 2
 // Check "run" with invalid parameters
-for (var i=1;i<=5;i++) {
+for (var i=1;i<=2;i++) {
 	assert.throws(
 		function() { run_program_skip_step(i) },
 		/ProgramExecutionError/
