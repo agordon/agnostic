@@ -80,36 +80,36 @@ assert.strictEqual ( tmp[3], "world" );
  * Test Input Stream
 *********************************************************************/
 var is = new Streams.InputStream();
-assert.strictEqual ( is.is_empty(), true);
+assert.strictEqual ( is.__is_empty(), true);
 
 //Use internal functions to set content
 is.__set_lines(["hello","world","foo","bar"]);
 //Then read input as a normal progra
-assert.strictEqual ( is.is_empty(), false);
+assert.strictEqual ( is.__is_empty(), false);
 assert.strictEqual ( is.get_line(), "hello" );
-assert.strictEqual ( is.is_empty(), false);
+assert.strictEqual ( is.__is_empty(), false);
 assert.strictEqual ( is.get_line(), "world" );
 assert.strictEqual ( is.get_line(), "foo" );
-assert.strictEqual ( is.is_empty(), false);
+assert.strictEqual ( is.__is_empty(), false);
 assert.strictEqual ( is.get_line(), "bar" );
-assert.strictEqual ( is.is_empty(), true); //end of input
+assert.strictEqual ( is.__is_empty(), true); //end of input
 
 //Test 'get_all_lines()'
 is.__set_lines(["hello","world"]);
-assert.strictEqual ( is.is_empty(), false);
+assert.strictEqual ( is.__is_empty(), false);
 assert.deepEqual(is.get_all_lines(), [ "hello", "world"] );
-assert.strictEqual ( is.is_empty(), true); //end of input
+assert.strictEqual ( is.__is_empty(), true); //end of input
 
 // Ensure multiple streams don't intermix
 var is2 = new Streams.InputStream();
 is.__set_lines(["hello"]);
 is2.__set_lines(["world"]);
 assert.strictEqual( is2.get_line(), "world" );
-assert.strictEqual ( is.is_empty(), false);
-assert.strictEqual ( is2.is_empty(), true);
+assert.strictEqual ( is.__is_empty(), false);
+assert.strictEqual ( is2.__is_empty(), true);
 assert.strictEqual( is.get_line(), "hello" );
-assert.strictEqual ( is.is_empty(), true);
-assert.strictEqual ( is2.is_empty(), true);
+assert.strictEqual ( is.__is_empty(), true);
+assert.strictEqual ( is2.__is_empty(), true);
 
 
 // Test InputStream with fill-input callback
@@ -122,13 +122,11 @@ is3.fill_input_callback = function() {
 		return [ "" + callback_count ];
 	return [];
 }
-assert.strictEqual( is3.is_empty(), false);
 assert.strictEqual( is3.get_line(), "3" );
 assert.strictEqual( is3.get_line(), "2" );
-assert.strictEqual( is3.is_empty(), false);
 assert.strictEqual( is3.get_line(), "1" );
-assert.strictEqual( is3.is_empty(), true);
 assert.strictEqual( is3.get_line(), null );
+assert.strictEqual( is3.__is_empty(), true);
 
 
 // Test two InputStreams with full-input callbacks
