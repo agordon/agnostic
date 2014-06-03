@@ -4,8 +4,7 @@
  * Released under GPLv3 or later.
  ****************************************/
 
-/* ProgramCat Class Tester
- */
+/* ProgramCat Class Tester */
 
 var cat_tests = [
 {
