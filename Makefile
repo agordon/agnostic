@@ -44,6 +44,7 @@ web:
 .PHONY: check
 check: test_object_utils \
        test_string_utils \
+       test_shellquote_utils \
        test_getopt \
        test_os_state \
        test_streams \
@@ -124,6 +125,10 @@ test_object_utils:
 .PHONY: test_string_utils
 test_string_utils:
 	$(NODEBIN) ./src/tests/string_utils_tester.js
+
+.PHONY: test_shellquote_utils
+test_shellquote_utils:
+	$(NODEBIN) ./src/tests/shellquote_utils_tester.js
 
 .PHONY: test_getopt
 test_getopt:
