@@ -33,8 +33,10 @@ var known_programs = [
 			"head",
 			"printf",
 			"seq",
+			"tac",
 			"tail",
 			"true",
+			"wc"
 		     ];
 
 for (var i in known_programs) {

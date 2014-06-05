@@ -1,0 +1,28 @@
+#!/bin/sh
+
+#   This file is part of UNIX Guide for the Perplexed project.
+#   Copyright (C) 2014 by Assaf Gordon <assafgordon@gmail.com>
+#   Released under GPLv3 or later
+
+if [ -z "$1" ] ; then
+echo "UNIX Guide for the Perplexed Project
+Shell Emulator
+
+Usage:
+  sh_c 'shell command'
+
+This debugging tool will parse the shell command,
+then execute it using Agnostic emulation programs.
+
+Example:
+    # run the javascript emulation of date,seq,tail
+    $ ./sh_c ' date ; seq 0 5 30 | tail -n +2 '
+
+    # Try true and echo
+    $ ./sh_c 'true && echo foo || echo bar'
+
+"
+exit 1
+fi
+
+nodejs ./src/tools/sh_c.js "$1"
