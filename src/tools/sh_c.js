@@ -28,9 +28,13 @@ var known_programs = [
 			"cat",
 			"cut",
 			"date",
+			"echo",
+			"false",
 			"head",
+			"printf",
 			"seq",
 			"tail",
+			"true",
 		     ];
 
 for (var i in known_programs) {
