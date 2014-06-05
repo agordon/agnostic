@@ -33,3 +33,13 @@ assert.ok ( !s.startsWith("f") ) ;
 assert.ok ( s.endsWith("") ) ;
 assert.ok ( !s.endsWith("f") ) ;
 
+
+/* Test trimWhitespace() */
+
+assert.strictEqual(  "hello".trimWhitespace(),		"hello" ) ;
+assert.strictEqual(  "hello   \t ".trimWhitespace(),	"hello" ) ;
+assert.strictEqual(  "\t  \t\thello".trimWhitespace(),	"hello" ) ;
+assert.strictEqual(  "  hello  ".trimWhitespace(),	"hello" ) ;
+assert.strictEqual(  "\thello\t".trimWhitespace(),	"hello" ) ;
+assert.strictEqual(  "hello world".trimWhitespace(),	"hello world" ) ;
+assert.strictEqual(  "  hello\t world  ".trimWhitespace(),"hello\t world" ) ;
