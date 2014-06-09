@@ -9,7 +9,7 @@ Shell Quotes Utillities Tester
 */
 
 var assert = require('assert');
-require("utils/shell_quotes");
+var str_utils = require("utils/string_utils");
 
 var split_tests = [
 [ "n1",  "hello world",					["hello","world"] ],
@@ -55,7 +55,7 @@ for (var i in split_tests) {
 	var expected = split_tests[i][2];
 
 	try {
-		var result = ShellQuotesSplit( input ) ;
+		var result = str_utils.splitShellquotes ( input ) ;
 		assert.deepEqual( result, expected );
 		console.log(name + " OK");
 	} catch (e) {
@@ -71,7 +71,7 @@ for (var i in removequotes_tests) {
 	var expected = removequotes_tests[i][2];
 
 	try {
-		var result = ShellQuotesRemoveQuotes( input ) ;
+		var result = str_utils.removeShellquotes ( input ) ;
 		assert.deepEqual( result, expected );
 		console.log(name + " OK");
 	} catch (e) {
