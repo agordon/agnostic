@@ -10,179 +10,181 @@
  */
 
 var assert = require('assert');
-require("utils/object_utils");
+var obutils_wrapper = require("utils/object_utils");
+
+_ = obutils_wrapper.ob_utils ;
 
 /* Test IsObjectEmpty */
-assert.ok( IsObjectEmpty( {} ) );
-assert.ok( !IsObjectEmpty( {"hello" : "world"} ) );
+assert.ok( _.IsObjectEmpty( {} ) );
+assert.ok( !_.IsObjectEmpty( {"hello" : "world"} ) );
 
 /* Test IsBoolean */
-assert.ok( IsBoolean( false ) );
-assert.ok( IsBoolean( true ) );
-assert.ok( !IsBoolean( 1 ) );
-assert.ok( !IsBoolean( {} ) );
-assert.ok( !IsBoolean( [] ) );
-assert.ok( !IsBoolean( null ) );
-assert.ok( !IsBoolean( "hello" ) );
-assert.ok( IsBoolean( 1==1 ) );
-assert.ok( IsBoolean( 1===1 ) );
+assert.ok( _.IsBoolean( false ) );
+assert.ok( _.IsBoolean( true ) );
+assert.ok( !_.IsBoolean( 1 ) );
+assert.ok( !_.IsBoolean( {} ) );
+assert.ok( !_.IsBoolean( [] ) );
+assert.ok( !_.IsBoolean( null ) );
+assert.ok( !_.IsBoolean( "hello" ) );
+assert.ok( _.IsBoolean( 1==1 ) );
+assert.ok( _.IsBoolean( 1===1 ) );
 
 /* Test VerifyBoolean */
-assert.doesNotThrow( function() { VerifyBoolean( false ); } );
-assert.throws(       function() { VerifyBoolean( "foo" ); } ) ;
+assert.doesNotThrow( function() { _.VerifyBoolean( false ); } );
+assert.throws(       function() { _.VerifyBoolean( "foo" ); } ) ;
 
 /* Test IsString */
-assert.ok( !IsString( false ) );
-assert.ok( !IsString( true ) );
-assert.ok( !IsString( 1 ) );
-assert.ok( !IsString( {} ) );
-assert.ok( !IsString( [] ) );
-assert.ok( !IsString( null ) );
-assert.ok( IsString( "hello" ) );
-assert.ok( IsString( 'hello' ) );
-assert.ok( IsString( "" ) );
-assert.ok( !IsString( 1==1 ) );
-assert.ok( !IsString( 1===1 ) );
+assert.ok( !_.IsString( false ) );
+assert.ok( !_.IsString( true ) );
+assert.ok( !_.IsString( 1 ) );
+assert.ok( !_.IsString( {} ) );
+assert.ok( !_.IsString( [] ) );
+assert.ok( !_.IsString( null ) );
+assert.ok( _.IsString( "hello" ) );
+assert.ok( _.IsString( 'hello' ) );
+assert.ok( _.IsString( "" ) );
+assert.ok( !_.IsString( 1==1 ) );
+assert.ok( !_.IsString( 1===1 ) );
 
 /* Test VerifyString */
-assert.doesNotThrow( function() { VerifyString( "foo" ); } );
-assert.throws(       function() { VerifyString( false ); } ) ;
+assert.doesNotThrow( function() { _.VerifyString( "foo" ); } );
+assert.throws(       function() { _.VerifyString( false ); } ) ;
 
 /* Test IsNumber */
-assert.ok( !IsNumber( false ) );
-assert.ok( !IsNumber( true ) );
-assert.ok( IsNumber( 1 ) );
-assert.ok( IsNumber( 1.43 ) );
-assert.ok( IsNumber( -0.43e-9 ) );
-assert.ok( !IsNumber( {} ) );
-assert.ok( !IsNumber( [] ) );
-assert.ok( !IsNumber( null ) );
-assert.ok( !IsNumber( "hello" ) );
-assert.ok( !IsNumber( 'hello' ) );
-assert.ok( !IsNumber( "" ) );
-assert.ok( !IsNumber( 1==1 ) );
-assert.ok( !IsNumber( 1===1 ) );
+assert.ok( !_.IsNumber( false ) );
+assert.ok( !_.IsNumber( true ) );
+assert.ok( _.IsNumber( 1 ) );
+assert.ok( _.IsNumber( 1.43 ) );
+assert.ok( _.IsNumber( -0.43e-9 ) );
+assert.ok( !_.IsNumber( {} ) );
+assert.ok( !_.IsNumber( [] ) );
+assert.ok( !_.IsNumber( null ) );
+assert.ok( !_.IsNumber( "hello" ) );
+assert.ok( !_.IsNumber( 'hello' ) );
+assert.ok( !_.IsNumber( "" ) );
+assert.ok( !_.IsNumber( 1==1 ) );
+assert.ok( !_.IsNumber( 1===1 ) );
 
 /* Test VerifyNumber */
-assert.doesNotThrow( function() { VerifyNumber( 32 ); } );
-assert.doesNotThrow( function() { VerifyNumber( 32.4 ); } );
-assert.throws(       function() { VerifyNumber( false ); } ) ;
+assert.doesNotThrow( function() { _.VerifyNumber( 32 ); } );
+assert.doesNotThrow( function() { _.VerifyNumber( 32.4 ); } );
+assert.throws(       function() { _.VerifyNumber( false ); } ) ;
 
 /* Test IsInteger */
-assert.ok( !IsInteger( false ) );
-assert.ok( !IsInteger( true ) );
-assert.ok( IsInteger( 1 ) );
-assert.ok( IsInteger( 0123 ) );
-assert.ok( IsInteger( 0x664 ) );
-assert.ok( IsInteger( 1 ) );
-assert.ok( IsInteger( 0 ) );
-assert.ok( IsInteger( -43 ) );
-assert.ok( !IsInteger( 1.43 ) );
-assert.ok( !IsInteger( -0.43e-9 ) );
-assert.ok( !IsInteger( {} ) );
-assert.ok( !IsInteger( [] ) );
-assert.ok( !IsInteger( null ) );
-assert.ok( !IsInteger( "hello" ) );
-assert.ok( !IsInteger( 'hello' ) );
-assert.ok( !IsInteger( "" ) );
-assert.ok( !IsInteger( 1==1 ) );
-assert.ok( !IsInteger( 1===1 ) );
+assert.ok( !_.IsInteger( false ) );
+assert.ok( !_.IsInteger( true ) );
+assert.ok( _.IsInteger( 1 ) );
+assert.ok( _.IsInteger( 0123 ) );
+assert.ok( _.IsInteger( 0x664 ) );
+assert.ok( _.IsInteger( 1 ) );
+assert.ok( _.IsInteger( 0 ) );
+assert.ok( _.IsInteger( -43 ) );
+assert.ok( !_.IsInteger( 1.43 ) );
+assert.ok( !_.IsInteger( -0.43e-9 ) );
+assert.ok( !_.IsInteger( {} ) );
+assert.ok( !_.IsInteger( [] ) );
+assert.ok( !_.IsInteger( null ) );
+assert.ok( !_.IsInteger( "hello" ) );
+assert.ok( !_.IsInteger( 'hello' ) );
+assert.ok( !_.IsInteger( "" ) );
+assert.ok( !_.IsInteger( 1==1 ) );
+assert.ok( !_.IsInteger( 1===1 ) );
 
 /* Test VerifyInteger */
-assert.doesNotThrow( function() { VerifyInteger( 32 ); } );
-assert.throws(       function() { VerifyInteger( "foo" ); } ) ;
-assert.throws(       function() { VerifyInteger( 43.3 ); } ) ;
+assert.doesNotThrow( function() { _.VerifyInteger( 32 ); } );
+assert.throws(       function() { _.VerifyInteger( "foo" ); } ) ;
+assert.throws(       function() { _.VerifyInteger( 43.3 ); } ) ;
 
 /* Test IsStrictDecimalIntegerValue */
-assert.ok ( IsStrictDecimalIntegerValue(1) ) ;
-assert.ok ( IsStrictDecimalIntegerValue("1") ) ;
-assert.ok ( ! IsStrictDecimalIntegerValue(1.4) ) ;
-assert.ok ( ! IsStrictDecimalIntegerValue("1.4") ) ;
-assert.ok ( IsStrictDecimalIntegerValue(0) ) ;
-assert.ok ( IsStrictDecimalIntegerValue("0") ) ;
-assert.ok ( IsStrictDecimalIntegerValue("-32") ) ;
-assert.ok ( IsStrictDecimalIntegerValue(-32) ) ;
-assert.ok ( IsStrictDecimalIntegerValue("  32") ) ;
-assert.ok ( ! IsStrictDecimalIntegerValue("  32  ") ) ;
-assert.ok ( ! IsStrictDecimalIntegerValue("5 apples") ) ;
-assert.ok ( ! IsStrictDecimalIntegerValue("5.5") ) ;
-assert.ok ( ! IsStrictDecimalIntegerValue([]) ) ;
-assert.ok ( ! IsStrictDecimalIntegerValue({}) ) ;
-assert.ok ( IsStrictDecimalIntegerValue(0x10) ) ;
-assert.ok ( !IsStrictDecimalIntegerValue("0x10") ) ;
+assert.ok ( _.IsStrictDecimalIntegerValue(1) ) ;
+assert.ok ( _.IsStrictDecimalIntegerValue("1") ) ;
+assert.ok ( ! _.IsStrictDecimalIntegerValue(1.4) ) ;
+assert.ok ( ! _.IsStrictDecimalIntegerValue("1.4") ) ;
+assert.ok ( _.IsStrictDecimalIntegerValue(0) ) ;
+assert.ok ( _.IsStrictDecimalIntegerValue("0") ) ;
+assert.ok ( _.IsStrictDecimalIntegerValue("-32") ) ;
+assert.ok ( _.IsStrictDecimalIntegerValue(-32) ) ;
+assert.ok ( _.IsStrictDecimalIntegerValue("  32") ) ;
+assert.ok ( ! _.IsStrictDecimalIntegerValue("  32  ") ) ;
+assert.ok ( ! _.IsStrictDecimalIntegerValue("5 apples") ) ;
+assert.ok ( ! _.IsStrictDecimalIntegerValue("5.5") ) ;
+assert.ok ( ! _.IsStrictDecimalIntegerValue([]) ) ;
+assert.ok ( ! _.IsStrictDecimalIntegerValue({}) ) ;
+assert.ok ( _.IsStrictDecimalIntegerValue(0x10) ) ;
+assert.ok ( !_.IsStrictDecimalIntegerValue("0x10") ) ;
 
 /* Test IsStrictFloatNumber */
-assert.ok ( IsStrictFloatValue(1) ) ;
-assert.ok ( IsStrictFloatValue("1") ) ;
-assert.ok ( IsStrictFloatValue(1.4) ) ;
-assert.ok ( IsStrictFloatValue("1.4") ) ;
-assert.ok ( IsStrictFloatValue(0) ) ;
-assert.ok ( IsStrictFloatValue("0") ) ;
-assert.ok ( IsStrictFloatValue("-32") ) ;
-assert.ok ( IsStrictFloatValue(-32) ) ;
-assert.ok ( IsStrictFloatValue("  32") ) ;
-assert.ok ( ! IsStrictFloatValue("  32  ") ) ;
-assert.ok ( ! IsStrictFloatValue("5 apples") ) ;
-assert.ok ( ! IsStrictFloatValue("5.5 apples") ) ;
-assert.ok ( IsStrictFloatValue("5.5") ) ;
-assert.ok ( ! IsStrictFloatValue([]) ) ;
-assert.ok ( ! IsStrictFloatValue({}) ) ;
-assert.ok ( IsStrictFloatValue(0x10) ) ;
-assert.ok ( !IsStrictFloatValue("0x10") ) ;
-assert.ok ( IsStrictFloatValue(1.4e4) ) ;
-assert.ok ( IsStrictFloatValue("1.4e4") ) ;
+assert.ok ( _.IsStrictFloatValue(1) ) ;
+assert.ok ( _.IsStrictFloatValue("1") ) ;
+assert.ok ( _.IsStrictFloatValue(1.4) ) ;
+assert.ok ( _.IsStrictFloatValue("1.4") ) ;
+assert.ok ( _.IsStrictFloatValue(0) ) ;
+assert.ok ( _.IsStrictFloatValue("0") ) ;
+assert.ok ( _.IsStrictFloatValue("-32") ) ;
+assert.ok ( _.IsStrictFloatValue(-32) ) ;
+assert.ok ( _.IsStrictFloatValue("  32") ) ;
+assert.ok ( ! _.IsStrictFloatValue("  32  ") ) ;
+assert.ok ( ! _.IsStrictFloatValue("5 apples") ) ;
+assert.ok ( ! _.IsStrictFloatValue("5.5 apples") ) ;
+assert.ok ( _.IsStrictFloatValue("5.5") ) ;
+assert.ok ( ! _.IsStrictFloatValue([]) ) ;
+assert.ok ( ! _.IsStrictFloatValue({}) ) ;
+assert.ok ( _.IsStrictFloatValue(0x10) ) ;
+assert.ok ( !_.IsStrictFloatValue("0x10") ) ;
+assert.ok ( _.IsStrictFloatValue(1.4e4) ) ;
+assert.ok ( _.IsStrictFloatValue("1.4e4") ) ;
 
 
 /* Test IsObject */
-assert.ok( IsObject( {} ) );
-assert.ok( IsObject( { "hello" : "world" } ) );
-assert.ok( IsObject( { "hello" : "world", "foo" : "bar" } ) );
+assert.ok( _.IsObject( {} ) );
+assert.ok( _.IsObject( { "hello" : "world" } ) );
+assert.ok( _.IsObject( { "hello" : "world", "foo" : "bar" } ) );
 
 /* Test IsObject on non-objects */
-assert.ok( ! IsObject( 4 ) );
-assert.ok( ! IsObject( "Hello" ) );
-assert.ok( ! IsObject( [1,2,3,4,5] ) );
+assert.ok( ! _.IsObject( 4 ) );
+assert.ok( ! _.IsObject( "Hello" ) );
+assert.ok( ! _.IsObject( [1,2,3,4,5] ) );
 
 /* Test VerifyObject */
-assert.doesNotThrow( function() { VerifyObject( { "hello" : "world" } ) } );
-assert.throws(       function() { VerifyObject( "hello" ); } ) ;
+assert.doesNotThrow( function() { _.VerifyObject( { "hello" : "world" } ) } );
+assert.throws(       function() { _.VerifyObject( "hello" ); } ) ;
 
 /* Test IsArray */
-assert.ok( IsArray( [] ) );
-assert.ok( IsArray( [1,2,3,4,5] ) );
-assert.ok( IsArray( [ {"hello":"world"}, {"foo":"bar"} ] ) );
+assert.ok( _.IsArray( [] ) );
+assert.ok( _.IsArray( [1,2,3,4,5] ) );
+assert.ok( _.IsArray( [ {"hello":"world"}, {"foo":"bar"} ] ) );
 
 /* Test IsArray on non-arrays */
-assert.ok( ! IsArray( 4 ) );
-assert.ok( ! IsArray( "Hello" ) );
-assert.ok( ! IsArray( {} ) ) ;
-assert.ok( ! IsArray( {"hello":"world"} ) )  ;
+assert.ok( ! _.IsArray( 4 ) );
+assert.ok( ! _.IsArray( "Hello" ) );
+assert.ok( ! _.IsArray( {} ) ) ;
+assert.ok( ! _.IsArray( {"hello":"world"} ) )  ;
 
 /* Test VerifyArray */
-assert.doesNotThrow( function() { VerifyArray( [ 1,2,3,5,6] ); } ) ;
-assert.throws      ( function() { VerifyArray( "hello" ); } ) ;
+assert.doesNotThrow( function() { _.VerifyArray( [ 1,2,3,5,6] ); } ) ;
+assert.throws      ( function() { _.VerifyArray( "hello" ); } ) ;
 
 /* Test VerifyAllowedKeys */
 var data1 = { "hello":"world", "foo": [1,2,3,4,5], "bar": { "abc":"def" } } ;
 var data2 = { } ;
 var data3 = { "hello":"world" } ;
-assert.doesNotThrow( function() { VerifyAllowedKeys( data1, ["hello","foo","bar"] ) ; } ) ;
-assert.doesNotThrow( function() { VerifyAllowedKeys( data1, ["hello","foo","bar","baz","bee"] ) ; } ) ;
-assert.throws      ( function() { VerifyAllowedKeys( data1, ["foo","bar"] ) ; } ) ;
-assert.throws      ( function() { VerifyAllowedKeys( "hello", ["foo","bar"] ) ; } ) ;
-assert.doesNotThrow( function() { VerifyAllowedKeys( data2, ["hello","foo","bar"] ) ; } ) ;
-assert.doesNotThrow( function() { VerifyAllowedKeys( data3, ["hello","foo","bar"] ) ; } ) ;
+assert.doesNotThrow( function() { _.VerifyAllowedKeys( data1, ["hello","foo","bar"] ) ; } ) ;
+assert.doesNotThrow( function() { _.VerifyAllowedKeys( data1, ["hello","foo","bar","baz","bee"] ) ; } ) ;
+assert.throws      ( function() { _.VerifyAllowedKeys( data1, ["foo","bar"] ) ; } ) ;
+assert.throws      ( function() { _.VerifyAllowedKeys( "hello", ["foo","bar"] ) ; } ) ;
+assert.doesNotThrow( function() { _.VerifyAllowedKeys( data2, ["hello","foo","bar"] ) ; } ) ;
+assert.doesNotThrow( function() { _.VerifyAllowedKeys( data3, ["hello","foo","bar"] ) ; } ) ;
 
 /* Test VerifyOneKey */
-assert.throws      ( function() { VerifyOneKey ( data1 ) ; } ) ;
-assert.throws      ( function() { VerifyOneKey ( data2 ) ; } ) ;
-assert.doesNotThrow( function() { VerifyOneKey ( data3 ) ; } ) ;
-assert.throws      ( function() { VerifyOneKey ( "hello" ) ; } ) ;
-assert.throws      ( function() { VerifyOneKey ( [1,2,3,4,5] ) ; } ) ;
+assert.throws      ( function() { _.VerifyOneKey ( data1 ) ; } ) ;
+assert.throws      ( function() { _.VerifyOneKey ( data2 ) ; } ) ;
+assert.doesNotThrow( function() { _.VerifyOneKey ( data3 ) ; } ) ;
+assert.throws      ( function() { _.VerifyOneKey ( "hello" ) ; } ) ;
+assert.throws      ( function() { _.VerifyOneKey ( [1,2,3,4,5] ) ; } ) ;
 
 /* Test GetOneKey */
-assert.strictEqual(GetOneKey(data3), "hello") ;
-assert.throws      ( function() { GetOneKey ( data1 ) ; } ) ;
-assert.throws      ( function() { GetOneKey ( data2 ) ; } ) ;
+assert.strictEqual(_.GetOneKey(data3), "hello") ;
+assert.throws      ( function() { _.GetOneKey ( data1 ) ; } ) ;
+assert.throws      ( function() { _.GetOneKey ( data2 ) ; } ) ;
 
 console.log("Shell-Executor Helper Functions - OK");
