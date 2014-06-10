@@ -43,3 +43,14 @@ assert.strictEqual(  str_utils.trimWhitespace("  hello  "),	"hello" ) ;
 assert.strictEqual(  str_utils.trimWhitespace("\thello\t"),	"hello" ) ;
 assert.strictEqual(  str_utils.trimWhitespace("hello world"),	"hello world" ) ;
 assert.strictEqual(  str_utils.trimWhitespace("  hello\t world  "),"hello\t world" ) ;
+
+
+/* Test unbackslash */
+assert.strictEqual ( str_utils.unbackslash("hello"),		"hello" );
+assert.strictEqual ( str_utils.unbackslash("h\tello"),		"h\tello" );
+assert.strictEqual ( str_utils.unbackslash("h\\tello"),		"h\tello" );
+assert.strictEqual ( str_utils.unbackslash("h\nello"),		"h\nello" );
+assert.strictEqual ( str_utils.unbackslash("h\\nello"),		"h\nello" );
+assert.strictEqual ( str_utils.unbackslash("h\\\\ello"),	"h\\ello" );
+assert.strictEqual ( str_utils.unbackslash("hello\\"),		"hello\\" );
+
