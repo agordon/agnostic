@@ -5,6 +5,7 @@
  ****************************************/
 
 /* ProgramCut Class Tester */
+"use strict";
 
 var stdin_ex1 = [1,2,3,4,5,6,7,8,9].join("\t") + "\n";
 var stdin_ex2 = "123456789\n";
@@ -164,10 +165,11 @@ var cut_tests = [
 },
 ];
 
-require('utils/program_test_framework');
+var run_program_tests = require('utils/program_test_framework');
+var FileSystem = require('os/filesystem');
 
 //Create a filesystem, with one file (/tmp/foo.txt)
-var fs = new FileSystem.FileSystem();
+var fs = new FileSystem();
 fs.mkdir("/tmp");
 var fl = fs.openfile("/tmp/foo.txt",true);
 fl.write(["a","b","c","d","e","f","g","h","i","j"]);
@@ -176,4 +178,4 @@ fl=null;
 var ProgramCut = require('programs/cut');
 
 // run tests
-run_program_tests("cut",ProgramCut.ProgramCut, cut_tests,fs);
+run_program_tests("cut",ProgramCut, cut_tests,fs);
