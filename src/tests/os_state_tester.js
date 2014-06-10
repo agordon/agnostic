@@ -7,14 +7,11 @@
 /* OS encapsulation Tester
  *
  */
+"use strict";
 
-var count_pass = 0 ;
-var count_fail = 0 ;
-
-require('utils/object_utils');
 var OperatingSystem = require('os/os_state');
 
-var os = new OperatingSystem.OperatingSystem(null); //OS without a FileSystem
+var os = new OperatingSystem();
 
 console.log("OS time = " + os.time() );
 
