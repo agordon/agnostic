@@ -7,15 +7,18 @@
 /* Stream encapsulation Tester
  *
  */
+"use strict";
 
 var assert = require('assert');
-require('utils/object_utils');
+var ob_utils_wrapper = require('utils/object_utils');
+var ob_utils = ob_utils_wrapper.ob_utils;
 var Streams = require('os/streams');
 
 /*********************************************************************
  * Test Generic Stream - Internal functions
 *********************************************************************/
 var gs = new Streams.GenericStream();
+
 
 // Test 1 - push_line
 gs.__clear_lines();
@@ -33,6 +36,7 @@ gs.__clear_lines();
 assert.strictEqual ( gs.__is_empty(), true );
 assert.strictEqual ( gs.__shift_line(), null );
 
+
 // Test 3 push_line / shift_line
 gs.__clear_lines();
 gs.__push_line("hello");
@@ -45,6 +49,7 @@ assert.equal( gs.__shift_line(), "foo");
 assert.equal( gs.__shift_line(), "bar");
 assert.strictEqual ( gs.__shift_line(), null );
 
+
 // Test 4 - push_lines
 gs.__clear_lines();
 gs.__push_lines(["hello","foo","bar","world"]);
@@ -54,6 +59,7 @@ assert.equal( gs.__shift_line(), "bar");
 assert.equal( gs.__shift_line(), "world");
 assert.strictEqual ( gs.__shift_line(), null );
 
+
 //Test 5 - set_lines
 gs.__clear_lines();
 gs.__push_line("hello");
@@ -62,13 +68,14 @@ assert.equal( gs.__shift_line(), "foo");
 assert.equal( gs.__shift_line(), "bar");
 assert.strictEqual ( gs.__shift_line(), null );
 
+
 //Test 6 - Get_lines
 gs.__clear_lines();
 gs.__push_lines(["hello","foo","bar","world"]);
 var tmp = gs.__get_lines();
 assert.strictEqual ( gs.__is_empty(), true );
 assert.strictEqual ( gs.__shift_line(), null );
-VerifyArray(tmp);
+ob_utils.VerifyArray(tmp);
 assert.strictEqual ( tmp[0], "hello" );
 assert.strictEqual ( tmp[1], "foo" );
 assert.strictEqual ( tmp[2], "bar" );
@@ -155,7 +162,7 @@ assert.deepEqual ( os2.__get_lines(), [] );
 
 //Use internal methods to get the lines
 var tmp = os.__get_lines();
-VerifyArray(tmp);
+ob_utils.VerifyArray(tmp);
 assert.strictEqual ( tmp[0], "hello" );
 assert.strictEqual ( tmp[1], "world" );
 assert.strictEqual ( tmp[2], "foo" );
@@ -165,7 +172,7 @@ assert.strictEqual ( tmp[3], "bar" );
 os.put_line("hello");
 os.put_lines(["1","2","3"]);
 var tmp = os.__get_lines();
-VerifyArray(tmp);
+ob_utils.VerifyArray(tmp);
 assert.deepEqual(tmp, ["hello","1","2","3"]);
 
 
