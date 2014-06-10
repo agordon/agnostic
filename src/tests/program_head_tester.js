@@ -6,6 +6,7 @@
 
 /* ProgramHead Class Tester
  */
+"use strict";
 
 var head_tests = [
 {
@@ -101,10 +102,11 @@ var head_tests = [
 }
 ];
 
-require('utils/program_test_framework');
+var run_program_tests = require('utils/program_test_framework');
+var FileSystem = require('os/filesystem');
 
 //Create a filesystem, with one file (/tmp/foo.txt)
-var fs = new FileSystem.FileSystem();
+var fs = new FileSystem();
 fs.mkdir("/tmp");
 var fl = fs.openfile("/tmp/foo.txt",true);
 fl.write(["a","b","c","d","e","f","g","h","i","j"]);
@@ -113,4 +115,4 @@ fl=null;
 var ProgramHead = require('programs/head');
 
 // run tests
-run_program_tests("head",ProgramHead.ProgramHead, head_tests,fs);
+run_program_tests("head",ProgramHead, head_tests,fs);
