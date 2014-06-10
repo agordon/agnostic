@@ -7,15 +7,16 @@
 /* ProcessState encapsulation Tester */
 
 var assert = require('assert');
-require('utils/object_utils');
+var obj_utils_wrapper = require("utils/object_utils");
+var ob_utils = obj_utils_wrapper.ob_utils;
 var OperatingSystem = require('os/os_state');
 var FileSystem = require('os/filesystem');
 var ProcessState = require('os/process_state');
 
-var os = new OperatingSystem.OperatingSystem();
-var fs = new FileSystem.FileSystem();
+var os = new OperatingSystem();
+var fs = new FileSystem();
 
-var ps = new ProcessState.ProcessState(os,fs);
+var ps = new ProcessState(os,fs);
 
 var pid  = ps.getpid();
 var ppid = ps.getppid();
@@ -58,7 +59,7 @@ ps.unsetenv("foo");
 ps.setenv("hello","world",false);
 ps.setenv("orange","black",false);
 var env = ps.environ();
-VerifyAllowedKeys(env, ["hello", "orange"]);
+ob_utils.VerifyAllowedKeys(env, ["hello", "orange"]);
 assert.equal( env["orange"], "black");
 assert.equal( env["hello"], "world");
 // Ensure Processes can't change environment directly
