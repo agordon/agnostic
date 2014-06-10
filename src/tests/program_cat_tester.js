@@ -5,6 +5,7 @@
  ****************************************/
 
 /* ProgramCat Class Tester */
+"use strict";
 
 var cat_tests = [
 {
@@ -93,10 +94,11 @@ var cat_tests = [
 },
 ];
 
-require('utils/program_test_framework');
+var run_program_tests = require('utils/program_test_framework');
+var FileSystem = require('os/filesystem');
 
 //Create a filesystem, with one file (/tmp/foo.txt)
-var fs = new FileSystem.FileSystem();
+var fs = new FileSystem();
 fs.mkdir("/tmp");
 
 var fl2 = fs.openfile("/tmp/foo2.txt",true);
@@ -107,4 +109,4 @@ fl3.write(["","","4"]);
 var ProgramCat = require('programs/cat');
 
 // run tests
-run_program_tests("cat",ProgramCat.ProgramCat, cat_tests,fs);
+run_program_tests("cat",ProgramCat, cat_tests,fs);
