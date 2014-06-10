@@ -3,26 +3,23 @@
  * Copyright (C) 2014 by Assaf Gordon <assafgordon@gmail.com>
  * Released under GPLv3 or later.
  ****************************************/
+"use strict";
 
 /* Generic Program Runner */
 
 var nodefs = require('fs');
 var assert = require('assert');
-require('utils/object_utils');
-require('utils/time_utils');
+var ob_utils = require('utils/object_utils');
+var time_utils = require('utils/time_utils');
 var OperatingSystem = require('os/os_state');
 var FileSystem = require('os/filesystem');
 var Streams = require('os/streams');
 var ProcessState = require('os/process_state');
 var ProgramBase = require('programs/program_base');
 
-var os = new OperatingSystem.OperatingSystem();
-var fs = new FileSystem.FileSystem();
-var ps = new ProcessState.ProcessState(os,fs);
-ps.stdin = new Streams.InputStream();
-ps.stdout = new Streams.OutputStream();
-ps.stderr = new Streams.OutputStream();
-
+var os = new OperatingSystem();
+var fs = new FileSystem();
+var ps = new ProcessState(os,fs);
 
 if (process.argv.length<3) {
 	console.error("Missing Javascript program name to run (programs in ./src/node_modules/progams)");
@@ -54,12 +51,7 @@ try {
 	process.exit(1);
 }
 
-//Ugly Hack:
-//	It is implicitly assumed that each program's source code
-//	exports ONE key into the modules.export, and that key is
-//	the program's class (or construtor function).
-var k = GetOneKey(program_module);
-var program = new program_module[k]();
+var program = new program_module();
 
 try {
 	var exit_code = program.run(ps,program_args);
