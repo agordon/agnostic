@@ -5,6 +5,7 @@
  * Copyright (C) 2014 by Assaf Gordon <assafgordon@gmail.com>
  * Released under GPLv3 or later.
  ****************************************/
+"use strict";
 
 /* This script takes a shell command line as parameter(s),
    parses it, then uses the "shell_descriptor" module to convert
@@ -19,14 +20,13 @@ if (input === "") {
 	process.exit(1);
 }
 
-require("utils/object_utils");
-require("utils/shell_parser_loader");
+var load_shell_parser = require("utils/shell_parser_loader");
 var parser = load_shell_parser();
-require("shell/shell_descriptor");
+var DescribeShellCommand = require("shell/shell_descriptor");
 
 //try {
 	var shell_parse_tree = parser.parse(input);
-	var desc = Shell_Descriptor.DescribeShellCommand(shell_parse_tree);
+	var desc = DescribeShellCommand(shell_parse_tree);
 
 	console.log("-- Input Command:");
 	console.log(input);
