@@ -5,14 +5,15 @@
  * Copyright (C) 2014 by Assaf Gordon <assafgordon@gmail.com>
  * Released under GPLv3 or later.
  ****************************************/
+"use strict";
 
 /*
 This script takes a shell command line as parameter(s),
 parses it, and executes it.
 */
 
-require('utils/object_utils');
-require('utils/time_utils');
+var ob_utils = require('utils/object_utils');
+var time_utils = require('utils/time_utils');
 var nodefs = require('fs');
 var assert = require('assert');
 var OperatingSystem = require('os/os_state');
@@ -41,10 +42,8 @@ var known_programs = [
 
 for (var i in known_programs) {
 	var progname = known_programs[i];
-	var prog_mod = require('programs/' + progname + ".js");
-	var prog_key = GetOneKey(prog_mod);
-	var prog_function = prog_mod[prog_key]; //the function used with "New" to create the program's object
-	program_functions[progname] = prog_function;
+	var prog_module = require('programs/' + progname + ".js");
+	program_functions[progname] = prog_module;
 }
 
 var input = require("utils/single_cmdline_parameter");
@@ -54,9 +53,9 @@ if (input === "") {
 }
 
 /* Setup the process-state ("current" process will be the shell executor) */
-var os = new OperatingSystem.OperatingSystem();
-var fs = new FileSystem.FileSystem();
-var ps = new ProcessState.ProcessState(os,fs);
+var os = new OperatingSystem();
+var fs = new FileSystem();
+var ps = new ProcessState(os,fs);
 
 //Read STDIN, in one chunk
 ps.stdin.fill_input_callback = function() {
