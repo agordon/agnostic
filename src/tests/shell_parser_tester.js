@@ -8,16 +8,18 @@
  * This test script ONLY checks acceptance/rejection of shell syntax.
  * It does not check the data object generated from the parser.
  */
+"use strict";
 
 var count_pass = 0 ;
 var count_fail = 0 ;
 var seen_tests = {};
 
-require('utils/object_utils');
-require('utils/shell_parser_loader');
+var ob_utils = require('utils/object_utils');
+var load_shell_parser = require('utils/shell_parser_loader');
 
-/* Load the tests. This creates two global variables: 'tests' and 'rules' */
-require('./shell_syntax_tests.js');
+var shell_syntax_tests = require('./shell_syntax_tests.js');
+var tests = shell_syntax_tests.tests;
+var rules = shell_syntax_tests.parser_rules;
 
 var start_rules = Object.keys(rules);
 var parser = load_shell_parser({ "allowedStartRules" : start_rules });
