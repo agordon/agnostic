@@ -1,10 +1,10 @@
 #!/usr/bin/env nodejs
-
 /****************************************
  * This file is part of UNIX Guide for the Perplexed project.
  * Copyright (C) 2014 by Assaf Gordon <assafgordon@gmail.com>
  * Released under GPLv3 or later.
  ****************************************/
+"use strict";
 
 
 /* This script takes a shell command line as parameter(s),
@@ -50,7 +50,7 @@ if (input === "") {
 	process.exit(1);
 }
 
-require("utils/shell_parser_loader");
+var load_shell_parser = require("utils/shell_parser_loader");
 var parser = load_shell_parser();
 
 try {
