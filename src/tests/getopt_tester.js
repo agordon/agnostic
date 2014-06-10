@@ -16,7 +16,7 @@ GetOpt module:
 
 var assert = require('assert');
 
-var mod_getopt = require('utils/posix-getopt');
+var POSIX_Getopt_Parser = require('utils/posix-getopt');
 var parser, option;
 
 /* Test "getopt" module,
@@ -28,7 +28,7 @@ function test_getopt_head(params)
 {
 	console.log("parsing command line: '" + params.join(" ") +"'");
 
-	var parser = new mod_getopt.BasicParser(':c:(bytes)n:(lines)q(quiet)\u1000(silent)v(verbose)', params );
+	var parser = new POSIX_Getopt_Parser(':c:(bytes)n:(lines)q(quiet)\u1000(silent)v(verbose)', params );
 
 	var result = {} ;
 
