@@ -18,14 +18,14 @@
  *      The rule name must match the names in 'posix_shell.pegjs' .
  *      See 'rules' variable for list of valid starting rules.
  */
-
+"use strict";
 
 /* List of rules, must be the same as the rules
  * listed in "posix_shell.pegjs".
  * For each rule (the key), the subsequent rules to be also tested are listed.
  * The hierarchial order must match 'posix_shell.pegjs'.
  */
-rules = {
+var rules = {
 	'Non_Operator_UnquotedCharacters' : 'Tokens_Command',
 	'SingleQuotedString' : 'Tokens_Command',
 	'DoubleQuotedString' : 'Tokens_Command',
@@ -56,7 +56,7 @@ rules = {
 	'Compound_Command_Currentshell' : 'Command'
 };
 
-tests = [
+var tests = [
 /* test-name,	test-input,	should-be-accepted,		start-rule */
 
 /* Single words, without any quoted characters, accpted in the context of a command. */
@@ -472,3 +472,10 @@ tests = [
 /* TODO: test expansion with assignment, redirection */
 
 ];
+
+module.exports = {
+			"tests" : tests,
+			"parser_rules": rules
+		};
+
+

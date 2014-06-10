@@ -13,19 +13,20 @@
  * can be handled by the Shell-Descriptor (which is the reference implementation
  * of handling the parse-tree).
  */
+"use strict";
 
 var count_pass = 0 ;
 var count_fail = 0 ;
 
-require('utils/object_utils');
-require('utils/shell_parser_loader');
-require('shell/shell_descriptor');
+var ob_utils = require('utils/object_utils');
+var load_shell_parser = require('utils/shell_parser_loader');
+var describeShellCommand = require('shell/shell_descriptor');
 
 /* Load the tests. This creates two global variables: 'tests' and 'rules' */
-require('./shell_syntax_tests.js');
+var shell_syntax_tests = require('./shell_syntax_tests.js');
+var tests = shell_syntax_tests.tests;
 
 var parser = load_shell_parser();
-
 
 for (var t in tests)
 {
@@ -40,7 +41,7 @@ for (var t in tests)
 
 	try {
 		var parse_tree = parser.parse(input);
-		var desc = Shell_Descriptor.DescribeShellCommand(parse_tree);
+		var desc = describeShellCommand(parse_tree);
 
 		console.log(name + " OK");
 		count_pass++;
