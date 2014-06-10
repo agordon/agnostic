@@ -5,6 +5,7 @@
  ****************************************/
 
 /* ProgramTail Class Tester */
+"use strict";
 
 var tail_tests = [
 {
@@ -112,10 +113,11 @@ var tail_tests = [
 }
 ];
 
-require('utils/program_test_framework');
+var run_program_tests = require('utils/program_test_framework');
+var FileSystem = require('os/filesystem');
 
 //Create a filesystem, with one file (/tmp/foo.txt)
-var fs = new FileSystem.FileSystem();
+var fs = new FileSystem();
 fs.mkdir("/tmp");
 var fl = fs.openfile("/tmp/foo.txt",true);
 fl.write(["a","b","c","d","e","f","g","h","i","j","k"]);
@@ -124,4 +126,4 @@ fl=null;
 var ProgramTail = require('programs/tail');
 
 // run tests
-run_program_tests("tail",ProgramTail.ProgramTail, tail_tests,fs);
+run_program_tests("tail",ProgramTail, tail_tests,fs);
