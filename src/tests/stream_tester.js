@@ -10,8 +10,7 @@
 "use strict";
 
 var assert = require('assert');
-var ob_utils_wrapper = require('utils/object_utils');
-var ob_utils = ob_utils_wrapper.ob_utils;
+var ob_utils = require('utils/object_utils');
 var Streams = require('os/streams');
 
 /*********************************************************************

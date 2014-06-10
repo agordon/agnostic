@@ -10,8 +10,7 @@
 "use strict";
 
 var assert = require('assert');
-var obj_utils_wrapper = require("utils/object_utils");
-var ob_utils = obj_utils_wrapper.ob_utils;
+var ob_utils = require("utils/object_utils");
 var OS = require('os/os_state');
 var Storage = require('os/storage_object');
 

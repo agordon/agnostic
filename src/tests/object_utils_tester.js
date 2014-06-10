@@ -10,9 +10,7 @@
  */
 
 var assert = require('assert');
-var obutils_wrapper = require("utils/object_utils");
-
-_ = obutils_wrapper.ob_utils ;
+var _ = require("utils/object_utils");
 
 /* Test IsObjectEmpty */
 assert.ok( _.IsObjectEmpty( {} ) );

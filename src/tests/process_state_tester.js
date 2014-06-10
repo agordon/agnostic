@@ -7,8 +7,7 @@
 /* ProcessState encapsulation Tester */
 
 var assert = require('assert');
-var obj_utils_wrapper = require("utils/object_utils");
-var ob_utils = obj_utils_wrapper.ob_utils;
+var ob_utils = require("utils/object_utils");
 var OperatingSystem = require('os/os_state');
 var FileSystem = require('os/filesystem');
 var ProcessState = require('os/process_state');
