@@ -14,10 +14,11 @@ NOTE:
 Passing STDIN to STDOUT is done explicitly,
 not through "real" OS pipes.
 */
+"use strict";
 
 var assert = require('assert');
-require('utils/object_utils');
-require('utils/time_utils');
+var ob_utils = require('utils/object_utils');
+var time_utils = require('utils/time_utils');
 var OperatingSystem = require('os/os_state');
 var FileSystem = require('os/filesystem');
 var Streams = require('os/streams');
@@ -29,20 +30,19 @@ var ProgramCat = require('programs/cat');
 
 function run_program(parent_process_state, program_module, argv, stdin)
 {
-	if (! (parent_process_state instanceof ProcessState.ProcessState))
-		throw new ProgramExecutionError("internal error: run_program() called with wrong parameter (1st param is not ProcessState)");
+	if (! (parent_process_state instanceof ProcessState))
+		throw new TypeError("run_program() called with wrong parameter (1st param is not ProcessState)");
 
 	//TODO: Replace this with a "ProcessState.clone()" method
 	var ps = parent_process_state.clone();
 
 	if (stdin !== null) {
 		if (! (stdin instanceof Streams.InputStream))
-			throw new ProgramExecutionError("internal error: run_program() called with wrong stdin parameter (not a Stream.InputStream)");
+			throw new TypeError("run_program() called with wrong stdin parameter (not a Stream.InputStream)");
 		ps.stdin = stdin ;
 	}
 
-	var program_key = GetOneKey(program_module);
-	var program_obj = new program_module[program_key];
+	var program_obj = new program_module();
 	var program_name = program_obj.program_name;
 
 	var args = [ program_name ]; //argv[0] is the program name
@@ -54,12 +54,12 @@ function run_program(parent_process_state, program_module, argv, stdin)
 }
 
 
-var os = new OperatingSystem.OperatingSystem();
-var fs = new FileSystem.FileSystem();
+var os = new OperatingSystem();
+var fs = new FileSystem();
 
 // 'ps' is the ProcessState of the "parent"
 // (i.e. the shell, or the process doing the fork+exec)
-var ps = new ProcessState.ProcessState(os,fs);
+var ps = new ProcessState(os,fs);
 
 //Run the first program: 'seq 10'
 var child_ps = run_program(ps, ProgramSeq, ["10"], null);
