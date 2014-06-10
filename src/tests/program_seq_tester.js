@@ -6,6 +6,7 @@
 
 /* ProgramSeq Class Tester
  */
+"use strict";
 
 var try_help = "Try 'seq --help' for more information.\n";
 
@@ -90,8 +91,8 @@ var seq_tests = [
 
 
 
-require('utils/program_test_framework');
+var run_program_tests = require('utils/program_test_framework');
 var FileSystem = require('os/filesystem');
 var ProgramSeq = require('programs/seq');
-var fs = new FileSystem.FileSystem();
-run_program_tests("seq",ProgramSeq.ProgramSeq, seq_tests,fs);
+var fs = new FileSystem();
+run_program_tests("seq",ProgramSeq, seq_tests, fs);
