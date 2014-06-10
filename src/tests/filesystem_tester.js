@@ -8,15 +8,16 @@
  */
 
 var assert = require('assert');
-require('utils/object_utils');
-require('os/os_state');
+var obj_utils_wrapper = require("utils/object_utils");
+var ob_utils = obj_utils_wrapper.ob_utils;
+var OS = require('os/os_state');
 var Storage = require('os/storage_object');
 var FileSystem = require('os/filesystem');
 
 /*********************************************************************
  * Test Generic Stream - Internal functions
 *********************************************************************/
-var fs = new FileSystem.FileSystem();
+var fs = new FileSystem();
 
 // Test1 - create a directory, a file, then write and read it
 fs.mkdir("/tmp");
@@ -25,7 +26,7 @@ f.write(["hello","world"]);
 f= null;
 var k = fs.openfile("/tmp/foo.txt",false);
 var t = k.get_all_lines();
-VerifyArray(t);
+ob_utils.VerifyArray(t);
 assert.strictEqual( t[0], "hello");
 assert.strictEqual( t[1], "world");
 
@@ -52,7 +53,7 @@ fs.openfile("/usr/bin/sh",true);
 fs.openfile("/usr/bin/cat",true);
 fs.mkdir("/usr/bin/test2");
 var o = fs.readdir("/usr/bin/");
-VerifyArray(t);
+ob_utils.VerifyArray(t);
 //order should be the same as creation order
 assert.strictEqual( o[0], "/usr/bin/sort");
 assert.strictEqual( o[1], "/usr/bin/cut");
