@@ -7,10 +7,12 @@
 /* Storage Object Tester
  *
  */
+"use strict";
 
 var assert = require('assert');
-require('utils/object_utils');
-require('os/os_state');
+var obj_utils_wrapper = require("utils/object_utils");
+var ob_utils = obj_utils_wrapper.ob_utils;
+var OS = require('os/os_state');
 var Storage = require('os/storage_object');
 
 /*********************************************************************
@@ -18,7 +20,7 @@ var Storage = require('os/storage_object');
 *********************************************************************/
 var so = new Storage.StorageObject();
 
-so.chmod(0666);
+so.chmod(438);
 so.chown(123,456);
 so.utime(1000000,1100000);
 
@@ -36,7 +38,7 @@ if (0) {
 	var start = new Date().getTime();
 	while(new Date().getTime() < start + 2000) { ; }
 	//Changing file mode should update the Ctime as well
-	so.chmod(0666);
+	so.chmod(438);
 	st = so.stat();
 	var new_ctime = st["ctime"];
 	assert.notEqual ( old_ctime, new_ctime );
@@ -61,7 +63,7 @@ assert.strictEqual( st["size"], 0 );
 
 // Test Read empty file
 var lines = f.get_all_lines();
-VerifyArray(lines);
+ob_utils.VerifyArray(lines);
 assert.strictEqual( lines.length, 0);
 
 // Test write + append
@@ -70,7 +72,7 @@ f.append(["foo","bar"]);
 var st = f.stat();
 assert.strictEqual( st["size"], 20 );
 lines = f.get_all_lines();
-VerifyArray(lines);
+ob_utils.VerifyArray(lines);
 assert.strictEqual ( lines[0], "hello" );
 assert.strictEqual ( lines[1], "world" );
 assert.strictEqual ( lines[2], "foo" );
