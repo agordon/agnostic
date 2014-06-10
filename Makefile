@@ -61,6 +61,7 @@ check: test_object_utils \
        test_program_echo \
        test_program_true \
        test_program_false \
+       test_program_printf \
        test_pipe \
        test_parse_syntax \
        test_shell_descriptor
@@ -128,6 +129,10 @@ test_program_true:
 .PHONY: test_program_false
 test_program_false:
 	$(NODEBIN) ./src/tests/program_false_tester.js
+
+.PHONY: test_program_printf
+test_program_printf:
+	$(NODEBIN) ./src/tests/program_printf_tester.js
 
 .PHONY: test_shell_descriptor
 test_shell_descriptor:
