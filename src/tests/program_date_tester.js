@@ -7,10 +7,9 @@
 /* ProgramDate Class Tester
 (not really a test, just ensures it runs)
  */
+"use strict";
 
 var assert = require('assert');
-require('utils/object_utils');
-require('utils/time_utils');
 var OperatingSystem = require('os/os_state');
 var FileSystem = require('os/filesystem');
 var Streams = require('os/streams');
@@ -18,14 +17,11 @@ var ProcessState = require('os/process_state');
 var ProgramBase = require('programs/program_base');
 var ProgramDate = require('programs/date');
 
-var os = new OperatingSystem.OperatingSystem();
-var fs = new FileSystem.FileSystem();
-var ps = new ProcessState.ProcessState(os,fs);
-ps.stdin = new Streams.InputStream();
-ps.stdout = new Streams.OutputStream();
-ps.stderr = new Streams.OutputStream();
+var os = new OperatingSystem();
+var fs = new FileSystem();
+var ps = new ProcessState(os,fs);
 
-var d = new ProgramDate.ProgramDate();
+var d = new ProgramDate();
 var exit_code = d.run(ps,["/bin/date"]);
 assert.strictEqual(exit_code,0);
 var time = ps.stdout.__shift_line();
