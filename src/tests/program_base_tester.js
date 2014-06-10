@@ -8,16 +8,16 @@
  */
 
 var assert = require('assert');
-require('utils/object_utils');
-require('utils/time_utils');
+var ob_utils = require('utils/object_utils');
+var time_utils = require('utils/time_utils');
 var OperatingSystem = require('os/os_state');
 var FileSystem = require('os/filesystem');
 var Streams = require('os/streams');
 var ProcessState = require('os/process_state');
 var ProgramBase = require('programs/program_base');
 
-var os = new OperatingSystem.OperatingSystem();
-var fs = new FileSystem.FileSystem();
+var os = new OperatingSystem();
+var fs = new FileSystem();
 
 /*
  Run a ProgramBase, while optionally skipping an initialization step
@@ -29,11 +29,11 @@ function run_program_skip_step(step_to_skip)
 	var args = [] ;
 
 	if (step_to_skip!==1)
-		ps = new ProcessState.ProcessState(os,fs);
+		ps = new ProcessState(os,fs);
 	if (step_to_skip!==2)
 		args.push("/bin/foo");
 
-	var prog = new ProgramBase.ProgramBase();
+	var prog = new ProgramBase();
 
 	var exit_code = prog.run(ps,args);
 
@@ -58,7 +58,7 @@ assert.strictEqual(ps.stderr.__shift_line(), "Not implemented");
 for (var i=1;i<=2;i++) {
 	assert.throws(
 		function() { run_program_skip_step(i) },
-		/ProgramExecutionError/
+		/TypeError/
 	);
 }
 
