@@ -36,7 +36,11 @@ ps.stdin.fill_input_callback = function() {
 	//Remove last linebreak, if any (to prevent an extranous empty last line)
 	stdin_text = stdin_text.replace(/\n$/,"");
 
-	var stdin_lines = stdin_text.split("\n");
+	var stdin_lines = [] ;
+
+	if (stdin_text !== "")
+		stdin_lines = stdin_text.split("\n");
+
 	return stdin_lines ;
 }
 
