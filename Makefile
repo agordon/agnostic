@@ -65,6 +65,7 @@ web: $(SHELL_PARSER)
 .PHONY: check
 check: test_object_utils \
        test_string_utils \
+       test_path_utils \
        test_shellquote_utils \
        test_getopt \
        test_os_state \
@@ -172,6 +173,10 @@ test_object_utils:
 .PHONY: test_string_utils
 test_string_utils:
 	$(NODEBIN) ./src/tests/string_utils_tester.js
+
+.PHONY: test_path_utils
+test_path_utils:
+	$(NODEBIN) ./src/tests/path_utils_tester.js
 
 .PHONY: test_shellquote_utils
 test_shellquote_utils:
