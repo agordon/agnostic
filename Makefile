@@ -110,12 +110,8 @@ agnostic_bundle: $(AGNOSTIC_BUNDLE_MINIFIED)
 
 
 .PHONY: web
-web: $(SHELL_PARSER)
-	cp ./src/node_modules/utils/object_utils.js \
-	   ./src/node_modules/shell/shell_descriptor.js \
-	   ./src/node_modules/shell/shell_HTML_descriptor.js \
-	   ./src/node_modules/shell/shell_console_logger.js \
-	   ./website/
+web: $(SHELL_PARSER) $(AGNOSTIC_BUNDLE_MINIFIED)
+	cp $(AGNOSTIC_BUNDLE_MINIFIED) ./website/
 
 .PHONY: check
 check: test_object_utils \
