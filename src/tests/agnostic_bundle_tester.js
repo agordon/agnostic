@@ -5,20 +5,20 @@
  ****************************************/
 
 /*
- * Test the (un-browserified) 'agnostic' bundle.
+ * Test the 'agnostic' bundle.
  *
- * The file should load all Agnostic-related classes and modules,
- * and be able to run Agnostic programs.
- *
- * The same module will be later 'browserified', and be used
- * in the web-browser (and not in NodeJS).
  */
 "use strict";
 
-
 var assert = require('assert');
 
-var agnostic = require('agnostic');
+if (process.argv.length<2) {
+	console.error("missing agnostic bundle javascript file name");
+	process.exit(1);
+}
+var agnostic_file = process.argv[2];
+
+var agnostic = require(agnostic_file);
 
 var os = new agnostic.OperatingSystem();
 var fs = new agnostic.FileSystem();

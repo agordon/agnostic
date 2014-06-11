@@ -7,4 +7,14 @@ website/shell_descriptor.js
 website/shell_console_logger.js
 website/shell_HTML_descriptor.js
 
+# Auto-generated using PegJS
 src/node_modules/shell/posix_shell_parser.js
+
+# Auto-generated using Browserify
+src/node_modules/agnostic_web_bundle.js
+
+# Auto-generated using Uglify
+src/node_modules/agnostic_web_bundle.min.js
+
+# Auto-generated in the Makefile
+src/node_modules/agnostic_web_bundle.js.deps
