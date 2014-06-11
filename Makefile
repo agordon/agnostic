@@ -144,6 +144,7 @@ check: test_object_utils \
        test_parse_syntax \
        test_shell_parsers_comparison \
        test_shell_descriptor \
+       test_shell_HTML_descriptor \
        test_agnostic_bundle_source \
        test_agnostic_bundle_browserified \
        test_agnostic_bundle_minified
@@ -223,6 +224,10 @@ test_program_wc:
 .PHONY: test_shell_descriptor
 test_shell_descriptor: $(SHELL_PARSER)
 	$(NODEBIN) ./src/tests/shell_descriptor_tester.js
+
+.PHONY: test_shell_HTML_descriptor
+test_shell_HTML_descriptor: $(SHELL_PARSER)
+	$(NODEBIN) ./src/tests/shell_HTML_descriptor_tester.js
 
 .PHONY: test_object_utils
 test_object_utils:
