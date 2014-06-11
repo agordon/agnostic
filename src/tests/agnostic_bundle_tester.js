@@ -11,6 +11,8 @@
 "use strict";
 
 var assert = require('assert');
+var shell_syntax_tests = require('./shell_syntax_tests.js');
+var tests = shell_syntax_tests.tests;
 
 if (process.argv.length<2) {
 	console.error("missing agnostic bundle javascript file name");
@@ -38,3 +40,30 @@ exit_code = prog.run(ps,["/bin/printf","%s: %d\n", "a","1","b","2","c"]);
 assert.strictEqual(exit_code,0);
 output = ps.stdout.__get_lines();
 assert.deepEqual(output, [ "a: 1", "b: 2", "c: 0" ]);
+
+
+/* Parse Shell Commands, then convert them back to text and HTML
+NOTE:
+ This test happens late in the testing list (in the makefile).
+ These Shell-Syntax tests have already been run multiple times,
+ in other tests with individual modules, and extended error messages.
+
+ When this test does is specifically re-run these tests after loading
+ the parser, and the shell text/html descriptors using the Agnostic bundle module.
+ All these tests are supposed to pass.
+ If they don't - it indicates a problem in the bundling - not in the shell implementation.
+*/
+for (var t in tests)
+{
+	var name  = tests[t][0];
+	var input = tests[t][1];
+	var should_be_accepted = tests[t][2];
+
+	/* Only tests valid shell commands */
+	if (!should_be_accepted)
+		continue;
+
+	var parse_tree = agnostic.shell.parse_command(input);
+	var text_desc = agnostic.shell.command_to_text(parse_tree);
+	var html_desc = agnostic.shell.command_to_html(parse_tree);
+}
