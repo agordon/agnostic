@@ -68,7 +68,7 @@ ps.stdin.fill_input_callback = function() {
 	return stdin_lines ;
 }
 
-var shell = new ProgramShell.ProgramShell();
+var shell = new ProgramShell();
 
 for (var name in program_functions) {
 	shell.add_external_program(name, program_functions[name]);
