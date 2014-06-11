@@ -6,3 +6,5 @@ website/object_utils.js
 website/shell_descriptor.js
 website/shell_console_logger.js
 website/shell_HTML_descriptor.js
+
+src/node_modules/shell/posix_shell_parser.js
