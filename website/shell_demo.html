@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>(UNIX) Guide for the Perplexed</title>
+
+    <!-- Bootstrap -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+<style>
+input#shellcmd {
+	font-family:monospace;
+}
+#shell_input {
+	font-family:monospace;
+}
+.redtext {
+	color: red;
+}
+
+.blacktext {
+	color: black;
+}
+
+</style>
+
+  </head>
+  <body>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+<h1>(UNIX) Guide for the Perplexed</h1>
+<p>
+This is an early-alpha-stage project, which I hope one day will become
+the UNIX equivalent of online tutorials such as <a href="http://try.github.io">http://try.github.io</a>,
+CodeSchool, CodeAcademy, and others. For more information,
+visit <a href="https://github.com/agordon/UnixGuideforthePerplexed">UGP GitHub Page</a>.
+</p>
+		</div>
+	</div><!--row: main title-->
+
+
+<!-- *************************************************
+	Demo Edit Box and Form
+     ************************************************* -->
+	<div class="row">
+		<div class="col-md-12">
+<h2 class="page-header">
+UNIX Emulation Demo
+</h2>
+
+<div class="row">
+    <div class="col-md-3">
+      Enter Shell Command:
+    </div>
+    <div class="col-md-8">
+      <input type="text" class="form-control col-md-10" id="shellcmd" placeholder="Enter Shell Command" autocomplete='off'>
+    </div>
+    <div class="col-md-1">
+      <button type="run" class="btn btn-primary" onclick="run();return false;">Run</button>
+    </div>
+</div>
+<br/>
+
+<div class="row">
+    <div class="col-md-3">
+	Or Select Example:
+    </div>
+    <div class="col-md-9">
+	<select id="shell_examples" class="form-control" onChange="run_example();">
+	</select>
+    </div>
+</div>
+
+		</div>
+	</div><!--row -->
+
+
+<!-- *************************************************
+Command Output (STDOUT/STDERR)
+     ************************************************* -->
+<div class="row">
+	<div class="col-md-12">
+		<h3>Command Input</h3>
+(Enter text to be used as STDIN)<br/>
+<textarea id="shell_input" class="field col-md-12" placeholder="Enter text to be used as STDIN">Hello World</textarea>
+	</div>
+	<div class="col-md-12">
+		<h3>Command output</h3>
+		(<span class="redtext">STDERR in red</span>, <span class="blacktext">STDOUT in black</span>)
+<br/>
+<pre id="shell_output">(Enter a shell command and click 'Run')</pre>
+	</div>
+
+</div>
+
+
+</div> <!-- container -->
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <!-- Google Code Prettifier: https://code.google.com/p/google-code-prettify/ -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/prettify/188.0.0/prettify.js"></script>
+
+    <script src="agnostic_web_bundle.min.js"></script>
+
+<script>
+
+var examples = [
+{
+	name: "Select an Example",
+},
+{
+	name: 'Example 1: seq, printf, subshell, arithmetic',
+	command: 'seq 0 $(printf "%s\\n" a b c d | wc -l) $((5*5))',
+	stdin: ''
+},
+{
+	name: 'Example 2: seq with bad paramters, shell and/or operators',
+	command: "seq foo && echo valid command || echo bad command",
+	stdin: ''
+},
+{
+	name: 'Example 3: printf, tac, head, cut, shell pipes',
+	command: 'printf "%s: %d\\n" a 1 b 2 c 3 d | tac | head -n 2 | cut -f2 -d:',
+	stdin: ''
+},
+{
+	name: 'Example 4: cut from STDIN',
+	command: 'cut -f1,3,7 -d: --output-delimiter=" "',
+	stdin: 'root:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nbin:x:2:2:bin:/bin:/usr/sbin/nologin\nsys:x:3:3:sys:/dev:/usr/sbin/nologin\nsync:x:4:65534:sync:/bin:/bin/sync\ngames:x:5:60:games:/usr/games:/usr/sbin/nologin\nman:x:6:12:man:/var/cache/man:/usr/sbin/nologin'
+}
+];
+
+
+function run_example(num)
+{
+	var num = $("#shell_examples option:selected").val()-1;
+	if (num===0) {
+		$("#shellcmd").val("");
+		$("#shell_input").val("");
+		return ;
+	}
+	var cmd = examples[num].command;
+	var stdin = examples[num].stdin;
+
+	$("#shellcmd").val(cmd);
+	$("#shell_input").val(stdin);
+	run();
+}
+
+function run()
+{
+	var shellcmd = $("#shellcmd").val();
+	var stdin = $("#shell_input").val();
+	//Remove last linebreak, if any (to prevent an extranous empty last line)
+	stdin = stdin.replace(/\n$/,"");
+	$("#shell_output").text("");
+	try {
+		var output_html ="" ;
+
+		// For now, start an entirely new shell process each invocation
+		/* Setup the process-state ("current" process will be the shell executor) */
+		var os = new agnostic.OperatingSystem();
+		var fs = new agnostic.FileSystem();
+		var ps = new agnostic.ProcessState(os,fs);
+
+		//Read STDIN, in one chunk
+		ps.stdin.fill_input_callback = function() {
+			var lines = [];
+			if (stdin)
+				lines = stdin.split("\n");
+
+			console.log("lines = ", lines);
+
+			// Warn the user about empty STDIN
+			if (lines.length===0)
+				output_html += "( Emulation Warning: shell command needed information from STDIN, which was empty.<br/>In a real unix environment, the command would wait indefinitely for you to enter information on the terminal )<br/>";
+			return lines;
+		}
+
+		var shell = new agnostic.programs.sh();
+
+		for (var name in agnostic.programs) {
+			shell.add_external_program(name, agnostic.programs[name]);
+		}
+
+		var exit_code = shell.run(ps,["/bin/sh", "-c", shellcmd]);
+		var stdout = ps.stdout.__get_lines().join("\n");
+		var stderr = ps.stderr.__get_lines().join("\n");
+
+
+		if (stderr)
+			output_html += '<span class="redtext">' + stderr + '</span><br/>';
+		if (stdout)
+			output_html += '<span class="blacktext">' + stdout + '</span><br/>';
+
+		output_html += '( Shell returned exit code: ' + exit_code + ')';
+
+		$("#shell_output").html(output_html);
+	} catch(err) {
+		$("#shell_output").html('<span class="redtext">Emulation Exception: ' + err + '</span>');
+		throw err;
+	}
+	return false;
+}
+
+$(document).ready(function() {
+	//Add "Example' button for each example
+	for (var i in examples) {
+		var num = parseInt(i)+1;
+		var name = examples[i].name;
+		var html = agnostic.sprintf('<option value="%d">%s</option>',num,name);
+		$("#shell_examples").append(html);
+	}
+});
+
+
+
+</script>
+</body>
+</html>
