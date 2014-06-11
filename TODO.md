@@ -27,6 +27,9 @@ for later display of errors or information.
     * Modules / Namespaces
     * Exception Throwing and Handling
 
+* Shell Parser + Descritpr:
+    * Generate unique IDs for each element in the parsed tree, to be later
+    used with *all* the descriptor (HTML/text/executor)
 
 ## OS
 
