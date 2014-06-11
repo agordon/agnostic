@@ -54,3 +54,13 @@ assert.strictEqual ( str_utils.unbackslash("h\\nello"),		"h\nello" );
 assert.strictEqual ( str_utils.unbackslash("h\\\\ello"),	"h\\ello" );
 assert.strictEqual ( str_utils.unbackslash("hello\\"),		"hello\\" );
 
+/* Test firstNotOf */
+assert.strictEqual ( str_utils.firstNotOf("aaaBBcc", 'a'), 3 );
+assert.strictEqual ( str_utils.firstNotOf("aaaBBcc", 'c'), 0 );
+assert.strictEqual ( str_utils.firstNotOf("aaaaaaa", 'a'), -1 );
+assert.strictEqual ( str_utils.firstNotOf("//////", '/'), -1 );
+assert.throws ( function() { str_utils.firstNotOf("aaaa",""); } ) ;
+assert.throws ( function() { str_utils.firstNotOf("aaaa",null); } ) ;
+assert.throws ( function() { str_utils.firstNotOf("aaaa","aaa"); } ) ;
+
+
