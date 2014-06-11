@@ -88,7 +88,8 @@ check: test_object_utils \
        test_pipe \
        test_parse_syntax \
        test_shell_parsers_comparison \
-       test_shell_descriptor
+       test_shell_descriptor \
+       test_agnostic_bundle \
 
 .PHONY: test_parse_syntax
 test_parse_syntax:
@@ -193,6 +194,10 @@ test_pipe:
 .PHONY: test_shell_parsers_comparison
 test_shell_parsers_comparison: $(SHELL_PARSE_TOOL)
 	$(NODEBIN) ./src/tests/shell_parsers_comparison_tester.js
+
+.PHONY: test_agnostic_bundle
+test_agnostic_bundle: $(SHELL_PARSER)
+	$(NODEBIN) ./src/tests/agnostic_bundle_tester.js
 
 .PHONY: ex1p ex2p ex3p ex4p ex5p
 ex1p:
