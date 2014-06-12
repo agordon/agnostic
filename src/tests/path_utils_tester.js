@@ -12,17 +12,24 @@ var assert = require('assert');
 var path_utils = require('utils/path_utils');
 
 var basename_tests = [
-["b1",	"foo.txt",		"foo.txt"],
-["b2",	"foo",			"foo"],
-["b3",	"/bar/foo.txt",		"foo.txt"],
-["b4",	"/foo/",		"foo"],
-["b5",	"/",			"/"], //NOTE: different than NodeJS's path.basename
-["b6",	"///",			"/"], //NOTE: different than NodeJS's path.basename
-["b7",	"///.",			"."],
-["b8",	"foo///",		"foo"],
-["b9",	"///foo",		"foo"],
-["b10",	"/// ",			" "],
-["b11",	" ///",			" "],
+//name,  path,         suffix,   expected-result
+["b1",	"foo.txt",	"",	"foo.txt"],
+["b2",	"foo",		"",	"foo"],
+["b3",	"/bar/foo.txt",	"",	"foo.txt"],
+["b4",	"/foo/",	"",	"foo"],
+["b5",	"/",		"",	"/"], //NOTE: different than NodeJS's path.basename
+["b6",	"///",		"",	"/"], //NOTE: different than NodeJS's path.basename
+["b7",	"///.",		"",	"."],
+["b8",	"foo///",	"",	"foo"],
+["b9",	"///foo",	"",	"foo"],
+["b10",	"/// ",		"",	" "],
+["b11",	" ///",		"",	" "],
+["b12", "",		"",	"."], //POSIX Basename(1) case 1
+["b13", "//",		"",	"/"], //POSIX Basename(1) case 2
+["b14", "foo.txt",	"txt",	"foo."], //POSIX Basename(2) case 6
+["b15", "foo.txt",	".txt",	"foo"], //POSIX Basename(2) case 6
+["b16", "/foo.txt",	".txt",	"foo"], //POSIX Basename(2) case 6
+["b17", "foo.txt",	"foo.txt","foo.txt"], //NOTE: different than NodeJS's path.basename (POSIX says remove suffix ONLY if it is not equal to the path).
 ]
 
 var dirname_tests = [
@@ -33,6 +40,17 @@ var dirname_tests = [
 ["d5",	"/foo/.././",		"/foo/.."],
 ["d6",	"foo/bar",		"foo"],
 ["d7",	"///",			"/"],
+["d8",	"/usr/lib",		"/usr"], //Tests from POSIX dirname(3) page
+["d9",	"/usr/",		"/"],
+["d10",	"usr",			"."],
+["d11",	"/",			"/"],
+["d12",	".",			"."],
+["d13",	"..",			"."],
+["d14",	"",			"."],
+["d15",	null,			"."],
+["d16",	"//",			"//"], // Tests from POSIX dirname(1) page
+["d17",	"/a/b/",		"/a"],
+["d18",	"//a//b//",		"//a"],
 ];
 
 var canon_tests = [
@@ -62,9 +80,18 @@ function run_tests(func, func_name, tests)
 	for (var i in tests) {
 		var name = tests[i][0];
 		var input = tests[i][1];
-		var expected_output = tests[i][2];
+		var suffix, output, expected_output;
 
-		var output = func(input);
+		//Ugly hard-code hack for 'basename' tests with 4 items.
+		if (tests[i].length==4) {
+			suffix = tests[i][2];
+			expected_output = tests[i][3];
+			output = func(input,suffix);
+		} else {
+			expected_output = tests[i][2];
+			output = func(input);
+		}
+
 		if ( output === expected_output ) {
 			console.log(func_name + ": " + name + " OK");
 			pass_count++;
