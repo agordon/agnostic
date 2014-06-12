@@ -81,3 +81,11 @@ assert.throws(
 		//(reversed parameter order, wrong instance type)
 		var ps3 = new ProcessState.ProcessState(fs,os);
 	});
+
+/* Test Clone */
+var ps1 = new ProcessState(os,fs);
+ps1.setenv("foo","bar",false);
+var ps2 = ps1.clone();
+assert.notEqual ( ps1.getpid(), ps2.getpid() );
+assert.equal ( ps1.getpid(), ps2.getppid() );
+assert.deepEqual( ps1.environ(), ps2.environ() );
