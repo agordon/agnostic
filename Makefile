@@ -136,6 +136,7 @@ check: test_object_utils \
        test_program_false \
        test_program_printf \
        test_program_wc \
+       test_program_basename \
        test_pipe \
        test_parse_syntax \
        test_shell_parsers_comparison \
@@ -216,6 +217,10 @@ test_program_printf:
 .PHONY: test_program_wc
 test_program_wc:
 	$(NODEBIN) ./src/tests/program_wc_tester.js
+
+.PHONY: test_program_basename
+test_program_basename:
+	$(NODEBIN) ./src/tests/program_basename_tester.js
 
 .PHONY: test_shell_descriptor
 test_shell_descriptor: $(SHELL_PARSER)
