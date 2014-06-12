@@ -201,8 +201,7 @@ var tests = [
 ["asgn1",	"FOO=BAR",		true,		"Assignment"],
 ["asgn2",	"FOO='fo fo > BAR'",	true,		"Assignment"],
 ["asgn3",	"FOO=HELLO\"WOR LD\"",	true,		"Assignment"],
-/* TODO: asgn4 fails, but should be accepted */
-/*["asgn4",	"FOO=",			true,		"Assignment"],*/
+["asgn4",	"FOO=",			true,		"Assignment"],
 ["asgn5",	"F\"OO\"=BAR",		false,		"Assignment"],
 ["asgn6",	"=BAR",			false,		"Assignment"],
 

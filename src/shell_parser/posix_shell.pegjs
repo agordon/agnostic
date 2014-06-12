@@ -338,8 +338,13 @@ Variable Assignment, as per 2.9.1:
 *************************/
 
 Assignment =
-  vari_name:VariableName '=' value:Token_NoDelimiter {
+  vari_name:VariableName '=' value:Token_NoDelimiter? {
 	  parser_debug("Assignments, text ='" + text() + "' offset = " + offset() ) ;
+	  if (!value) {
+		//In case of empty assignment (e..g "FOO="),
+		//emulate it as "FOO=''" )
+		value = [ { literal : "" } ];
+	  }
 	  var tmp={}; tmp[vari_name]=value; return { 'assignment' :tmp }; }
 
 
