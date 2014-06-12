@@ -63,4 +63,18 @@ assert.throws ( function() { str_utils.firstNotOf("aaaa",""); } ) ;
 assert.throws ( function() { str_utils.firstNotOf("aaaa",null); } ) ;
 assert.throws ( function() { str_utils.firstNotOf("aaaa","aaa"); } ) ;
 
-
+/* Test parse_var_assignment */
+assert.deepEqual( str_utils.parse_var_assignment("FOO"),
+	{ name: "FOO", value: undefined, assignment: false, valid: true } );
+assert.deepEqual( str_utils.parse_var_assignment("FOO="),
+	{ name: "FOO", value: "", assignment: true, valid: true } );
+assert.deepEqual( str_utils.parse_var_assignment("FOO=A"),
+	{ name: "FOO", value: "A", assignment: true, valid: true } );
+assert.deepEqual( str_utils.parse_var_assignment("FOO=A  B"),
+	{ name: "FOO", value: "A  B", assignment: true, valid: true } );
+assert.deepEqual( str_utils.parse_var_assignment("=A  B"),
+	{ name: "", value: "A  B", assignment: true, valid: false } );
+assert.deepEqual( str_utils.parse_var_assignment("1=A"),
+	{ name: "1", value: "A", assignment: true, valid: false } );
+assert.deepEqual( str_utils.parse_var_assignment("$=A"),
+	{ name: "$", value: "A", assignment: true, valid: false } );
