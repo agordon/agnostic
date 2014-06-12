@@ -35,6 +35,7 @@ for later display of errors or information.
 
 * Consolidate "streams" and "files", and then
 * Implement pseudo-File-Descriptor (.e.g os.GetFileDescriptor(int) )
+* Move "ProgramBase" functionality into "Process-State", make a "program" be just one function.
 
 ## Programs
 
