@@ -47,7 +47,7 @@ Check the Colon (NULL) utility
 var exit_code = ss.colon(ps,[]);
 assert.strictEqual (exit_code, 0);
 
-exit_code = ss.runSpecialBuiltinUtility(ps,":",[]);
+exit_code = ss.runSpecialBuiltinUtility(ps,[":"]);
 assert.strictEqual (exit_code, 0);
 
 
@@ -178,7 +178,7 @@ assert.strictEqual (exit_code, 0);
 assert.strictEqual( ps.stdout.__get_lines().join("\n"), expected_export ) ;
 
 //call function throw the dispatcher (emulating command line input)
-exit_code = ss.runSpecialBuiltinUtility(ps, "export",["-p"]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["export","-p"]);
 assert.strictEqual (exit_code, 0);
 assert.strictEqual( ps.stdout.__get_lines().join("\n"), expected_export ) ;
 
@@ -190,11 +190,11 @@ ss = new ShellState();
 ss.variable_set(ps,"A","1");
 ss.variable_set(ps,"B","2");
 
-exit_code = ss.runSpecialBuiltinUtility(ps, "export",["A"]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["export","A"]);
 assert.strictEqual (exit_code, 0);
-exit_code = ss.runSpecialBuiltinUtility(ps, "export",["C=3"]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["export","C=3"]);
 assert.strictEqual (exit_code, 0);
-exit_code = ss.runSpecialBuiltinUtility(ps, "export",["D=4","E="]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["export","D=4","E="]);
 assert.strictEqual (exit_code, 0);
 
 //no output so far
@@ -202,13 +202,13 @@ assert.strictEqual( ps.stdout.__get_lines().length,0);
 assert.strictEqual( ps.stderr.__get_lines().length,0);
 
 //Use 'export -p' => B should not appear (it wasn't exported)
-exit_code = ss.runSpecialBuiltinUtility(ps, "export",["-p"]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["export","-p"]);
 assert.strictEqual (exit_code, 0);
 assert.deepEqual( ps.stdout.__get_lines(),
 	["export A='1'", "export C='3'", "export D='4'", "export E=''"]) ;
 
 //Use 'set' => B should appear
-exit_code = ss.runSpecialBuiltinUtility(ps, "set",[]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["set"]);
 assert.strictEqual (exit_code, 0);
 assert.deepEqual( ps.stdout.__get_lines(),
 	["A='1'", "B='2'", "C='3'", "D='4'", "E=''"]) ;
@@ -217,11 +217,11 @@ assert.deepEqual( ps.stdout.__get_lines(),
 /*
 Check the 'export' utility, part 3 (invalid variables)
 */
-exit_code = ss.runSpecialBuiltinUtility(ps, "export",["3=FOO"]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["export","3=FOO"]);
 assert.strictEqual (exit_code, 1);
 assert.strictEqual( ps.stderr.__get_lines().length, 1);
 
-exit_code = ss.runSpecialBuiltinUtility(ps, "export",["oo-$3=FOO"]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["export","oo-$3=FOO"]);
 assert.strictEqual (exit_code, 1);
 assert.strictEqual( ps.stderr.__get_lines().length, 1);
 
@@ -234,9 +234,9 @@ ss = new ShellState();
 
 ss.variable_set(ps,"A","1");
 ss.variable_set(ps,"B","2");
-exit_code = ss.runSpecialBuiltinUtility(ps, "readonly",["A"]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["readonly","A"]);
 assert.strictEqual (exit_code, 0);
-exit_code = ss.runSpecialBuiltinUtility(ps, "readonly",["C=3"]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["readonly","C=3"]);
 assert.strictEqual (exit_code, 0);
 
 //no output so far
@@ -244,13 +244,13 @@ assert.strictEqual( ps.stdout.__get_lines().length,0);
 assert.strictEqual( ps.stderr.__get_lines().length,0);
 
 //Use 'export -p' => B should not appear (it wasn't exported)
-exit_code = ss.runSpecialBuiltinUtility(ps, "readonly",["-p"]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["readonly","-p"]);
 assert.strictEqual (exit_code, 0);
 assert.deepEqual( ps.stdout.__get_lines(),
 	["readonly A='1'", "readonly C='3'"]);
 
 //Use 'set' => B should appear
-exit_code = ss.runSpecialBuiltinUtility(ps, "set",[]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["set"]);
 assert.strictEqual (exit_code, 0);
 assert.deepEqual( ps.stdout.__get_lines(),
 	["A='1'", "B='2'", "C='3'"]);
@@ -259,11 +259,11 @@ assert.deepEqual( ps.stdout.__get_lines(),
 /*
 Check the 'readonly' utility, part 2 (invalid variables)
 */
-exit_code = ss.runSpecialBuiltinUtility(ps, "readonly",["3=FOO"]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["readonly","3=FOO"]);
 assert.strictEqual (exit_code, 1);
 assert.strictEqual( ps.stderr.__get_lines().length, 1);
 
-exit_code = ss.runSpecialBuiltinUtility(ps, "readonly",["oo-$3=FOO"]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["readonly","oo-$3=FOO"]);
 assert.strictEqual (exit_code, 1);
 assert.strictEqual( ps.stderr.__get_lines().length, 1);
 
@@ -274,7 +274,7 @@ Check the 'readonly' utility, part 3 (readonly violations)
 ss = new ShellState();
 
 ss.variable_set(ps,"A","1");
-exit_code = ss.runSpecialBuiltinUtility(ps, "readonly",["A"]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["readonly","A"]);
 
 //no output so far
 assert.strictEqual( ps.stdout.__get_lines().length,0);
@@ -286,12 +286,12 @@ assert.strictEqual (exit_code, 1);
 assert.strictEqual( ps.stderr.__get_lines().length, 1);
 
 //Readonly should fail
-exit_code = ss.runSpecialBuiltinUtility(ps, "readonly",["A=88"]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["readonly","A=88"]);
 assert.strictEqual (exit_code, 1);
 assert.strictEqual( ps.stderr.__get_lines().length, 1);
 
 //Export should fail
-exit_code = ss.runSpecialBuiltinUtility(ps, "export",["A=77"]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["export","A=77"]);
 assert.strictEqual (exit_code, 1);
 assert.strictEqual( ps.stderr.__get_lines().length, 1);
 
@@ -305,10 +305,10 @@ ss = new ShellState();
 
 ss.variable_set(ps,"A","1");
 ss.variable_set(ps,"B","1");
-exit_code = ss.runSpecialBuiltinUtility(ps, "unset",["A", "B"]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["unset","A", "B"]);
 assert.strictEqual (exit_code, 0);
 
 //Set should return nothing
-exit_code = ss.runSpecialBuiltinUtility(ps, "set",[]);
+exit_code = ss.runSpecialBuiltinUtility(ps, ["set"]);
 assert.strictEqual (exit_code, 0);
 assert.deepEqual( ps.stdout.__get_lines(), []);
