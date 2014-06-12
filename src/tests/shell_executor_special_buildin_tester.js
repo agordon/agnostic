@@ -44,6 +44,17 @@ var tests = [
 [ "s11", "FOO=''",		{}],
 [ "s13", "set" ,		{ stdout: [ "A='B'", "FOO=''" ] } ],
 
+// Empty assignments in various ways
+[ "s14", "unset FOO",		{}],
+[ "s15", "B=2 C=3 D=4",		{}],
+[ "s16", "set" ,		{ stdout: [ "A='B'", "B='2'", "C='3'", "D='4'" ] } ],
+[ "s17", "B=",			{}],
+[ "s18", 'C=""',		{}],
+[ "s19", 'export D=',		{}],
+[ "s20", "set" ,		{ stdout: [ "A='B'", "B=''", "C=''", "D=''" ] } ],
+
+
+
 ];
 
 var assert = require('assert');
