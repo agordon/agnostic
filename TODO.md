@@ -63,6 +63,9 @@ for later display of errors or information.
 But too *cutesy*, "web 2.0++" for my current taste...
 
 * Ace Javascript Editor: <http://ace.c9.io>
+    * Google Groups: [Using Single-Line Mode](https://groups.google.com/forum/#!searchin/ace-discuss/single$20line/ace-discuss/x3vAP3pIvvA/fgK79zEKTW4J)
+    * Code: [SingleLineEditor](https://github.com/ajaxorg/ace/blob/d5566938ba/demo/kitchen-sink/layout.js#L103-L128)
+    * Code: [ENTER key binding](https://github.com/ajaxorg/ace/blob/d5566938ba/demo/kitchen-sink/demo.js#L210-L221)
 
 * JS/UIX - virtual OS written entirely in Javascript: <http://www.masswerk.at/jsuix/jsuix-documentation.txt> ,
     from 2003. Current Status unclear. License clearly not free. Uses "old-style" functional javascript.
