@@ -1,0 +1,7 @@
+#!/bin/sh
+
+#   This file is part of UNIX Guide for the Perplexed project.
+#   Copyright (C) 2014 by Assaf Gordon <assafgordon@gmail.com>
+#   Released under GPLv3 or later
+
+nodejs ./src/tools/shell_interactive.js
