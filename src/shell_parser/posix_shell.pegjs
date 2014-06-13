@@ -582,7 +582,8 @@ TODO: The parsing tree is more-or-less standard for arithmetic expressions,
 ******************************************************/
 
 ArithmeticExpandable =
-  "$((" whitespace expr:ArithmeticExpression whitespace "))" { return { "arithmetic" : expr } ; }
+  "$((" whitespace "))" { return { "arithmetic" : { literal : 0 } } ; }
+  / "$((" whitespace expr:ArithmeticExpression whitespace "))" { return { "arithmetic" : expr } ; }
 
 
 ArithmeticExpression
@@ -629,8 +630,9 @@ DecimalInteger
 HexInteger
   = "0x" hexvalue:[A-Fa-f0-9]+ { return parseInt(text(), 16); }
 
+/* NOTE: octal's zero prefix will catch "0" value as well */
 OctalInteger
-  = "0" [0-7]+ { return parseInt(text(), 8); }
+  = "0" [0-7]* { return parseInt(text(), 8); }
 
 /* Parameter Variable Names which can appear inside $(()) without a '$' - special variables can't.
    e.g. invalid: $((?))

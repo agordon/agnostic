@@ -440,9 +440,8 @@ var tests = [
 
 /* Test Arithmatic Expansion */
 /* TODO: as more arithmetic operations are added, add appropriate tests */
-/* TODO: the first two should work, but don't. Allow empty arithmetic expressions */
-/*["arthm1",	"$(())",					true,	"ArithmeticExpandable"],
-["arthm2",	"$(( ))",					true,	"ArithmeticExpandable"],*/
+["arthm1",	"$(())",					true,	"ArithmeticExpandable"],
+["arthm2",	"$(( ))",					true,	"ArithmeticExpandable"],
 ["arthm3",	"$((1))",					true,	"ArithmeticExpandable"],
 ["arthm4",	"$(( 3 ))",					true,	"ArithmeticExpandable"],
 ["arthm5",	"$((A))",					true,	"ArithmeticExpandable"],
@@ -452,6 +451,12 @@ var tests = [
 ["arthm9",	"$((A*3))",					true,	"ArithmeticExpandable"],
 ["arthm10",	"$((1+FOO*3))",					true,	"ArithmeticExpandable"],
 ["arthm11",	"$(((1+FOO)*3))",				true,	"ArithmeticExpandable"],
+// Zero
+["arthm12",	"$((0))",					true,	"ArithmeticExpandable"],
+// Octal
+["arthm13",	"$((033))",					true,	"ArithmeticExpandable"],
+// Hex
+["arthm14",	"$((0x33))",					true,	"ArithmeticExpandable"],
 /* Go Recursive */
 ["arthm20",	"$(( $(nproc)+1 ))",				true,	"ArithmeticExpandable"],
 ["arthm21",	"$(( ${PID}*1 ))",				true,	"ArithmeticExpandable"],
