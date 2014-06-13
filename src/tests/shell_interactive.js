@@ -5,13 +5,17 @@
  ****************************************/
 
 /*
-An interactive shell Emulator
-*/
-
+ * Test the 'InteractiveShell' object -
+ *    This is the main interface which will be used on the website.
+ *
+ * NOTE:
+ *   This module tests the 'InteractiveShell' object directory.
+ *   Another module tests it through the 'agnostic bundle' loader
+ *   (as will be loaded in the website).
+ */
 "use strict";
 
 var assert = require('assert');
-var readline = require('readline');
 
 var load_shell_parser = require('utils/shell_parser_loader');
 var shell_parser = load_shell_parser();
@@ -20,22 +24,7 @@ var InteractiveShell = require('shell/shell_interactive');
 
 var shell = new InteractiveShell(shell_parser);
 
-//
-// Prompt loop starts here
-//
-var rl = readline.createInterface(process.stdin, process.stdout);
-rl.setPrompt('$ ');
-rl.prompt();
-
-rl.on('line', function(line) {
-	var result = shell.execute(line);
-	if ( 'stdout' in result )
-		console.log(result.stdout.join("\n"));
-	if ( 'stderr' in result )
-		console.error(result.stderr.join("\n"));
-
-	rl.prompt();
-}).on('close', function() {
-  process.exit(0);
-});
+// Execute few commands, just to check the entire setup.
+var res = shell.execute("seq 10 | wc -l");
+assert.deepEqual( res.stdout, ["10"] );
 

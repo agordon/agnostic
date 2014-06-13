@@ -67,3 +67,19 @@ for (var t in tests)
 	var text_desc = agnostic.shell.command_to_text(parse_tree);
 	var html_desc = agnostic.shell.command_to_html(parse_tree);
 }
+
+
+
+
+/*
+Test the InteractiveShell Object, as loaded by the agnostic bundle.
+
+NOTE:
+Here we mainly test if the object can be loaded, created and used - through
+the agnostic bundle.
+More detailed tests are in other modules.
+*/
+var shell = agnostic.createInteractiveShell();
+var res = shell.execute("seq 10 | wc -l");
+assert.deepEqual( res.stdout, ["10"] );
+
