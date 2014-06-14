@@ -28,3 +28,8 @@ var shell = new InteractiveShell(shell_parser);
 var res = shell.execute("seq 10 | wc -l");
 assert.deepEqual( res.stdout, ["10"] );
 
+// Execute a command with errors to STDERR
+res = shell.execute("seq");
+assert.deepEqual( res.stderr,
+  [ 'seq: missing operand', 'Try \'seq --help\' for more information.' ]);
+assert.equal ( res.exit_code, 1 );
