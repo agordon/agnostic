@@ -33,7 +33,7 @@ var dirname_tests = [
     name: "e3",
     argv: [ "/tmp/foo", "bar" ],
     exit_code: 1,
-    stderr: "dirname: extra operand: 'bar'"
+    stderr: "dirname: extra operand: 'bar'\nTry 'dirname --help' for more information."
 },
 ];
 
