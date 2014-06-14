@@ -56,99 +56,20 @@ $ seq 10 | wc -l</div><!-- Ace Editor -->
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
     <!-- Ace Editor -->
-    <!-- script src="./ace/ace.js"></script -->
     <script src="//cdn.jsdelivr.net/ace/1.1.3/min/ace.js"></script>
 
+    <!-- Agnostic Bundle -->
+    <script src="agnostic_web_bundle.min.js"></script>
+
     <!-- Ace Editor Initialization -->
+    <script src="ace_shell_terminal.js"></script>
+
 <script>
 
 var editor;
-var shell_prompt = "$ ";
 
 $().ready(function(){
-    editor = ace.edit("editorID");
-    editor.setTheme("ace/theme/github");
-    editor.getSession().setUseWrapMode(false);
-    editor.setHighlightActiveLine(false);
-    editor.setShowPrintMargin(false);
-    editor.setShowFoldWidgets(false);
-    editor.setShowInvisibles(false);
-    editor.renderer.setShowGutter(false);
-    editor.renderer.setStyle("ace_one-line");
-    editor.setFontSize(18);
-
-    editor.selection.on("changeCursor",function() {
-        var pos = editor.getCursorPosition();
-        var maxline = editor.getSession().getDocument().getLength();
-        //console.log("cursor moved", pos, " maxlines = ", maxline);
-        if (pos.row != maxline-1) {
-          //console.log("Forcing cursor to last line");
-          editor.gotoLine(maxline,0,false);
-          return;
-        }
-        if ( (pos.row === maxline-1) && (pos.column < shell_prompt.length)) {
-          //console.log("Forcing cursor after shell prompt");
-          editor.gotoLine(maxline,shell_prompt.length,false);
-          return;
-        }
-    });
-
-    editor.commands.bindKeys({
-      "shift-Return": function() { },
-
-      "ctrl-A": function(cmdLine) { editor.navigateLineStart(); },
-      "ctrl-E": function(cmdLine) { editor.navigateLineEnd(); },
-      "alt-F":  function(cmdLine) { editor.navigateWordRight(); },
-      "alt-B":  function(cmdLine) { editor.navigateWordLeft(); },
-
-      "Return": function(cmdLine){
-            var doc = editor.getSession().getDocument();
-            var maxline = doc.getLength();
-            var shell_command = doc.getLine(maxline-1);
-
-            //Remove shell Prompt
-            shell_command = shell_command.substr(shell_prompt.length);
-            console.log("return: ", shell_command);
-
-            //Execute the command
-
-            //Add a new line prompt
-            doc.insertLines(maxline,[ shell_prompt ]);
-          },
-      "Up": function(cmdLine){
-            console.log("Up");
-          },
-
-      "Down": function(cmdLine){
-            console.log("Down");
-          }
-      });
-/*
-"selectleft",
-"gotostart", "selectup", "golineup", "selecttoend",
-"gotoend", "selectdown", "golinedown", "selectwordleft",
-"gotowordleft", "selecttolinestart", "gotolinestart", "selectwordright", "gotowordright", "selecttolineend", "gotolineend", "selectright",
-"gotoright", "selectpagedown", "pagedown", "gotopagedown", "selectpageup", "pageup",
-"gotopageup", "scrollup", "scrolldown", "selectlinestart", "selectlineend", "togglerecording",
-"backspace", "cut_or_delete",
-"inserttext", "del",
-
-"overwrite","insertstring",
-*/
-
-  editor.commands.removeCommands([
-"showSettingsMenu", "goToNextError", "goToPreviousError",
-"selectall", "centerselection", "gotoline", "fold", "unfold",
-"toggleFoldWidget", "toggleParentFoldWidget", "foldall", "foldOther", "unfoldall",
-"findnext", "findprevious", "selectOrFindNext", "selectOrFindPrevious",
-"find",  "selecttostart",
-"replaymacro", "jumptomatching", "selecttomatching", "cut", "removeline",
-"duplicateSelection", "sortlines", "togglecomment", "toggleBlockComment", "modifyNumberUp",
-"modifyNumberDown", "replace", "undo", "redo",
-"copylinesup", "movelinesup", "copylinesdown", "movelinesdown",  "removetolinestart", "removetolineend", "removewordleft",
-"removewordright", "outdent", "indent", "blockoutdent", "blockindent", "splitline", "transposeletters", "touppercase",
-"tolowercase"]);
-
+  editor = CreateAceShellTerminal("editorID");
 });
 
 </script>
