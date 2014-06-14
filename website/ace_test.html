@@ -94,6 +94,13 @@ $().ready(function(){
     });
 
     editor.commands.bindKeys({
+      "shift-Return": function() { },
+
+      "ctrl-A": function(cmdLine) { editor.navigateLineStart(); },
+      "ctrl-E": function(cmdLine) { editor.navigateLineEnd(); },
+      "alt-F":  function(cmdLine) { editor.navigateWordRight(); },
+      "alt-B":  function(cmdLine) { editor.navigateWordLeft(); },
+
       "Return": function(cmdLine){
             var doc = editor.getSession().getDocument();
             var maxline = doc.getLength();
@@ -116,21 +123,36 @@ $().ready(function(){
             console.log("Down");
           }
       });
-});
+/*
+"selectleft",
+"gotostart", "selectup", "golineup", "selecttoend",
+"gotoend", "selectdown", "golinedown", "selectwordleft",
+"gotowordleft", "selecttolinestart", "gotolinestart", "selectwordright", "gotowordright", "selecttolineend", "gotolineend", "selectright",
+"gotoright", "selectpagedown", "pagedown", "gotopagedown", "selectpageup", "pageup",
+"gotopageup", "scrollup", "scrolldown", "selectlinestart", "selectlineend", "togglerecording",
+"backspace", "cut_or_delete",
+"inserttext", "del",
 
-    //editor.commands.removeCommands(["find", "gotoline", "findall", "replace", "replaceall"]);
-    
-    //editor["$emacsModeHandler.bindKey("M-k" , "hello" );
-/*    editor.commands.bindKeys({
-        "Return": { command: function(cmdLine){
-          var command = cmdLine.getValue();
-          alert("shell command = '" + command + "'");
-          cmdLine.setValue("");
-        } }
-        });*/
+"overwrite","insertstring",
+*/
+
+  editor.commands.removeCommands([
+"showSettingsMenu", "goToNextError", "goToPreviousError",
+"selectall", "centerselection", "gotoline", "fold", "unfold",
+"toggleFoldWidget", "toggleParentFoldWidget", "foldall", "foldOther", "unfoldall",
+"findnext", "findprevious", "selectOrFindNext", "selectOrFindPrevious",
+"find",  "selecttostart",
+"replaymacro", "jumptomatching", "selecttomatching", "cut", "removeline",
+"duplicateSelection", "sortlines", "togglecomment", "toggleBlockComment", "modifyNumberUp",
+"modifyNumberDown", "replace", "undo", "redo",
+"copylinesup", "movelinesup", "copylinesdown", "movelinesdown",  "removetolinestart", "removetolineend", "removewordleft",
+"removewordright", "outdent", "indent", "blockoutdent", "blockindent", "splitline", "transposeletters", "touppercase",
+"tolowercase"]);
+
+});
 
 </script>
 
-  </body>
+</body>
 </html>
 
