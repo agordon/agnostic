@@ -71,6 +71,19 @@ var canon_tests = [
 ["n15",	"./foo/bar/",		"foo/bar"],
 ];
 
+var resolve_tests = [
+//name  cwd_abs_path		new_path        expected_result
+["r1",	"/",			"/tmp/",	"/tmp"],
+["r2",	"/tmp/",		"/tmp/",	"/tmp"],
+["r3",	"/tmp/",		"/usr/",	"/usr"],
+["r4",	"/tmp/",		"usr",		"/tmp/usr"],
+["r5",	"/tmp/",		"./usr",	"/tmp/usr"],
+["r6",	"/tmp/",		"../usr",	"/usr"],
+["r7",	"/tmp",			".",		"/tmp"],
+["r8",	"/",			".",		"/"],
+
+];
+
 
 var pass_count = 0 ;
 var fail_count = 0;
@@ -107,6 +120,7 @@ function run_tests(func, func_name, tests)
 run_tests(path_utils.basename, 'basename',  basename_tests);
 run_tests(path_utils.dirname,  'dirname',   dirname_tests);
 run_tests(path_utils.canonicalize,'canonicalize', canon_tests);
+run_tests(path_utils.resolve,'resolve', resolve_tests);
 
 console.log ("--Path Utils tester--");
 console.log ("pass: " + pass_count);
