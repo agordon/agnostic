@@ -5,7 +5,8 @@
  ****************************************/
 
 /*
- * LS Class Tester, part 1
+ * ProgramLS Tester, part 1
+ * (no actual testing, just ensuring it runs)
  */
 "use strict";
 
@@ -32,5 +33,27 @@ assert.deepEqual(out, { exit_code:1, stderr: [ "ls: cannot access /tmp/l: no suc
 
 // A file
 var out = run_program_tests.run_program("ls",ProgramLS, [], ["/tmp/foo.txt"] ,fs);
-
 console.log("out = ", JSON.stringify(out,undefined,2));
+assert.equal (out.exit_code,0);
+
+//A file in long-format
+var out = run_program_tests.run_program("ls",ProgramLS, [], ["-l", "/tmp/foo.txt"] ,fs);
+console.log("out = ", JSON.stringify(out,undefined,2));
+assert.equal (out.exit_code,0);
+
+
+//A directory
+var out = run_program_tests.run_program("ls",ProgramLS, [], ["/tmp"] ,fs);
+console.log("out = ", JSON.stringify(out,undefined,2));
+assert.equal (out.exit_code,0);
+
+
+//A directory - long format
+var out = run_program_tests.run_program("ls",ProgramLS, [], ["-l", "/tmp"] ,fs);
+console.log("out = ", JSON.stringify(out,undefined,2));
+assert.equal (out.exit_code,0);
+
+//Current directory - long format
+var out = run_program_tests.run_program("ls",ProgramLS, [], ["-l"] ,fs);
+console.log("out = ", JSON.stringify(out,undefined,2));
+assert.equal (out.exit_code,0);
