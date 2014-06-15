@@ -54,13 +54,13 @@ fs.mkdir("/usr/bin/test2");
 var o = fs.readdir("/usr/bin/");
 ob_utils.VerifyArray(t);
 //order should be the same as creation order
-assert.strictEqual( o[0], "/usr/bin/sort");
-assert.strictEqual( o[1], "/usr/bin/cut");
-assert.strictEqual( o[2], "/usr/bin/test1");
-assert.strictEqual( o[3], "/usr/bin/less");
-assert.strictEqual( o[4], "/usr/bin/sh");
-assert.strictEqual( o[5], "/usr/bin/cat");
-assert.strictEqual( o[6], "/usr/bin/test2");
+assert.strictEqual( o[0], "sort");
+assert.strictEqual( o[1], "cut");
+assert.strictEqual( o[2], "test1");
+assert.strictEqual( o[3], "less");
+assert.strictEqual( o[4], "sh");
+assert.strictEqual( o[5], "cat");
+assert.strictEqual( o[6], "test2");
 
 //Test 4 - opendir
 var dd = fs.opendir("/usr/bin");
