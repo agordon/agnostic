@@ -116,6 +116,7 @@ web: $(SHELL_PARSER) $(AGNOSTIC_BUNDLE_MINIFIED)
 .PHONY: check
 check: test_object_utils \
        test_string_utils \
+       test_strftime \
        test_path_utils \
        test_shellquote_utils \
        test_getopt \
@@ -284,6 +285,11 @@ test_shellquote_utils:
 .PHONY: test_getopt
 test_getopt:
 	$(NODEBIN) ./src/tests/getopt_tester.js
+
+.PHONY: test_strftime
+test_strftime:
+	$(NODEBIN) ./src/tests/strftime_tester.js
+
 
 .PHONY: test_pipe
 test_pipe:
