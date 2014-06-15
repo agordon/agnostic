@@ -20,6 +20,19 @@ var InteractiveShell = require('shell/shell_interactive');
 
 var shell = new InteractiveShell(shell_parser);
 
+var samples = require('utils/sample_data_files');
+
+// Create few dummy files for the demo
+var fl = shell.fs.openfile("/passwd",true);
+fl.write( samples.passwd );
+
+var fl = shell.fs.openfile("/mammals.txt",true);
+fl.write( samples.mammals );
+
+var fl = shell.fs.openfile("/nobel.csv",true);
+fl.write( samples.nobel );
+
+
 //
 // Prompt loop starts here
 //

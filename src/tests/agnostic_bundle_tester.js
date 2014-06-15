@@ -83,3 +83,12 @@ var shell = agnostic.createInteractiveShell();
 var res = shell.execute("seq 10 | wc -l");
 assert.deepEqual( res.stdout, ["10"] );
 
+
+/* Test the demo files */
+var res = shell.execute("ls");
+assert.deepEqual( res.stdout, ["passwd", "mammals.txt", "nobel.csv"] );
+
+/* The first nobel prize year, after skipping the header line */
+var res = shell.execute("cut -f1 -d, nobel.csv | head -n 2 | tail -n 1");
+assert.deepEqual( res.stdout, ["1901"]);
+
