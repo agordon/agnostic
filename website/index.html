@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>(UNIX) Guide for the Perplexed</title>
+
+    <!-- Bootstrap -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+
+<style type="text/css" media="screen">
+    #editorID {
+	width: 100%;
+	height: 20em;
+  border: 1px solid black;
+  overflow: hidden;
+    }
+</style>
+
+
+  </head>
+  <body>
+
+<div class="container">
+
+<div class="row">
+  <div class="col-md-12">
+    <h1>AGNOSTIC - UNIX Shell Javascript Emulation</h1>
+<p>
+For more information see the <a href="https://github.com/agordon/agnostic">Agnostic Github Repository</a>.
+</p>
+
+<p>
+This is an early-alpha-stage project, which I hope one day will become
+the UNIX equivalent of online tutorials such as <a href="http://try.github.io">http://try.github.io</a>,
+CodeSchool, CodeAcademy, and others.
+</p>
+
+<p>
+The box below emulates a unix shell terminate. Type commands to experiment.
+</p>
+
+<div id="editorID" class="col-md-12">Hello!
+Welcome to Agnostic - Unix Shell emulation in Javascript.
+
+Type a shell command to experiment:
+examples:
+    seq 10
+    ls -l
+    cut -f1,4 -d, nobel.csv | head -n5
+    cat passwd | cut -f1,7 -d:
+    wc -l mammals.txt nobels.csv
+    export A=42 B=9
+    echo $((A/B))
+    printf "%d: %d\n" $(seq 7)
+$ </div><!-- Ace Editor -->
+
+</div><!-- col-md-12 -->
+</div><!-- row -->
+
+<div class="row">
+  <div class="col-md-12">
+  The demo above emulates a basic UNIX environment, with one directory (<code>/</code>)
+  and three text files (type <code>ls -l</code> to list them).
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-md-6">
+    <h3>POSIX Shell Status</h3>
+    <ul>
+      <li>Currently implemented:
+        <ul>
+        <li> posix-compliant tokenizing, shell-quotes, field-splitting.</li>
+        <li> variable assignment (<code>CC=clang</code>)</li>
+        <li> parameter expansion (<code>$HOME</code>),</li>
+        <li> partial arithmetic expressions (<code>$((42/9))</code>)</li>
+        <li> Subshells (<code>NAME=$(basename "$FILE" .txt)</code>)</li>
+        <li> Pipes (<code>seq 10 | wc -l</code>),</li>
+        <li> And/Or operations (<code>make && echo ok || echo failed</code>)</li>
+        <li> Sequential commands ( <code>sleep 10 ; touch 1.txt</code> )</li>
+        <li> Compound commands ( <code>make || { echo make failed ; exit 1 ; }</code> )</li>
+        <li> some Special built-in utilities ( <code>export</code>, <code>readonly</code>, <code>set</code>, <code>unset</code>).</li>
+        </ul>
+      </li>
+      <li>Not yet implemented:
+        <ul>
+        <li> redirection</li>
+        <li> filename-expansion</li>
+        <li> control structures (<code>if</code>,<code>case</code>,<code>while</code>,etc.)</li>
+        <li> Parameter expansion string operations ( <code>${FOO:-BAR}</code> )</li>
+        <li> aliases</li>
+        <li> multiline statements</li>
+        <li> Many arithmetic operators </li>
+        <li> Here-Documents</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="col-md-6">
+    <h3>POSIX Utilities Status</h3>
+    <ul>
+    <li> (almost) fully implemented: <code>basename</code>, <code>cat</code>, <code>cut</code>, <code>dirname</code>, <code>echo</code>, <code>false</code>, <code>head</code>, <code>printf</code>, <code>seq</code>, <code>tac</code>, <code>tail</code>, <code>true</code>, <code>wc</code></li>
+    <li> partially implemented: <code>date</code></li>
+    <li> not yet implemented (but planned): <code>stat</code>, <code>paste</code>, <code>env</code>, <code>grep</code>, <code>find</code>, <code>xargs</code></li>
+    <li> Challenging but highly desired: <code>sed</code>, <code>awk</code>.</li>
+    </ul>
+  </div>
+</div>
+
+</div><!-- container -->
+
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+    <!-- Ace Editor -->
+    <script src="//cdn.jsdelivr.net/ace/1.1.3/min/ace.js"></script>
+
+    <!-- Agnostic Bundle -->
+    <script src="agnostic_web_bundle.min.js"></script>
+
+    <!-- Ace Editor Initialization -->
+    <script src="ace_shell_terminal.js"></script>
+
+<script>
+
+var editor;
+
+$().ready(function(){
+  editor = CreateAceShellTerminal("editorID");
+});
+
+</script>
+
+</body>
+</html>
+

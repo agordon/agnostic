@@ -31,19 +31,17 @@ function CreateAceShellTerminal(html_id)
 
     function ExecuteShellCommand(cmd)
     {
-		var res = shell.execute(cmd);
-		var doc = editor.getSession().getDocument();
-		if ("stderr" in res) {
-            var maxline = doc.getLength();
-			doc.insertLines(maxline,res.stderr);
-		}
-		if ("stdout" in res) {
-            var maxline = doc.getLength();
-			doc.insertLines(maxline,res.stdout);
-		}
+      var res = shell.execute(cmd);
+      var doc = editor.getSession().getDocument();
+      if ("stderr" in res) {
+        var maxline = doc.getLength();
+        doc.insertLines(maxline,res.stderr);
+      }
+      if ("stdout" in res) {
+        var maxline = doc.getLength();
+        doc.insertLines(maxline,res.stdout);
+      }
     }
-
-
 
 
     editor.setTheme("ace/theme/github");
@@ -93,10 +91,10 @@ function CreateAceShellTerminal(html_id)
 
             //Remove shell Prompt
             shell_command = shell_command.substr(shell_prompt.length);
-            console.log("return: ", shell_command);
 
             //Execute the command
-			ExecuteShellCommand(shell_command);
+            shell_command = agnostic.str_utils.trimWhitespace(shell_command);
+            ExecuteShellCommand(shell_command);
 
             //Add a new line prompt
             maxline = doc.getLength();
