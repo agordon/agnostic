@@ -1,60 +1,67 @@
-# UGP - (UNIX) Guide for the Perplexed
+# Agnostic
 
-This is an early-alpha-stage project, which I hope one day will become
-the UNIX equivalent of online tutorials such as <http://try.github.io>,
-CodeSchool, CodeAcademy, and others.
+**Agnostic** is an attempt to implement the unix user interface (shell + common programs) in Javascript.
 
-### Current Status
+The long-term goal is to provide a web-based educational environment for users to experiment with the unix user interface, and provide structured tutorials (akin to <http://try.github.com>, <http://codeacademy.com>, etc.).
 
-1. Implemeted: a partial POSIX shell syntax parser in Javascript, accepts shell command
-syntax (e.g. `grep -iw FOO <input.txt | LC_ALL=C sort -k2n2 | wc -l && echo ok`)
-and returns a JSON representation of the commands:
+Demo at: <http://agnostic.housegordon.org> .
 
-    ```
-    {
-      "and_or_list": [
-        {
-          "pipeline": [
-            {
-              "SimpleCommand": {
-                "tokens": [ "grep", "-iw", "FOO" ],
-                "redirections": [
-                  { "filedescriptor": 0, "filename": "input.txt", "type": "input_file" }
-                ]
-              }
-            },
-            {
-              "SimpleCommand": {
-                "tokens": [ "sort", "-k2n2" ],
-                "assginments": [ { "LC_ALL": "C" } ]
-              }
-            },
-            {
-              "SimpleCommand": { "tokens": [ "wc", "-l" ] }
-            }
-          ]
-        },
-        "&&",
-        {
-          "SimpleCommand": { "tokens": [ "echo", "ok" ] }
-        }
-      ]
-    }
-    ```
+## Current Status
 
-2. Emulated operating system, implemented:
-    * Streams (emulating stdin/stdout/stderr)
-    * File Objects (functioning more like 'object storage' than posix files)
-    * File System (files, directories, stats). Partial, non-posix-compliant at all.
-    * Opeating-System class
-    * Process-State class (encapsulating per-process information)
+1. POSIX shell interface.
+    * Implemented:
+        * posix-compliant tokenizing, shell-quotes, field-splitting.
+        * variable assignment (`CC=clang`)
+        * parameter expansion (`$HOME`),
+        * partial arithmetic expressions (`$((42/9))`)
+        *  Subshells (`NAME=$(basename "$FILE" .txt)`)
+        * Pipes (`seq 10 | wc -l`),
+        * And/Or operations (`make && echo ok || echo failed`)
+        * Sequential commands ( `sleep 10 ; touch 1.txt` )
+        * Compound commands ( `make || { echo make failed ; exit 1 ; }` )
+        * some Special built-in utilities ( `export`, `readonly`, `set`, `unset`).
+    * Not yet implemented:
+        * redirection
+        * filename-expansion
+        * control structures (`if`,`case`,`while`,etc.)
+        * Parameter expansion string operations ( `${FOO:-BAR}` )
+        * aliases
+        * multiline statements
+        * Here-Documents
 
-3. Emulated programs, implemented:
-    * date(1) - partial
-    * head(1)
-    * seq(1)
+2. POSIX utilities
+    * (almost) fully implemented: `basename`, `cat`, `cut`, `dirname`, `echo`, `false`, `head`, `printf`, `seq`, `tac`,
+    `tail`, `true`, `wc` 
+    * partialyl implemented: `date`
+    * not yet implemented (but planned): `paste`, `env`, `grep`, `find`, `xargs`
+    * Challenging but highly desired: `sed`, `awk`.
 
-### Project Goals
+3. Local execution (mainly for testing) using NodeJS.
+
+4. Web-based execution, with "terminal-like" behavior implemented in Javascript.
+
+
+## Try it
+
+1. Locally with NodeJS:
+
+        $ npm install -g browserify
+        $ npm install -g pegjs
+        $ npm install -g uglify
+        $ git clone https://github.com/agordon/agnostic
+        $ cd agnostic
+        $ ./shell
+
+    The `./shell` script will start an interactive-shell session, emulating a 'real' unix shell environment,
+    except it will all be running using javascript. Try running some command (e.g. `seq 10 | wc -l`) and compare
+    the output to a real unix environment.
+
+2. Web - visit one of the following:
+    * [Terminal Emulation Page](http://agnostic.housegordon.org/) - A demo of interactive shell session in a dumb terminal, with minimal command-line editing.
+    * [Shell Parser](http://agnostic.housegordon.org/parse_demo.html) - A demo of the shell syntax parser output (without  actual execution).
+
+
+## Project Goals
 
 When/If the project is ever done, it will have:
 
@@ -69,7 +76,7 @@ enough to run typical unix commands inside the Javascript emulation environment.
 * UNIX command-line demystifier: users could paste a unix-command line, and have
 different parts of it explained (e.g. what does `grep -iw foo | cut -f3,5 | sort -k2n,2 | uniq -c > foo.txt` do?)
 
-### Technical goals
+## Technical goals
 
 * free as in speech: code and lesson plans will be available under GPLv3 (or later).
 * Lessons, classes should be *easy enough* to add, with minimal programming requirements.
@@ -77,17 +84,21 @@ different parts of it explained (e.g. what does `grep -iw foo | cut -f3,5 | sort
 * The project should be able to include any command-line program, even if implemented as an empty stub.
 * for more details, see `PLANS.md` file.
 
-### Helping out
+## Helping out
 
 The project is in very early development stage, and many details are not yet set.
-If you're interested in helping, send me an email.  Also see `TODO.md` file for details.
+If you're interested in helping, send me an email.  Also see `PLANS.md` and `HACKING.md` files for details.
 
-To try it out yourself, clone this repository and run `make`.
+## Requirements
 
-### Requirements
+To run / hack the project, you'll need:
 
-* [nodejs](http://nodejs.org/)
-* [PEGjs](http://pegjs.majda.cz/)
+* [NodeJS](http://nodejs.org)
+* [npm](http://npmjs.org) (NodeJS's package manager)
+* The following NPM packages:
+    * [PEGjs](http://pegjs.majda.cz/) - Parser Generator for Javascript
+    * [Browserify](http://browserify.org) - Bundles Javascript modules for browser usage.
+    * [UglifyJS](http://marijnhaverbeke.nl//uglifyjs) - Javascript minifier
 * [jq](http://stedolan.github.io/jq/) - (optional) for pretty JSON printing.
 
 ### Contact
@@ -96,6 +107,9 @@ Assaf Gordon <assafgordon@gmail.com>
 
 ### License
 
-All code written for this project is GPLv3 or later.
+All code written for this project is released under GPLv3 or later.
 
-See `LICENSE` file for details.
+The code uses multiple libraries, with varying free/open-source licenses,
+see `LICENSE` file for details.
+
+
