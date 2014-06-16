@@ -47,7 +47,7 @@ Demo at: <http://agnostic.housegordon.org> .
 
         $ npm install -g browserify
         $ npm install -g pegjs
-        $ npm install -g uglify
+        $ npm install -g uglify-js
         $ git clone https://github.com/agordon/agnostic
         $ cd agnostic
         $ ./shell
