@@ -28,6 +28,9 @@ var shell = new InteractiveShell(shell_parser);
 var res = shell.execute("seq 10 | wc -l");
 assert.deepEqual( res.stdout, ["10"] );
 
+res = shell.execute("seq 0 5 20| grep 5 | ( echo 'hello' ; wc -l )");
+assert.deepEqual( res.stdout, ["hello","2"]);
+
 // Execute a command with errors to STDERR
 res = shell.execute("seq");
 assert.deepEqual( res.stderr,
