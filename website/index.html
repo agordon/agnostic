@@ -57,8 +57,8 @@ Type a shell command to experiment:
 examples:
     seq 10
     ls -l
-    cut -f1,4 -d, nobel.csv | head -n5
-    cat passwd | cut -f1,7 -d:
+    cut -f1,7 -d: &lt; passwd
+    grep -iE '^(year|200[3-9])' nobel.csv | cut -f1,3 -d,
     wc -l mammals.txt nobels.csv
     export A=42 B=9
     echo $((A/B))
@@ -91,12 +91,12 @@ $ </div><!-- Ace Editor -->
         <li> And/Or operations (<code>make && echo ok || echo failed</code>)</li>
         <li> Sequential commands ( <code>sleep 10 ; touch 1.txt</code> )</li>
         <li> Compound commands ( <code>make || { echo make failed ; exit 1 ; }</code> )</li>
+        <li> redirection (<code>seq 10&gt;hello.txt ; wc -l&lt;hello.txt</code>)</li>
         <li> some Special built-in utilities ( <code>export</code>, <code>readonly</code>, <code>set</code>, <code>unset</code>).</li>
         </ul>
       </li>
       <li>Not yet implemented:
         <ul>
-        <li> redirection</li>
         <li> filename-expansion</li>
         <li> control structures (<code>if</code>,<code>case</code>,<code>while</code>,etc.)</li>
         <li> Parameter expansion string operations ( <code>${FOO:-BAR}</code> )</li>
@@ -111,9 +111,12 @@ $ </div><!-- Ace Editor -->
   <div class="col-md-6">
     <h3>POSIX Utilities Status</h3>
     <ul>
-    <li> (almost) fully implemented: <code>basename</code>, <code>cat</code>, <code>cut</code>, <code>dirname</code>, <code>echo</code>, <code>false</code>, <code>head</code>, <code>printf</code>, <code>seq</code>, <code>tac</code>, <code>tail</code>, <code>true</code>, <code>wc</code></li>
+    <li> (almost) fully implemented: <code>basename</code>, <code>cat</code>, <code>cut</code>,
+          <code>dirname</code>, <code>echo</code>, <code>false</code>, <code>grep</code>,<code>head</code>,
+          <code>printf</code>, <code>seq</code>, <code>tac</code>, <code>tail</code>,
+          <code>true</code>, <code>wc</code></li>
     <li> partially implemented: <code>date</code></li>
-    <li> not yet implemented (but planned): <code>stat</code>, <code>paste</code>, <code>env</code>, <code>grep</code>, <code>find</code>, <code>xargs</code></li>
+    <li> not yet implemented (but planned): <code>stat</code>, <code>paste</code>, <code>env</code>, <code>find</code>, <code>xargs</code></li>
     <li> Challenging but highly desired: <code>sed</code>, <code>awk</code>.</li>
     </ul>
   </div>
