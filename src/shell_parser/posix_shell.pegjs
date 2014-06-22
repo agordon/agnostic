@@ -244,7 +244,7 @@ RedirectionFileDescriptor =
 
 /* Input Redirection, 2.7.1 */
 InputRedirection =
-  fd:RedirectionFileDescriptor? '<' file_name:Token_NoDelimiter {
+  fd:RedirectionFileDescriptor? '<' whitespace file_name:Token_NoDelimiter {
 		if (fd === null)
 			fd = 0 ; /* Default FD is STDIN/0 if not defined */
 		return { 'redirection' :
@@ -255,7 +255,7 @@ InputRedirection =
 
 /* Output Redirection, 2.7.2 */
 OutputRedirection =
-  fd:RedirectionFileDescriptor? '>' forceclobber:'|'? file_name:Token_NoDelimiter {
+  fd:RedirectionFileDescriptor? '>' whitespace forceclobber:'|'? file_name:Token_NoDelimiter {
 		if (fd === null)
 			fd = 1 ; /* Default FD is STDOUT/1 if not defined */
 		return { 'redirection' :
@@ -267,7 +267,7 @@ OutputRedirection =
 
 /* Append Redirection, 2.7.3 */
 AppendRedirection =
-  fd:RedirectionFileDescriptor? '>>' file_name:Token_NoDelimiter {
+  fd:RedirectionFileDescriptor? '>>' whitespace file_name:Token_NoDelimiter {
 		if (fd === null)
 			fd = 1 ; /* Default FD is STDOUT/1 if not defined */
 		return { 'redirection' :
@@ -312,7 +312,7 @@ DupOutputRedirection =
 
 /* Open file for reading/writing, 2.7.7 */
 InOutRedirection =
-  fd:RedirectionFileDescriptor? '<>' file_name:Token_NoDelimiter {
+  fd:RedirectionFileDescriptor? '<>' whitespace file_name:Token_NoDelimiter {
 		if (fd === null)
 			fd = 0 ; /* Default FD is STDIN/0 if not defined */
 		return { 'redirection' :

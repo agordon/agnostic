@@ -190,6 +190,11 @@ var tests = [
    multiple redirections are tested below. */
 ["redir12",	">foo.txt 2>&1",	false,		"Redirection"],
 ["redir13",	"<bar.txt >foo.txt",	false,		"Redirection"],
+//allow whitespace before the filename
+["redir14",	"> foo.txt",		true,		"Redirection"],
+["redir15",	"< foo.txt",		true,		"Redirection"],
+["redir16",	">> foo.txt",		true,		"Redirection"],
+["redir17",	"<> foo.txt",		true,		"Redirection"],
 
 /* Test Multiple Redirections */
 ["mredir1",	">foo.txt 2>&1",	true,		"Redirections"],
