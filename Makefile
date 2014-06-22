@@ -134,6 +134,7 @@ check: test_object_utils \
        test_program_cat \
        test_program_cut \
        test_program_echo \
+       test_program_grep \
        test_program_true \
        test_program_false \
        test_program_printf \
@@ -210,6 +211,10 @@ test_program_cut:
 .PHONY: test_program_echo
 test_program_echo:
 	$(NODEBIN) ./src/tests/program_echo_tester.js
+
+.PHONY: test_program_grep
+test_program_grep:
+	$(NODEBIN) ./src/tests/program_grep_tester.js
 
 .PHONY: test_program_true
 test_program_true:

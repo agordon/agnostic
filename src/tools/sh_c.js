@@ -31,6 +31,7 @@ var known_programs = [
 			"date",
 			"echo",
 			"false",
+			"grep",
 			"head",
 			"printf",
 			"seq",
