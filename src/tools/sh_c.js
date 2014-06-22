@@ -20,6 +20,7 @@ if (input === "") {
 
 
 var assert = require('assert');
+var nodefs = require('fs');
 var readline = require('readline');
 
 var load_shell_parser = require('utils/shell_parser_loader');
