@@ -28,8 +28,20 @@ var shell = new InteractiveShell(shell_parser);
 var res = shell.execute("seq 10 | wc -l");
 assert.deepEqual( res.stdout, ["10"] );
 
+// Execute multiple commands with a subshell, and sharing STDIN
 res = shell.execute("seq 0 5 20| grep 5 | ( echo 'hello' ; wc -l )");
 assert.deepEqual( res.stdout, ["hello","2"]);
+
+
+// Command with input and output redirection
+// (note: 'output.txt' is truncated by the 'echo')
+res = shell.execute("seq 10 > hello.txt ; echo hello > hello.txt ; wc -l < hello.txt");
+assert.deepEqual( res.stdout, ["1"]);
+
+// Command with input and output redirection with appending
+res = shell.execute("seq 10 > hello.txt ; echo hello >> hello.txt ; wc -l < hello.txt");
+assert.deepEqual( res.stdout, ["11"]);
+
 
 // Execute a command with errors to STDERR
 res = shell.execute("seq");
