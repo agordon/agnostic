@@ -78,6 +78,13 @@ assert.strictEqual ( lines[2], "foo" );
 assert.strictEqual ( lines[3], "bar" );
 
 
+// Verify that modifing the returned lines array does not affect
+// the original file
+lines.shift();
+lines.shift();
+lines = f.get_all_lines() ; //re-read the file's content
+assert.deepEqual (lines, [ "hello", "world", "foo", "bar" ]);
+
 
 
 
