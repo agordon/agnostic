@@ -151,6 +151,7 @@ check: test_object_utils \
        test_shell_executor_special_builtin \
        test_shell_executor_variables \
        test_shell_executor_expand_variables \
+       test_shell_executor_env_var_operators1 \
        test_shell_executor_arithmetics \
        test_shell_interactive \
        test_agnostic_bundle_source \
@@ -268,6 +269,10 @@ test_shell_executor_variables:
 .PHONY: test_shell_executor_expand_variables
 test_shell_executor_expand_variables:
 	$(NODEBIN) ./src/tests/shell_executor_expand_variables.js
+
+.PHONY: test_shell_executor_env_var_operators1
+test_shell_executor_env_var_operators1:
+	$(NODEBIN) ./src/tests/shell_executor_env_var_operators1.js
 
 .PHONY: test_shell_executor_arithmetics
 test_shell_executor_arithmetics:
