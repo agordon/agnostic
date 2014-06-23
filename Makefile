@@ -137,6 +137,7 @@ check: test_object_utils \
        test_program_grep \
        test_program_true \
        test_program_false \
+       test_program_paste \
        test_program_printf \
        test_program_wc \
        test_program_basename \
@@ -223,6 +224,10 @@ test_program_true:
 .PHONY: test_program_false
 test_program_false:
 	$(NODEBIN) ./src/tests/program_false_tester.js
+
+.PHONY: test_program_paste
+test_program_paste:
+	$(NODEBIN) ./src/tests/program_paste_tester.js
 
 .PHONY: test_program_printf
 test_program_printf:

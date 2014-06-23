@@ -42,6 +42,9 @@ assert.deepEqual( res.stdout, ["1"]);
 res = shell.execute("seq 10 > hello.txt ; echo hello >> hello.txt ; wc -l < hello.txt");
 assert.deepEqual( res.stdout, ["11"]);
 
+res = shell.execute("seq 10 | paste -s -d,");
+assert.deepEqual ( res.stdout, ["1,2,3,4,5,6,7,8,9,10"]);
+
 
 // Execute a command with errors to STDERR
 res = shell.execute("seq");
