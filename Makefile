@@ -117,6 +117,7 @@ web: $(SHELL_PARSER) $(AGNOSTIC_BUNDLE_MINIFIED)
 check: test_object_utils \
        test_string_utils \
        test_regex_utils \
+       test_fnmatch_utils \
        test_strftime \
        test_path_utils \
        test_shellquote_utils \
@@ -293,6 +294,10 @@ test_string_utils:
 .PHONY: test_regex_utils
 test_regex_utils:
 	$(NODEBIN) ./src/tests/regex_utils_tester.js
+
+.PHONY: test_fnmatch_utils
+test_fnmatch_utils:
+	$(NODEBIN) ./src/tests/fnmatch_tester.js
 
 .PHONY: test_path_utils
 test_path_utils:
