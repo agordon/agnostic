@@ -10,6 +10,11 @@ The project uses few external libraries, with the following licenses:
     Javascript sprintf ( https://github.com/alexei/sprintf.js ) - 3-Clause BSD
     Javascript GetOpt ( https://github.com/davepacheco/node-getopt ) - MIT license
     Javascript strftime ( https://github.com/samsonjs/strftime ) - MIT license
+    JQuery Terminal ( https://github.com/jcubic/jquery.terminal ) - GNU LGPL3
+       JQuery Terminal internally uses ( http://terminal.jcubic.pl/#license ):
+           Storage plugin (https://sites.google.com/site/daveschindler/jquery-html5-storage-plugin) - MIT license
+           jQuery Timers (http://jquery.offput.ca/every/) - WTFPL
+           Cross-Browser Split ( https://gist.github.com/slevithan/2048056) - MIT Licese
 
 An additional permission applies to Javascript files in the './src/' directory,
 as explained here https://www.gnu.org/philosophy/javascript-trap.html :
