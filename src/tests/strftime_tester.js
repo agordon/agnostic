@@ -14,18 +14,22 @@ Javascript's EPOCH is in Milliseconds, no seconds - need to multiply by 1000.
 
 var assert = require('assert');
 var strftime = require('utils/strftime');
+function strftimeUTC(format, time)
+{
+  return strftime.strftimeTZ(format,time,undefined,0);
+}
 
-// Fri Jun 13 20:28:57 EDT 2014
+// Sat Jun 14 00:28:57 UTC 2014
 // With GNU Date:
-//    $ date -d @1402705737
+//    $ date -ud @1402705737
 var fixed_time = new Date(1402705737 * 1000);
 
 
 var tests = [
 [ "%%",				"%" ],
-[ "%F",				"2014-06-13" ],
-[ "%R",				"20:28" ],
-[ "%T",				"20:28:57" ],
+[ "%F",				"2014-06-14" ],
+[ "%R",				"00:28" ],
+[ "%T",				"00:28:57" ],
 ];
 
 
@@ -36,7 +40,7 @@ for (var i in tests) {
 	var format = tests[i][0];
 	var expect = tests[i][1];
 
-	var result = strftime(format, fixed_time);
+	var result = strftimeUTC(format, fixed_time,undefined, 0);
 
 	if ( result === expect ) {
 		pass_count++;
