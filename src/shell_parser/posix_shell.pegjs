@@ -551,6 +551,7 @@ ParameterExpandable =
          but the "VALUE" part can recursively contain more expandable items. */
 ParameterOperationExpandable =
   "${" varname:ParameterName varop:ParameterExpansionOperator opvalue:Token_NoBraces* "}" { return { "envvar_operation" : { "envvar" : varname, "operation" : varop, "value": (opvalue?opvalue[0]:[]) } }; }
+  / "${#" varname:ParameterName "}" { return { "envvar_operation" : { "envvar" : varname, "operation" : "strlen", "value" : null } }; }
 
 /* Alphanumeric parameter name, or special parameter name (section 2.5.2) */
 ParameterName =

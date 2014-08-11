@@ -103,6 +103,9 @@ var tests = [
 // Double-quoted expansion - becomes one parameter despite whitespace
 [ "e54", "echo \"${SETNUL:-AAA BBB}\"",	{ stdout: ["AAA BBB"] }],
 
+// Length Operation
+[ "e55", "echo ${#SET}",                { stdout: ["3"] }],
+
 
 ];
 

@@ -441,6 +441,7 @@ var tests = [
 ["ParmOpExp28",	"${FOO=HELLO\"WORLD}",				false,	"ParameterOperationExpandable"],
 ["ParmOpExp29",	"${FOO=HELLO\'WORLD}",				false,	"ParameterOperationExpandable"],
 ["ParmOpExp30",	"${FOO=HEL${LOWORLD}",				false,	"ParameterOperationExpandable"],
+["ParmOpExp31",	"${#FOO}",					true,	"ParameterOperationExpandable"],
 
 
 /* Test Arithmatic Expansion */
