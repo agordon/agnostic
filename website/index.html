@@ -89,6 +89,7 @@ echo $(dirname $FILE)/output/$(basename $FILE .md).html
 export A=42 B=9
 echo $((A/B))
 
+date -d @$(($(date +%s)+86400)) +%A
  </pre>
   </div>
 </div>
