@@ -82,6 +82,7 @@ cut -f1,7 -d: &lt; passwd
 grep -iE '^(year|200[3-9])' nobel.csv | cut -f1,3 -d,
 wc -l mammals.txt nobel.csv
 printf "%d: %d\n" $(seq 7)
+cal feb 2000
 grep -q "sync" passwd &amp;&amp; echo "found" || echo "not found"
 
 FILE=/hello/world/foo/bar.md
@@ -139,7 +140,7 @@ test "$(date +%a)" = Fri &amp;&amp; echo TGIF
   <div class="col-md-6">
     <h3>POSIX Utilities Status</h3>
     <ul>
-    <li> (almost) fully implemented: <code>basename</code>, <code>cat</code>, <code>cut</code>,
+    <li> (almost) fully implemented: <code>basename</code>, <code>cal</code>,<code>cat</code>, <code>cut</code>,
           <code>date</code>,
           <code>dirname</code>, <code>echo</code>, <code>false</code>, <code>grep</code>,<code>head</code>,
           <code>paste</code>,
