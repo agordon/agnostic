@@ -111,8 +111,17 @@ Acceptable Tokens when parsing shell command context.
 	     "2.6 Word Expansion" item #2). So in this context, there's no
 	     need to stop consuming tokens due to unquoted whitespace/delimiters.
 */
+
+/* First word of a 'simple-command' - reject reserved words,
+   which will then be processed by other rules. */
+FirstCommandWord =
+  !( "{" / "}" / "!" / "if" / "then" / "else" / "elif" /
+     "fi" / "do" / "done" / "case" / "esac" / "while" / "until" / "for" /
+     "in" )
+  a:Token_NoDelimiter { return a ; }
+
 Tokens_Command =
-  first:Token_NoDelimiter rest:(EmptyDelimiter Token_NoDelimiter)* {
+  first:FirstCommandWord rest:(EmptyDelimiter Token_NoDelimiter)* {
 		parser_debug("Tokens_Command, text ='" + text() + "' offset = " + offset() ) ;
         var results = first ;
         rest.forEach(function(item){
@@ -157,7 +166,7 @@ Token_NoDelimiter =
   items:( NoDelimiter_UnquotedCharacters / AllContexts_Tokens )+ { return items; }
 
 NoDelimiter_UnquotedCharacters =
-  value:[^\|\&\;\`\<\>\{\}\(\)\$\\\"\ \t\'\n]+ { return { "literal" : value.join("") }; }
+  value:[^\|\&\;\`\<\>\(\)\$\\\"\ \t\'\n]+ { return { "literal" : value.join("") }; }
 
 
 /* Acceptable Tokens inside braces ${} -
