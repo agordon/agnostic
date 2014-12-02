@@ -394,15 +394,35 @@ SimpleCommand =
 Command, as per Section "2.9 Shell Commands"
 ***************************/
 
+Compound_List = cmd:List { return cmd ; }
+
 /* Compound Commands - Section "2.9.4" */
 Compound_Command_Subshell =
-	"(" EmptyDelimiter* cmd:List EmptyDelimiter* ")" { return { "compound_subshell" : cmd } ; }
+	"(" EmptyDelimiter* cmd:Compound_List EmptyDelimiter* ")" { return { "compound_subshell" : cmd } ; }
 
 Compound_Command_Currentshell =
 	"{" EmptyDelimiter* cmd:TerminatedList EmptyDelimiter* "}" { return { "compound_currentshell" : cmd } ; }
 
 Command =
-	EmptyDelimiter* cmd:(SimpleCommand / Compound_Command_Subshell / Compound_Command_Currentshell ) EmptyDelimiter* { return cmd; }
+	EmptyDelimiter* cmd:(SimpleCommand / Compound_Command_Subshell / Compound_Command_Currentshell / For_clause ) EmptyDelimiter* { return cmd; }
+
+Wordlist =
+  first:Token_NoDelimiter rest:(EmptyDelimiter Token_NoDelimiter)* {
+        var results = first ;
+        rest.forEach(function(item){
+            var delim = item[0];
+            var tokens = item[1];
+            results.push(delim); // Emptydelimiter is one item
+            results = results.concat(tokens); // Tokens is an array of items, add each one
+        });
+		return results;
+	}
+
+For_clause =
+	"for" EmptyDelimiter* name:VariableName EmptyDelimiter*
+	"in" EmptyDelimiter* wordlist:Wordlist EmptyDelimiter* ";"
+       EmptyDelimiter* "do" EmptyDelimiter* cmd:Compound_List EmptyDelimiter* "done"
+	{ return { "for_clause": { "varname" : name, "wordlist" : wordlist, "command":cmd } }; }
 
 /***************************
 Pipeline, as per Section 2.9.2
