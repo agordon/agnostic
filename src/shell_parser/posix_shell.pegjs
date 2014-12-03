@@ -404,7 +404,7 @@ Compound_Command_Currentshell =
 	"{" EmptyDelimiter* cmd:TerminatedList EmptyDelimiter* "}" { return { "compound_currentshell" : cmd } ; }
 
 Command =
-	EmptyDelimiter* cmd:(SimpleCommand / Compound_Command_Subshell / Compound_Command_Currentshell / For_clause / If_clause ) EmptyDelimiter* { return cmd; }
+	EmptyDelimiter* cmd:(SimpleCommand / Compound_Command_Subshell / Compound_Command_Currentshell / For_clause / If_clause / While_Until_Clause) EmptyDelimiter* { return cmd; }
 
 Wordlist =
   first:Token_NoDelimiter rest:(EmptyDelimiter Token_NoDelimiter)* {
@@ -418,11 +418,16 @@ Wordlist =
 		return results;
 	}
 
+Do_group = "do" EmptyDelimiter* cmd:Compound_List EmptyDelimiter* "done"
+	{ return cmd ; }
+
+
 For_clause =
 	"for" EmptyDelimiter* name:VariableName EmptyDelimiter*
 	"in" EmptyDelimiter* wordlist:Wordlist EmptyDelimiter* ";"
-       EmptyDelimiter* "do" EmptyDelimiter* cmd:Compound_List EmptyDelimiter* "done"
-	{ return { "for_clause": { "varname" : name, "wordlist" : wordlist, "command":cmd } }; }
+        EmptyDelimiter*
+	action:Do_group
+	{ return { "for_clause": { "varname" : name, "wordlist" : wordlist, "action":action } }; }
 
 If_clause = "if" EmptyDelimiter* condition:Compound_List EmptyDelimiter*
 	    "then" EmptyDelimiter* then_commands:Compound_List EmptyDelimiter*
@@ -450,6 +455,17 @@ Else_clause = "else" EmptyDelimiter* then_commands:Compound_List EmptyDelimiter*
 		{
 		   return then_commands ;
 		}
+
+While_Until_Clause = type:( "while" / "until" ) EmptyDelimiter*
+                     condition:Compound_List EmptyDelimiter*
+		     action:Do_group
+			{
+			  return { "while_until" : {
+					"type" : type,
+					"condition" : condition,
+					"action" : action
+				} } ;
+			}
 
 
 /***************************
