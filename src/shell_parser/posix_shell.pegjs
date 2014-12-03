@@ -404,7 +404,7 @@ Compound_Command_Currentshell =
 	"{" EmptyDelimiter* cmd:TerminatedList EmptyDelimiter* "}" { return { "compound_currentshell" : cmd } ; }
 
 Command =
-	EmptyDelimiter* cmd:(SimpleCommand / Compound_Command_Subshell / Compound_Command_Currentshell / For_clause ) EmptyDelimiter* { return cmd; }
+	EmptyDelimiter* cmd:(SimpleCommand / Compound_Command_Subshell / Compound_Command_Currentshell / For_clause / If_clause ) EmptyDelimiter* { return cmd; }
 
 Wordlist =
   first:Token_NoDelimiter rest:(EmptyDelimiter Token_NoDelimiter)* {
@@ -423,6 +423,34 @@ For_clause =
 	"in" EmptyDelimiter* wordlist:Wordlist EmptyDelimiter* ";"
        EmptyDelimiter* "do" EmptyDelimiter* cmd:Compound_List EmptyDelimiter* "done"
 	{ return { "for_clause": { "varname" : name, "wordlist" : wordlist, "command":cmd } }; }
+
+If_clause = "if" EmptyDelimiter* condition:Compound_List EmptyDelimiter*
+	    "then" EmptyDelimiter* then_commands:Compound_List EmptyDelimiter*
+	    elif_parts:Elif_clause*
+	    else_part:Else_clause ?
+	    "fi"
+		{
+		   var ifs = [ { "condition" : condition, "action" : then_commands } ];
+		   if (elif_parts) {
+			elif_parts.forEach(function(a){ifs.push(a)});
+	           }
+		   if (else_part) {
+			ifs.push( { "condition" : "else", "action" : else_part } );
+		   }
+		   return { "if_clause" : ifs } ;
+		}
+
+Elif_clause = "elif" EmptyDelimiter* condition:Compound_List EmptyDelimiter*
+		"then" then_commands:Compound_List EmptyDelimiter*
+		{
+		   return { "condition" : condition, "action" : then_commands } ;
+		}
+
+Else_clause = "else" EmptyDelimiter* then_commands:Compound_List EmptyDelimiter*
+		{
+		   return then_commands ;
+		}
+
 
 /***************************
 Pipeline, as per Section 2.9.2
