@@ -68,6 +68,10 @@ var tests = [
 [ "v21","echo $((1^2))",		{ stdout: [ "3" ] } ],
 [ "v22","echo $((42&&9))",		{ stdout: [ "1" ] } ],
 [ "v23","echo $((100||0))",		{ stdout: [ "1" ] } ],
+[ "v24","echo $((!0))",			{ stdout: [ "1" ] } ],
+[ "v25","echo $((!90))",		{ stdout: [ "0" ] } ],
+[ "v26","echo $((~7))",			{ stdout: [ "-8" ] } ],
+[ "v27","echo $((15&~7))",		{ stdout: [ "8" ] } ],
 
 //Test (some) operator precedences
 //This corresponds to the order of the operators listed in

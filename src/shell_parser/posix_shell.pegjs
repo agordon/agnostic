@@ -87,7 +87,7 @@ function pack_simple_command(prefix,cmd,suffix)
 			return { "SimpleCommand" : command } ;
 		}
 
-function arithmatic_op(first,rest)
+function arithmatic_binary_op(first,rest)
 {
 	if (rest.length===0)
 		return first;
@@ -98,7 +98,7 @@ function arithmatic_op(first,rest)
 		list.push( rest[i][1] ); // the operator
 		list.push( rest[i][3] ); // the value
 	}
-	return { "arithmetics_op_list" : list } ;
+	return { "arithmetics_binary_op_list" : list } ;
 }
 
 }
@@ -678,51 +678,58 @@ ArithmeticExpression =
 LogicalOrTerm
   = first:LogicalAndTerm
     rest:( whitespace "||" whitespace LogicalAndTerm)*
-	{ return arithmatic_op(first,rest) ; }
+	{ return arithmatic_binary_op(first,rest) ; }
 
 LogicalAndTerm
   = first:BitwiseOrTerm
     rest:( whitespace "&&" whitespace BitwiseOrTerm)*
-	{ return arithmatic_op(first,rest) ; }
+	{ return arithmatic_binary_op(first,rest) ; }
 
 BitwiseOrTerm
   = first:BitwiseXorTerm
     rest:( whitespace "|" whitespace BitwiseXorTerm)*
-	{ return arithmatic_op(first,rest) ; }
+	{ return arithmatic_binary_op(first,rest) ; }
 
 BitwiseXorTerm
   = first:BitwiseAndTerm
     rest:( whitespace "^" whitespace BitwiseAndTerm)*
-	{ return arithmatic_op(first,rest) ; }
+	{ return arithmatic_binary_op(first,rest) ; }
 
 BitwiseAndTerm
   = first:EqualityOpTerm
     rest:( whitespace "&" whitespace EqualityOpTerm)*
-	{ return arithmatic_op(first,rest) ; }
+	{ return arithmatic_binary_op(first,rest) ; }
 
 EqualityOpTerm
   = first:RelationalOpTerm
     rest:( whitespace ("==" / "!=" ) whitespace RelationalOpTerm)*
-	{ return arithmatic_op(first,rest) ; }
+	{ return arithmatic_binary_op(first,rest) ; }
 
 RelationalOpTerm
   = first:BitwiseShiftTerm
     rest:( whitespace ( "<=" / ">=" / ">" / "<" ) whitespace BitwiseShiftTerm)*
-	{ return arithmatic_op(first,rest) ; }
+	{ return arithmatic_binary_op(first,rest) ; }
 
 BitwiseShiftTerm
   = first:AdditiveTerm
     rest:( whitespace (">>" / "<<") whitespace AdditiveTerm)*
-	{ return arithmatic_op(first,rest) ; }
+	{ return arithmatic_binary_op(first,rest) ; }
 
 AdditiveTerm
   = first:Term rest:( whitespace ("+" / "-") whitespace Term)*
-	{ return arithmatic_op(first,rest) ; }
+	{ return arithmatic_binary_op(first,rest) ; }
 
 Term
-  = first:Factor rest:( whitespace ("*" / "/" / "%") whitespace Factor)*
-	{ return arithmatic_op(first,rest) ; }
+  = first:UnaryOpTerm rest:( whitespace ("*" / "/" / "%") whitespace UnaryOpTerm)*
+	{ return arithmatic_binary_op(first,rest) ; }
 
+UnaryOpTerm
+  = op:( "!" / "~" )? whitespace term:Factor
+	{
+		if (op===null)
+			return term;
+		return { "arithmetic_unary_op_list" : [ op, term ] };
+	}
 
 Factor
   = "(" whitespace expr:ArithmeticExpression whitespace ")" { return expr ; }
