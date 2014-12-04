@@ -72,6 +72,8 @@ var tests = [
 [ "v25","echo $((!90))",		{ stdout: [ "0" ] } ],
 [ "v26","echo $((~7))",			{ stdout: [ "-8" ] } ],
 [ "v27","echo $((15&~7))",		{ stdout: [ "8" ] } ],
+[ "v28","echo $((1?2:3))",		{ stdout: [ "2" ] } ],
+[ "v29","echo $((0?1:2))",		{ stdout: [ "2" ] } ],
 
 //Test (some) operator precedences
 //This corresponds to the order of the operators listed in
@@ -82,6 +84,7 @@ var tests = [
 [ "v103", "echo $((2-2==0))",		{ stdout: [ "1" ] } ],
 [ "v104", "echo $((4*1|4))",		{ stdout: [ "4" ] } ],
 [ "v105", "echo $((7||100|100))",	{ stdout: [ "1" ] } ],
+[ "v106", "echo $((5>6?7:8))",		{ stdout: [ "8" ] } ],
 
 //TODO:
 //Test invalid values and arithmetic errors

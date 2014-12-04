@@ -673,7 +673,18 @@ ArithmeticExpandable =
   / "$((" whitespace expr:ArithmeticExpression whitespace "))" { return { "arithmetic" : expr } ; }
 
 ArithmeticExpression =
-	LogicalOrTerm
+	ConditionalOpTerm
+
+ConditionalOpTerm
+  = condition:LogicalOrTerm
+    rest:(whitespace "?" whitespace true_value:LogicalOrTerm
+	  whitespace ":" whitespace false_value:LogicalOrTerm)?
+	{
+		if (rest===null)
+			return condition;
+		return { "arithmetics_ternary_op" :
+			[ condition, rest[3], rest[7]] };
+	}
 
 LogicalOrTerm
   = first:LogicalAndTerm
