@@ -69,16 +69,17 @@ var fnmatch_match_tests = [
 ["m12",	"abcdeee",	"b*e",		"$",		"bcdeee"],
 ["m13",	"abcdeee",	"b*e",		"?",		"bcde"],
 
-/* Will be used in shell expansion, such as:
+/* Simple example of greedy vs non-greedy suffix matching */
+["m14", "helloooooowold", "o*",		"$",		"oooooowold"],
+["m15", "helloooooowold", "o*",		"$?",		"old"],
+/*Real-world example of greedy vs non-greedy suffix matching.
+  Will be used in shell expansion, such as:
     FILE=/tmp/foo/bar/agnostic.tar.gz.gpg.sig"
     echo ${FILE%.*sig}    # non-greedy (shortest match), removes '.sig'
     echo ${FILE%%.*sig}   # greedy (longest match), removes all extensions
 */
-["m14", "agnostic.tar.gz.gpg.sig", ".*sig", "$",        ".tar.gz.gpg.sig"],
-
-/* TODO: FIX THIS
-["m15", "agnostic.tar.gz.gpg.sig", ".*sig", "$?",       ".sig"],
-*/
+["m16", "agnostic.tar.gz.gpg.sig", ".*sig", "$",        ".tar.gz.gpg.sig"],
+["m17", "agnostic.tar.gz.gpg.sig", ".*sig", "$?",       ".sig"],
 
 ];
 
@@ -103,7 +104,6 @@ fnmatch_match_tests.forEach(function(test){
 	} else {
 	/* If the expected result is a string, check the returned matched string,
            (implied: string 'expect' should ALWAYS match) */
-console.log( "result = " + JSON.stringify(result));
 		assert ( result ) ;
 		result = input.substr ( result.pos, result.len ) ;
 	}
