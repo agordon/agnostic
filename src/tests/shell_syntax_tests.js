@@ -53,7 +53,8 @@ var rules = {
 
 	/* NOTE: these rules must be used directly, no other rule points to them */
 	'Compound_Command_Subshell' : 'Command',
-	'Compound_Command_Currentshell' : 'Command'
+	'Compound_Command_Currentshell' : 'Command',
+	'For_clause' : 'Command'
 };
 
 var tests = [
@@ -320,6 +321,21 @@ var tests = [
 ["cmpcs11",	"{ uname ; true ; false ; }",		true,	"Compound_Command_Currentshell"],
 ["cmpcs12",	"{ uname && true || false & }",		true,	"Compound_Command_Currentshell"],
 ["cmpcs13",	"{}",					false,	"Compound_Command_Currentshell"],
+
+/* Test For clause */
+["for1",	"for a in a b c d ; do true ; done",	true,	"For_clause"],
+/* missing 'in' */
+["for2",	"for a a b c d ; do true ; done",	false,	"For_clause"],
+/* missing semi-colon before do */
+["for3",	"for a in a b c d do true ; done",	false,	"For_clause"],
+/* missing 'do' */
+["for4",	"for a in a b c d ; true ; done",	false,	"For_clause"],
+/* missing semi-colon before done */
+["for5",	"for a in a b c d ; do true done",	false,	"For_clause"],
+/* missing command between do and done */
+["for6",	"for a in a b c d ; do ; done",		false,	"For_clause"],
+/* non-simple values in word-list */
+["for7",	"for a in $(ls); do echo a=$a ; done",	true,	"For_clause"],
 
 /* Test Pipeline rule */
 ["pipe1",	"seq 1 2 10 | wc -l",							true,	"Pipeline"],
