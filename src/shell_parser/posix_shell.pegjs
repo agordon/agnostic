@@ -473,7 +473,7 @@ While_Until_Clause = type:( "while" / "until" ) EmptyDelimiter*
                      condition:Compound_List EmptyDelimiter*
 		     action:Do_group
 			{
-			  return { "while_until" : {
+			  return { "while_until_clause" : {
 					"type" : type,
 					"condition" : condition,
 					"action" : action
